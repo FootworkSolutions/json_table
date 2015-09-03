@@ -1,0 +1,7 @@
+{
+	"name": "Footwork_Solutions/json_table",
+	"description": "A PHP validator and storage library using the JSON table schema.",
+	"require": {
+		"php": ">=5.4.0"
+	}
+}
