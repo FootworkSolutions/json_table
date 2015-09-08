@@ -1,6 +1,15 @@
 {
-	"name": "Footwork_Solutions/json_table",
+	"name": "footwork_solutions/json_table",
 	"description": "A PHP validator and storage library using the JSON table schema.",
+	"keywords": ["json table schema", "validation", "data protocols", "open knowledge foundation"],
+	"homepage": "https://github.com/FootworkSolutions/json_table",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "George Wilde",
+			"email": "george.wilde@footworksolutions.co.uk",
+		}
+	],
 	"require": {
 		"php": ">=5.4.0"
 	}
