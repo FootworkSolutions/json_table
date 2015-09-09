@@ -1,12 +1,12 @@
 <?php
-namespace json_table\format;
+namespace JsonTable\Validate\Format;
 
 /**
  * Lexical array validator.
  *
  * @package	CSV File Validator
  */
-class array_validator extends \json_table\abstract_format_validator {
+class ArrayValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	/**
 	 * Validate that the input is a valid null.
 	 *

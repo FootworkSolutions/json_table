@@ -1,12 +1,12 @@
 <?php
-namespace json_table\foreign_key;
+namespace JsonTable\Validate\ForeignKey;
 
 /**
  * Foreign key postgresql validator.
  *
  * @package	CSV File Validator
  */
-class postgresql_validator implements \json_table\interface_foreign_key_validator {
+class PostgresqlValidator implements \JsonTable\Validate\InterfaceForeignKeyValidator {
 	/**
 	 * Check that the foreign key hash matches the specified resource.
 	 *

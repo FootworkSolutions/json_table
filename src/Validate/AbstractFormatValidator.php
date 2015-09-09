@@ -1,12 +1,12 @@
 <?php
-namespace json_table;
+namespace JsonTable\Validate;
 
 /**
  * Format validator abstract.
  *
  * @package	JSON table
  */
-abstract class abstract_format_validator {
+abstract class AbstractFormatValidator {
 	/**
 	 * @access	protected
 	 * @var	string	The type of validation being done. eg "string", "number".

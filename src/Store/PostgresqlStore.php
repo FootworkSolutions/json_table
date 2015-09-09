@@ -1,10 +1,10 @@
 <?php
-namespace json_table\store;
+namespace JsonTable\Store;
 
 /**
- * postgresql store.
+ * Postgresql store.
  */
-class postgresql_store extends abstract_store {
+class PostgresqlStore extends AbstractStore {
 	/**
 	 * @access	private
 	 *
@@ -53,10 +53,10 @@ class postgresql_store extends abstract_store {
 		$lo_pdo = \halo_factory::pdo();
 
 		// Open the CSV file for reading.
-		\json_table\base::_open_file();
+		\JsonTable\Base::_open_file();
 
 		// Get a list of columns being inserted into from the CSV header row.
-		$ls_column_list = implode(', ', \json_table\base::$_a_header_columns);
+		$ls_column_list = implode(', ', \JsonTable\Base::$_a_header_columns);
 		// Add the csv_row field to the column list. This field stores the CSV row number to help make error messages more useful.
 		$ls_column_list .= ', csv_row';
 
@@ -64,19 +64,19 @@ class postgresql_store extends abstract_store {
 		$this->_set_columns_metadata();
 
 		// Define the parameter list for the statement.
-		$ls_insert_parameters = implode(', ', array_fill(0, count(\json_table\base::$_a_header_columns), '?'));
+		$ls_insert_parameters = implode(', ', array_fill(0, count(\JsonTable\Base::$_a_header_columns), '?'));
 
 		// Add an additional parameter for the csv_row field.
 		$ls_insert_parameters .= ', ?';
 
 		// Rewind the CSV file pointer to the first line of data.
-		\json_table\base::_rewind_file_pointer_to_first_data();
+		\JsonTable\Base::_rewind_file_pointer_to_first_data();
 
 		// Set the row flag.
 		$li_row = 1;
 
 		// Read each row in the file.
-		while ($la_csv_row = \json_table\base::_loop_through_file_rows()) {
+		while ($la_csv_row = \JsonTable\Base::_loop_through_file_rows()) {
 			// Set up the SQL statement for the insert.
 			$ls_insert_sql = "INSERT INTO $ps_table_name ($ls_column_list) VALUES ($ls_insert_parameters) RETURNING $ps_primary_key AS key";
 			$lo_pdo->prepare($ls_insert_sql);
@@ -139,7 +139,7 @@ class postgresql_store extends abstract_store {
 	 */
 	private function _set_columns_metadata () {
 		// Get the data type for each of the columns being inserted into.
-		foreach (\json_table\base::$_a_header_columns as $li_csv_field_position => $ls_csv_column_name) {
+		foreach (\JsonTable\Base::$_a_header_columns as $li_csv_field_position => $ls_csv_column_name) {
 			$la_metadata = array();
 
 			// Compensate for 1 based column reference.

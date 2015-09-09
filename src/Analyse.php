@@ -1,8 +1,8 @@
 <?php
-namespace json_table;
+namespace JsonTable;
 
-// Load the base class.
-require_once dirname(__FILE__) . '/base.php';
+// Load the Base class.
+require_once dirname(__FILE__) . '/Base.php';
 
 /**
  * Analyse data to ensure it validates against a JSON table schema.
@@ -47,7 +47,7 @@ require_once dirname(__FILE__) . '/base.php';
  *
  * @package	JSON table
  */
-class analyse extends base {
+class Analyse extends Base {
 	/**
 	 * @var	string	The description for missing mandatory columns.
 	 */
@@ -91,12 +91,12 @@ class analyse extends base {
 	/**
 	 * @var	string	The format validation type.
 	 */
-	const VALIDATION_TYPE_FORMAT = 'format';
+	const VALIDATION_TYPE_FORMAT = 'Format';
 
 	/**
 	 * @var	string	The foreign key validation type.
 	 */
-	const VALIDATION_TYPE_FOREIGN_KEY = 'foreign_key';
+	const VALIDATION_TYPE_FOREIGN_KEY = 'ForeignKey';
 
 	/**
 	 * @access	private
@@ -128,8 +128,8 @@ class analyse extends base {
 	 */
 	public function __construct () {
 		// Load the abstract and interface validator classes.
-		include dirname(__FILE__) . '/validate/abstract_format_validator.php';
-		include dirname(__FILE__) . '/validate/interface_foreign_key_validator.php';
+		include dirname(__FILE__) . '/Validate/AbstractFormatValidator.php';
+		include dirname(__FILE__) . '/Validate/InterfaceForeignKeyValidator.php';
 	}
 
 
@@ -226,7 +226,7 @@ class analyse extends base {
 				// Check if this column is in the CSV file.
 				if (!in_array($lo_field->name, self::$_a_header_columns)) {
 					// The column is missing from the file so add an error and update the returned flag.
-					$this->_set_error(analyse::ERROR_REQUIRED_COLUMN_MISSING, $lo_field->name);
+					$this->_set_error(Analyse::ERROR_REQUIRED_COLUMN_MISSING, $lo_field->name);
 					$lb_valid_mandatory_columns = false;
 
 					// Return if execution should stop if invalid.
@@ -257,7 +257,7 @@ class analyse extends base {
 			// Check that the column was found in the schema.
 			if (false === $this->_get_schema_key_from_name($ls_csv_column_name)) {
 				// The column is missing from the schema so add an error and update the returned flag.
-				$this->_set_error(analyse::ERROR_UNSPECIFIED_COLUMN, $ls_csv_column_name);
+				$this->_set_error(Analyse::ERROR_UNSPECIFIED_COLUMN, $ls_csv_column_name);
 				$lb_valid_unspecified_columns = false;
 
 				// Return if execution should stop if invalid.
@@ -296,7 +296,7 @@ class analyse extends base {
 			$li_header_column_count = count(self::$_a_header_columns);
 
 			if ($li_header_column_count !== $li_column_count) {
-				$this->_set_error(analyse::ERROR_INCORRECT_COLUMN_COUNT, "Row $li_row has $li_column_count columns but should have $li_header_column_count.");
+				$this->_set_error(Analyse::ERROR_INCORRECT_COLUMN_COUNT, "Row $li_row has $li_column_count columns but should have $li_header_column_count.");
 				$this->_a_statistics['rows_with_errors'][] = $li_row;
 			}
 
@@ -310,7 +310,7 @@ class analyse extends base {
 					// Check if the field has any data in it.
 					if ('' === $la_csv_row[$li_column_number]) {
 						// This is a mandatory column without any data in it, so set an error.
-						$this->_set_error(analyse::ERROR_REQUIRED_FIELD_MISSING_DATA, "$lo_schema_column->name on row $li_row is missing.");
+						$this->_set_error(Analyse::ERROR_REQUIRED_FIELD_MISSING_DATA, "$lo_schema_column->name on row $li_row is missing.");
 						$this->_a_statistics['rows_with_errors'][] = $li_row;
 						$lb_valid_lexical = false;
 
@@ -326,7 +326,7 @@ class analyse extends base {
 				$ls_format = $this->_get_column_format($lo_schema_column);
 
 				// Instantiate the format validator for this field type.
-				$lo_validator = $this->_instantiate_validator(analyse::VALIDATION_TYPE_FORMAT, $ls_type);
+				$lo_validator = $this->_instantiate_validator(Analyse::VALIDATION_TYPE_FORMAT, $ls_type);
 
 				// Pass the data to validate to the validator.
 				$lo_validator->set_input($la_csv_row[$li_column_number]);
@@ -336,7 +336,7 @@ class analyse extends base {
 					$lb_valid_lexical = false;
 
 					// This data didn't match the specified format.
-					$this->_set_error(analyse::ERROR_INVALID_FORMAT, "The data in column $lo_schema_column->name on row $li_row doesn't match the required format of $ls_format.");
+					$this->_set_error(Analyse::ERROR_INVALID_FORMAT, "The data in column $lo_schema_column->name on row $li_row doesn't match the required format of $ls_format.");
 					$this->_a_statistics['rows_with_errors'][] = $li_row;
 
 					// Return if execution should stop if invalid.
@@ -352,7 +352,7 @@ class analyse extends base {
 					$lb_valid_lexical = false;
 
 					// This data didn't match the specified pattern.
-					$this->_set_error(analyse::ERROR_INVALID_PATTERN, "The data in column $lo_schema_column->name on row $li_row doesn't match the required pattern of $ls_pattern.");
+					$this->_set_error(Analyse::ERROR_INVALID_PATTERN, "The data in column $lo_schema_column->name on row $li_row doesn't match the required pattern of $ls_pattern.");
 					$this->_a_statistics['rows_with_errors'][] = $li_row;
 
 					// Return if execution should stop if invalid.
@@ -448,7 +448,7 @@ class analyse extends base {
 				// A duplicate primary key hash has been found.
 				$ls_primary_key_columns = implode(', ', $la_primary_key_columns);
 				$ls_error_message = "The data in columns &quot;$ls_primary_key_columns&quot; should be unique, but rows $lm_existing_key &amp; $li_row have the same values of &quot;$ls_row_key&quot;";
-				$this->_set_error(analyse::ERROR_DUPLICATE_PRIMARY_KEY, $ls_error_message);
+				$this->_set_error(Analyse::ERROR_DUPLICATE_PRIMARY_KEY, $ls_error_message);
 				$this->_a_statistics['rows_with_errors'][] = $li_row;
 
 				// Return if execution should stop if invalid.
@@ -498,7 +498,7 @@ class analyse extends base {
 			}
 
 			// Instantiate the foreign key validator for this datapackage type.
-			$lo_validator = $this->_instantiate_validator(analyse::VALIDATION_TYPE_FOREIGN_KEY, $ls_datapackage);
+			$lo_validator = $this->_instantiate_validator(Analyse::VALIDATION_TYPE_FOREIGN_KEY, $ls_datapackage);
 
 			// Get the fields in the CSV and the resource for this foreign key.
 			$la_csv_fields = (array) $lo_foreign_key->fields;
@@ -556,7 +556,7 @@ class analyse extends base {
 					// This hash didn't match a foreign key.
 					$ls_csv_fields = implode(', ', $la_csv_fields);
 					$ls_error_message = "The value(s) of &quot;$ls_csv_value_hash&quot; in column(s) $ls_csv_fields on row $li_row doesn't match a foreign key.";
-					$this->_set_error(analyse::ERROR_INVALID_FOREIGN_KEY, $ls_error_message);
+					$this->_set_error(Analyse::ERROR_INVALID_FOREIGN_KEY, $ls_error_message);
 					$this->_a_statistics['rows_with_errors'][] = $li_row;
 
 					// Return if execution should stop if invalid.
@@ -633,12 +633,13 @@ class analyse extends base {
 	 */
 	private function _instantiate_validator ($ps_validation_type, $ps_type) {
 		// For format validation, "Date", "datetime" and "time" all follow the same schema definition rules so just use the datetime format for them all.
-		if (analyse::VALIDATION_TYPE_FORMAT === $ps_validation_type && ('date' === $ps_type || 'time' === $ps_type)) {
+		if (Analyse::VALIDATION_TYPE_FORMAT === $ps_validation_type && ('date' === $ps_type || 'time' === $ps_type)) {
 			$ps_type = 'datetime';
 		}
 
 		// Load the validator file.
-		$ls_validator_file = dirname(__FILE__) . "/validate/$ps_validation_type/$ps_type.php";
+		$ps_type = ucwords($ps_type) . 'Validator';
+		$ls_validator_file = dirname(__FILE__) . "/Validate/$ps_validation_type/$ps_type.php";
 
 		if (file_exists($ls_validator_file) && is_readable($ls_validator_file)) {
 			include_once $ls_validator_file;
@@ -648,7 +649,7 @@ class analyse extends base {
 		}
 
 		// Check that the class exists.
-		$ls_validator_class = "\\json_table\\$ps_validation_type\\$ps_type" . "_validator";
+		$ls_validator_class = "\\JsonTable\\Validate\\$ps_validation_type\\$ps_type";
 
 		if (!class_exists($ls_validator_class)) {
 			throw new \Exception("Could not find the validator class $ls_validator_class");

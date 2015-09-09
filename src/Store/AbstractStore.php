@@ -1,5 +1,5 @@
 <?php
-namespace json_table\store;
+namespace JsonTable\Store;
 
 /**
  * Abstract store class.
@@ -7,7 +7,7 @@ namespace json_table\store;
  *
  * @package	JSON table
  */
-abstract class abstract_store extends \json_table\base {
+abstract class AbstractStore extends \JsonTable\Base {
 	/**
 	 * @access	protected
 	 *

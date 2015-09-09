@@ -1,12 +1,12 @@
 <?php
-namespace json_table\format;
+namespace JsonTable\Validate\Format;
 
 /**
  * Lexical boolean validator.
  *
  * @package	CSV File Validator
  */
-class null_validator extends \json_table\abstract_format_validator {
+class NullValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	/**
 	 * Validate that the input is a valid null.
 	 * This actually has to check that the value is an empty string as all inputs are received as strings.

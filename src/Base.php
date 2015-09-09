@@ -1,10 +1,10 @@
 <?php
-namespace json_table;
+namespace JsonTable;
 
 /**
  * @package	JSON table
  */
-abstract class base {
+abstract class Base {
 	/**
 	 * @access	protected
 	 * @static

@@ -1,12 +1,12 @@
 <?php
-namespace json_table\format;
+namespace JsonTable\Validate\Format;
 
 /**
  * Lexical number validator.
  *
  * @package	CSV File Validator
  */
-class number_validator extends \json_table\abstract_format_validator {
+class NumberValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	/**
 	 * Validate that the input is a valid number (float).
 	 *
