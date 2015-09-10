@@ -1,9 +1,6 @@
 <?php
 namespace JsonTable;
 
-// Load the Base class.
-require_once dirname(__FILE__) . '/Base.php';
-
 /**
  * Store the data using the JSON table schema to determine the data structure.
  *
