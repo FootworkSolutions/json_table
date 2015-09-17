@@ -6,15 +6,15 @@ namespace JsonTable\Store;
  */
 class PostgresqlStore extends AbstractStore {
 	/**
-	 * @access	private
+	 * @access    private
 	 *
-	 * @var array	Data type and format metadata for each column being inserted.
-	 * 				The Key is the CSV column position in the file and value is an array of:
-	 * 					"pdo_type" - The PDO data type
-	 * 					"type" - The schema data type
-	 * 					"format" - The schema format.
+	 * @var array      Data type and format metadata for each column being inserted.
+	 *                 The Key is the CSV column position in the file and value is an array of:
+	 *                     "pdo_type" - The PDO data type
+	 *                     "type" - The schema data type
+	 *                     "format" - The schema format.
 	 */
-	private $_a_column_metadata = array();
+	private $_a_column_metadata = [];
 
 
 	/**
@@ -23,7 +23,7 @@ class PostgresqlStore extends AbstractStore {
 	 *
 	 * @var array Mappings of JSON table types to PDO param types.
 	 */
-	private static $_a_pdo_type_mappings = array(
+	private static $_a_pdo_type_mappings = [
 		'any' => \PDO::PARAM_STR,
 		'array' => \PDO::PARAM_STR,
 		'boolean' => \PDO::PARAM_BOOL,
@@ -34,7 +34,7 @@ class PostgresqlStore extends AbstractStore {
 		'null' => \PDO::PARAM_NULL,
 		'number' => \PDO::PARAM_STR,
 		'string' => \PDO::PARAM_STR
-	);
+	];
 
 
 	/**
@@ -42,16 +42,13 @@ class PostgresqlStore extends AbstractStore {
 	 *
 	 * @access public
 	 *
-	 * @param	string	$ps_table_name		The name of the table to save the data in. With optional schema prefix.
-	 * @param	string	$ps_primary_key		The name of the primary key on the table. [optional] The default is "id".
-	 *                                			The primary key does not need to be listed in the CSV if it has a serial associated with it.
+	 * @param    string    $ps_table_name         The name of the table to save the data in. With optional schema prefix.
+	 * @param    string    $ps_primary_key        The name of the primary key on the table. [optional] The default is "id".
+	 *                                            The primary key does not need to be listed in the CSV if it has a serial associated with it.
 	 *
-	 * @return	boolean true on success false on failure.
+	 * @return   boolean                          true on success false on failure.
 	 */
 	public function store ($ps_table_name, $ps_primary_key = 'id') {
-		// Get the PDO class.
-		$lo_pdo = \halo_factory::pdo();
-
 		// Open the CSV file for reading.
 		\JsonTable\Base::_open_file();
 
@@ -79,7 +76,7 @@ class PostgresqlStore extends AbstractStore {
 		while ($la_csv_row = \JsonTable\Base::_loop_through_file_rows()) {
 			// Set up the SQL statement for the insert.
 			$ls_insert_sql = "INSERT INTO $ps_table_name ($ls_column_list) VALUES ($ls_insert_parameters) RETURNING $ps_primary_key AS key";
-			$lo_pdo->prepare($ls_insert_sql);
+			self::$_o_pdo_connection->prepare($ls_insert_sql);
 
 			// Loop through the columns in this row.
 			$li_field_number = 1;
@@ -105,14 +102,14 @@ class PostgresqlStore extends AbstractStore {
 				}
 
 				// Bind the field to the insert statement.
-				$lo_pdo->bind_param($li_field_number++, $lm_field_value, $la_column_metadata['pdo_type']);
+				self::$_o_pdo_connection->bind_param($li_field_number++, $lm_field_value, $la_column_metadata['pdo_type']);
 			}
 
 			// Bind the extra parameter for the csv_row field.
-			$lo_pdo->bind_param($li_field_number++, $li_row, \PDO::PARAM_INT);
+			self::$_o_pdo_connection->bind_param($li_field_number++, $li_row, \PDO::PARAM_INT);
 
 			// Run the statement to insert the row.
-			$la_result = $lo_pdo->execute();
+			$la_result = self::$_o_pdo_connection->execute();
 
 			if (false === $la_result) {
 				// The query failed.
@@ -133,9 +130,9 @@ class PostgresqlStore extends AbstractStore {
 	/**
 	 * Get the PDO type, schema type & schema format for each column in the CSV file.
 	 *
-	 * @access	private
+	 * @access    private
 	 *
-	 * @return	boolean true on success
+	 * @return    boolean true on success
 	 */
 	private function _set_columns_metadata () {
 		// Get the data type for each of the columns being inserted into.

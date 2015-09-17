@@ -41,6 +41,14 @@ abstract class Base {
 
 
 	/**
+	 * @access protected
+	 *
+	 * @var object The PDO object.
+	 */
+	protected static $_o_pdo_connection;
+
+
+	/**
 	 * Set the schema.
 	 *
 	 * @access public
@@ -85,6 +93,21 @@ abstract class Base {
 	public function set_file ($ps_file_name) {
 		// Set the file to analyse.
 		self::$_s_file_name = (string) $ps_file_name;
+	}
+
+
+	/**
+	 * Set the database connection.
+	 *
+	 * @access protected
+	 * @static
+	 *
+	 * @param resource $po_pdo_connection    The PDO object.
+	 *
+	 * @return void
+	 */
+	public function set_pdo_connection($po_pdo_connection) {
+		self::$_o_pdo_connection = $po_pdo_connection;
 	}
 
 

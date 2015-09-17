@@ -21,9 +21,6 @@ class PostgresqlValidator implements \JsonTable\Validate\InterfaceForeignKeyVali
 	public function validate ($ps_row_hash, $ps_reference_resource, array $pa_reference_fields) {
 		$ls_reference_fields = implode(" || ', ' || ", $pa_reference_fields);
 
-		// Get the PDO class.
-		$lo_pdo = \halo_factory::pdo();
-
 		$ls_validation_sql =   "SELECT
 									COUNT(*)
 								FROM
@@ -37,8 +34,8 @@ class PostgresqlValidator implements \JsonTable\Validate\InterfaceForeignKeyVali
 		);
 
 		// Prepare and execute the statement.
-		$lo_pdo->prepare($ls_validation_sql, $la_bindings);
-		$la_results = $lo_pdo->execute();
+		self::$_o_pdo_connection->prepare($ls_validation_sql, $la_bindings);
+		$la_results = self::$_o_pdo_connection->execute();
 
 		if (false === $la_results) {
 			// The query failed.

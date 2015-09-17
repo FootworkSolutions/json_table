@@ -14,18 +14,31 @@
  * @see https://en.wikipedia.org/wiki/Hungarian_notation
  */
 
-// Define where the file and schema are located.
-// You will probably want to add some handling of what to do if they're not there.
-$ls_full_file_path = 'example.csv';
-$ls_schema_json = 'example.json';
+// Define where the file to validate is located.
+$ls_file_path = 'example.csv';
+
+// The validator expects a string for the JSON schema, this allows
+// you to load this from anywhere you like. e.g. a database table,
+// a file etc. In this example we're loading it from a file.
+$ls_schema_json = file_get_contents('example.json');
+
+// Connect to your database.
+$lo_pdo = new PDO('pgsql:host=localhost;port=5432;dbname=test1;user=json_test;password=mypass');
 
 try {
+	// Use composer's autoloading.
+	require __DIR__ . '/../vendor/autoload.php';
+
 	// Instantiate the class that will do the analysis.
 	$lo_analyser = new \JsonTable\Analyse();
 
 	// Let the analyser know where the schema and file are.
 	$lo_analyser->set_schema($ls_schema_json);
 	$lo_analyser->set_file($ls_file_path);
+
+	// Let the analyser know how to communicate with your database.
+	// This is used to check foreign keys and store data.
+	$lo_analyser->set_pdo_connection($lo_pdo);
 
 	// Check whether the file is valid against the schema.
 	$lb_file_is_valid = $lo_analyser->analyse();
@@ -60,11 +73,15 @@ try {
 
 		// You will probably want to do something else with this information,
 		// like return it to a calling function or as JSON from an API request.
-		var_dump($la_return_data);
+		echo '<pre>';
+		print_r($la_return_data);
+		echo '</pre>';
 	}
 } catch (\Exception $e) {
 	// All JSON Table exceptions are considered to be end user friendly.
 	// So if you are allowing users to upload their own files you should be
 	// safe to let them see these messages.
-	var_dump($e->getMessage());
+	echo '<pre>';
+	print_r($e->getMessage());
+	echo '</pre>';
 }
