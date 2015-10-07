@@ -512,8 +512,10 @@ class Analyse extends Base {
 					throw new \Exception("The foreign key field &quot;$ls_csv_field_name&quot; was not defined in the schema.");
 				}
 
+				$li_csv_position = $this->_get_csv_position_from_name($ls_csv_field_name);
+
 				// Get the position of this field in the CSV file.
-				if (!$li_csv_position = $this->_get_csv_position_from_name($ls_csv_field_name)) {
+				if (false === $li_csv_position) {
 					// The field isn't in the CSV.
 					if (1 === count($la_csv_fields)) {
 						// This is the only field in the foreign key so skip the validation of this foreign key.
@@ -635,8 +637,8 @@ class Analyse extends Base {
 		}
 
 		// Load the validator file.
-		$ps_type = ucwords($ps_type) . 'Validator';
-		$ls_validator_file = dirname(__FILE__) . "/Validate/$ps_validation_type/$ps_type.php";
+		$ps_type_class_name = ucwords($ps_type) . 'Validator';
+		$ls_validator_file = dirname(__FILE__) . "/Validate/$ps_validation_type/$ps_type_class_name.php";
 
 		if (file_exists($ls_validator_file) && is_readable($ls_validator_file)) {
 			include_once $ls_validator_file;
@@ -646,7 +648,7 @@ class Analyse extends Base {
 		}
 
 		// Check that the class exists.
-		$ls_validator_class = "\\JsonTable\\Validate\\$ps_validation_type\\$ps_type";
+		$ls_validator_class = "\\JsonTable\\Validate\\$ps_validation_type\\$ps_type_class_name";
 
 		if (!class_exists($ls_validator_class)) {
 			throw new \Exception("Could not find the validator class $ls_validator_class");

@@ -45,7 +45,7 @@ abstract class Base {
 	 *
 	 * @var object The PDO object.
 	 */
-	protected static $_o_pdo_connection;
+	public static $_o_pdo_connection;
 
 
 	/**
