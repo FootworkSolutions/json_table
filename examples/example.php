@@ -16,20 +16,25 @@
 
 // Use composer's autoloading.
 require __DIR__ . '/../vendor/autoload.php';
-
 PhpConsole\Helper::register();
 
-try {
-	// Define where the file to validate is located.
-	$ls_file_path = 'example.csv';
+/*
+ * These are the three things that need to be configured for this
+ * example to work.
+ */
+$ls_file_path = 'example.csv'; // Where the file to validate is located.
+$ls_json_schema_file_path = 'example.json'; // Where the JSON schema is located.
+$ls_pdo_connection = 'pgsql:host=localhost;port=5432;dbname=test1;user=json_test;password=mypass'; // The database connection information.
+$ls_store_table_name = 'json_table_stored_data_test'; // The name of the table to store the data in.
 
+try {
 	// The validator expects a string for the JSON schema, this allows
 	// you to load this from anywhere you like. e.g. a database table,
 	// a file etc. In this example we're loading it from a file.
-	$ls_schema_json = file_get_contents('example.json');
+	$ls_schema_json = file_get_contents($ls_json_schema_file_path);
 
 	// Connect to your database.
-	$lo_pdo = new PDO('pgsql:host=localhost;port=5432;dbname=test1;user=json_test;password=mypass');
+	$lo_pdo = new PDO($ls_pdo_connection);
 
 	// Instantiate the class that will do the analysis.
 	$lo_analyser = new \JsonTable\Analyse();
@@ -49,14 +54,17 @@ try {
 	$la_validation_errors = $lo_analyser->get_errors();
 	$la_statistics = $lo_analyser->get_statistics();
 
+	// Collect together all the information about this validation.
+	$la_return_data = [
+		'valid' => $lb_file_is_valid,
+		'errors' => $la_validation_errors,
+		'statistics' => $la_statistics
+	];
+
 	// If the file is valid, save the data in a PostgreSQL database.
 	if ($lb_file_is_valid) {
 		// Load and instantiate the store class.
 		$lo_store = \JsonTable\Store::load('postgresql');
-
-		// Save the data.
-		$ls_store_table_name = 'your_table_name';
-		$ls_store_table_name = "import.t_json_table_test";
 
 		if (!$lo_store->store($ls_store_table_name)) {
 			throw new \Exception ('Could not save the file to the PostgreSQL database.');
@@ -65,36 +73,25 @@ try {
 		// Get the primary key of the records that were inserted.
 		$la_inserted_records = $lo_store->inserted_records();
 
-		// Collect together all the information about this validation and store operation.
-		$la_return_data = [
-			'valid' => $lb_file_is_valid,
-			'errors' => $la_validation_errors,
-			'statistics' => $la_statistics,
-			'inserted_records' => $la_inserted_records
-		];
-
-		// You will probably want to do something else with this information,
-		// like return it to a calling function or as JSON from an API request.
-		$ls_html_output  = '<pre>';
-		$ls_html_output .= print_r($la_return_data, true);
-		$ls_html_output .= '</pre>';
+		// Add the store operation data to the validation information so there is
+		// a complete picture of everything that has happened.
+		$la_return_data['inserted_records'] = $la_inserted_records;
 	}
+
+	// You will probably want to do something else with this information,
+	// like return it to a calling function or as JSON from an API request.
+	$ls_html_output = print_r($la_return_data, true);
 } catch (\Exception $e) {
 	// All JSON Table exceptions are considered to be end user friendly.
 	// So if you are allowing users to upload their own files you should be
 	// safe to let them see these messages.
-	$ls_html_output  = '<pre>';
-	$ls_html_output .= print_r($e->getMessage(), true);
-	$ls_html_output .= '</pre>';
+	$ls_html_output = print_r($e->getMessage(), true);
 }
 ?>
 <html>
 <head>
-
 </head>
 <body>
-	<?php
-	echo $ls_html_output;
-	?>
+	<pre><?php echo $ls_html_output; ?></pre>
 </body>
 </html>

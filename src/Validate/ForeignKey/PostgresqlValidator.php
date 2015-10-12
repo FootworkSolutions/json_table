@@ -28,13 +28,9 @@ class PostgresqlValidator implements \JsonTable\Validate\InterfaceForeignKeyVali
 								WHERE
 									$ls_reference_fields = :row_hash";
 
-		// Set the query bindings.
-		$la_bindings = array(
-			'row_hash' => array($ps_row_hash, 'string')
-		);
-
 		// Prepare and execute the statement.
-		$lo_statement = \JsonTable\Base::$_o_pdo_connection->prepare($ls_validation_sql, $la_bindings);
+		$lo_statement = \JsonTable\Base::$_o_pdo_connection->prepare($ls_validation_sql);
+		$lo_statement->bindParam(':row_hash', $ps_row_hash);
 		$la_results = $lo_statement->execute();
 
 		if (false === $la_results) {

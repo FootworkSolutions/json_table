@@ -4,7 +4,7 @@ namespace JsonTable\Validate\Format;
 /**
  * Lexical boolean validator.
  *
- * @package	CSV File Validator
+ * @package	JSON table
  */
 class BooleanValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	/**

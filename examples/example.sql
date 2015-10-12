@@ -3,6 +3,9 @@
  * Run this file to set up your postgreSQL database to work with the example.php script.
  * This will add the tables required to validate the foreign keys and store the imported data.
  *
+ * The permissions here expect your database to be named json_test but this can easily be updated
+ * to your own database by replacing all references to json_test below.
+ *
  * @package JSON table
  */
 BEGIN;
@@ -28,9 +31,10 @@ BEGIN;
 
 
 	-- Add the table to store the example data.
-	-- DROP TABLE IF EXISTS auto_import_stored_data;
-	CREATE TABLE auto_import_stored_data (
+	-- DROP TABLE IF EXISTS json_table_stored_data_test;
+	CREATE TABLE json_table_stored_data_test (
 	  id SERIAL PRIMARY KEY
+	, csv_row INT
 	, FIRST_NAME VARCHAR
 	, EMAIL_ADDRESS VARCHAR
 	, WEBSITE VARCHAR
@@ -46,12 +50,10 @@ BEGIN;
 	, BREAKFAST_TIME VARCHAR
 	, DATA_DUMP VARCHAR
 	, MOOD VARCHAR
-	, added_by INT
-	, added_timestamp TIMESTAMP
 	) with oids;
 
-	ALTER TABLE auto_import_stored_data OWNER TO postgres;
-	GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE auto_import_stored_data TO json_test;
-	GRANT SELECT, UPDATE ON TABLE auto_import_stored_data_id_seq TO json_test;
-	COMMENT ON TABLE auto_import_stored_data IS 'This table is used to store the data from the JSON table system.';
+	ALTER TABLE json_table_stored_data_test OWNER TO postgres;
+	GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE json_table_stored_data_test TO json_test;
+	GRANT SELECT, UPDATE ON TABLE json_table_stored_data_test_id_seq TO json_test;
+	COMMENT ON TABLE json_table_stored_data_test IS 'This table is used to store the data from the JSON table system.';
 COMMIT;

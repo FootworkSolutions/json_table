@@ -4,7 +4,7 @@ namespace JsonTable\Validate\Format;
 /**
  * Lexical datetime validator.
  *
- * @package	CSV File Validator
+ * @package	JSON table
  */
 class DatetimeValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	/**

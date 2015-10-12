@@ -3,6 +3,8 @@ namespace JsonTable\Store;
 
 /**
  * Postgresql store.
+ *
+ * @package	JSON table
  */
 class PostgresqlStore extends AbstractStore {
 	/**
@@ -54,6 +56,7 @@ class PostgresqlStore extends AbstractStore {
 
 		// Get a list of columns being inserted into from the CSV header row.
 		$ls_column_list = implode(', ', \JsonTable\Base::$_a_header_columns);
+
 		// Add the csv_row field to the column list. This field stores the CSV row number to help make error messages more useful.
 		$ls_column_list .= ', csv_row';
 
@@ -76,13 +79,13 @@ class PostgresqlStore extends AbstractStore {
 		while ($la_csv_row = \JsonTable\Base::_loop_through_file_rows()) {
 			// Set up the SQL statement for the insert.
 			$ls_insert_sql = "INSERT INTO $ps_table_name ($ls_column_list) VALUES ($ls_insert_parameters) RETURNING $ps_primary_key AS key";
-			self::$_o_pdo_connection->prepare($ls_insert_sql);
+			$lo_statement = self::$_o_pdo_connection->prepare($ls_insert_sql);
 
-			// Loop through the columns in this row.
-			$li_field_number = 1;
 			// Loop through each column in the CSV row.
-			foreach ($la_csv_row as $lm_field_value) {
-				// Get this columns metadata for easy access and readability.
+			$li_field_number = 1;
+
+			foreach ($la_csv_row as &$lm_field_value) {
+				// Get this column's metadata for easy access and readability.
 				$la_column_metadata = $this->_a_column_metadata[$li_field_number];
 
 				// Do any data manipulation required on this column.
@@ -96,20 +99,20 @@ class PostgresqlStore extends AbstractStore {
 					$lm_field_value = self::boolean_from_filter_booleans($lm_field_value);
 				}
 
-				// Convert empty strings or special "\N" identifiers to nulls.
+				// Convert empty strings or special "\N" identifiers to null.
 				if ('' === $lm_field_value || '\N' === $lm_field_value) {
 					$lm_field_value = null;
 				}
 
 				// Bind the field to the insert statement.
-				self::$_o_pdo_connection->bind_param($li_field_number++, $lm_field_value, $la_column_metadata['pdo_type']);
+				$lo_statement->bindParam($li_field_number++, $lm_field_value, $la_column_metadata['pdo_type']);
 			}
 
 			// Bind the extra parameter for the csv_row field.
-			self::$_o_pdo_connection->bind_param($li_field_number++, $li_row, \PDO::PARAM_INT);
+			$lo_statement->bindParam($li_field_number, $li_row, \PDO::PARAM_INT);
 
 			// Run the statement to insert the row.
-			$la_result = self::$_o_pdo_connection->execute();
+			$la_result = $lo_statement->execute();
 
 			if (false === $la_result) {
 				// The query failed.
@@ -117,7 +120,7 @@ class PostgresqlStore extends AbstractStore {
 			}
 			else {
 				// Add this insert's primary key to the list of inserted columns.
-				$this->_a_inserted_ids[] = $la_result[0]['key'];
+				$this->_a_inserted_ids[] = $lo_statement->fetch(\PDO::FETCH_ASSOC);
 			}
 
 			$li_row++;
