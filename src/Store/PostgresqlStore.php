@@ -1,20 +1,22 @@
 <?php
-namespace json_table\store;
+namespace JsonTable\Store;
 
 /**
- * postgresql store.
+ * Postgresql store.
+ *
+ * @package	JSON table
  */
-class postgresql_store extends abstract_store {
+class PostgresqlStore extends AbstractStore {
 	/**
-	 * @access	private
+	 * @access    private
 	 *
-	 * @var array	Data type and format metadata for each column being inserted.
-	 * 				The Key is the CSV column position in the file and value is an array of:
-	 * 					"pdo_type" - The PDO data type
-	 * 					"type" - The schema data type
-	 * 					"format" - The schema format.
+	 * @var array      Data type and format metadata for each column being inserted.
+	 *                 The Key is the CSV column position in the file and value is an array of:
+	 *                     "pdo_type" - The PDO data type
+	 *                     "type" - The schema data type
+	 *                     "format" - The schema format.
 	 */
-	private $_a_column_metadata = array();
+	private $_a_column_metadata = [];
 
 
 	/**
@@ -23,7 +25,7 @@ class postgresql_store extends abstract_store {
 	 *
 	 * @var array Mappings of JSON table types to PDO param types.
 	 */
-	private static $_a_pdo_type_mappings = array(
+	private static $_a_pdo_type_mappings = [
 		'any' => \PDO::PARAM_STR,
 		'array' => \PDO::PARAM_STR,
 		'boolean' => \PDO::PARAM_BOOL,
@@ -34,7 +36,7 @@ class postgresql_store extends abstract_store {
 		'null' => \PDO::PARAM_NULL,
 		'number' => \PDO::PARAM_STR,
 		'string' => \PDO::PARAM_STR
-	);
+	];
 
 
 	/**
@@ -42,21 +44,19 @@ class postgresql_store extends abstract_store {
 	 *
 	 * @access public
 	 *
-	 * @param	string	$ps_table_name		The name of the table to save the data in. With optional schema prefix.
-	 * @param	string	$ps_primary_key		The name of the primary key on the table. [optional] The default is "id".
-	 *                                			The primary key does not need to be listed in the CSV if it has a serial associated with it.
+	 * @param    string    $ps_table_name         The name of the table to save the data in. With optional schema prefix.
+	 * @param    string    $ps_primary_key        The name of the primary key on the table. [optional] The default is "id".
+	 *                                            The primary key does not need to be listed in the CSV if it has a serial associated with it.
 	 *
-	 * @return	boolean true on success false on failure.
+	 * @return   boolean                          true on success false on failure.
 	 */
 	public function store ($ps_table_name, $ps_primary_key = 'id') {
-		// Get the PDO class.
-		$lo_pdo = \halo_factory::pdo();
-
 		// Open the CSV file for reading.
-		\json_table\base::_open_file();
+		\JsonTable\Base::_open_file();
 
 		// Get a list of columns being inserted into from the CSV header row.
-		$ls_column_list = implode(', ', \json_table\base::$_a_header_columns);
+		$ls_column_list = implode(', ', \JsonTable\Base::$_a_header_columns);
+
 		// Add the csv_row field to the column list. This field stores the CSV row number to help make error messages more useful.
 		$ls_column_list .= ', csv_row';
 
@@ -64,28 +64,28 @@ class postgresql_store extends abstract_store {
 		$this->_set_columns_metadata();
 
 		// Define the parameter list for the statement.
-		$ls_insert_parameters = implode(', ', array_fill(0, count(\json_table\base::$_a_header_columns), '?'));
+		$ls_insert_parameters = implode(', ', array_fill(0, count(\JsonTable\Base::$_a_header_columns), '?'));
 
 		// Add an additional parameter for the csv_row field.
 		$ls_insert_parameters .= ', ?';
 
 		// Rewind the CSV file pointer to the first line of data.
-		\json_table\base::_rewind_file_pointer_to_first_data();
+		\JsonTable\Base::_rewind_file_pointer_to_first_data();
 
 		// Set the row flag.
 		$li_row = 1;
 
 		// Read each row in the file.
-		while ($la_csv_row = \json_table\base::_loop_through_file_rows()) {
+		while ($la_csv_row = \JsonTable\Base::_loop_through_file_rows()) {
 			// Set up the SQL statement for the insert.
 			$ls_insert_sql = "INSERT INTO $ps_table_name ($ls_column_list) VALUES ($ls_insert_parameters) RETURNING $ps_primary_key AS key";
-			$lo_pdo->prepare($ls_insert_sql);
+			$lo_statement = self::$_o_pdo_connection->prepare($ls_insert_sql);
 
-			// Loop through the columns in this row.
-			$li_field_number = 1;
 			// Loop through each column in the CSV row.
-			foreach ($la_csv_row as $lm_field_value) {
-				// Get this columns metadata for easy access and readability.
+			$li_field_number = 1;
+
+			foreach ($la_csv_row as &$lm_field_value) {
+				// Get this column's metadata for easy access and readability.
 				$la_column_metadata = $this->_a_column_metadata[$li_field_number];
 
 				// Do any data manipulation required on this column.
@@ -99,20 +99,20 @@ class postgresql_store extends abstract_store {
 					$lm_field_value = self::boolean_from_filter_booleans($lm_field_value);
 				}
 
-				// Convert empty strings or special "\N" identifiers to nulls.
+				// Convert empty strings or special "\N" identifiers to null.
 				if ('' === $lm_field_value || '\N' === $lm_field_value) {
 					$lm_field_value = null;
 				}
 
 				// Bind the field to the insert statement.
-				$lo_pdo->bind_param($li_field_number++, $lm_field_value, $la_column_metadata['pdo_type']);
+				$lo_statement->bindParam($li_field_number++, $lm_field_value, $la_column_metadata['pdo_type']);
 			}
 
 			// Bind the extra parameter for the csv_row field.
-			$lo_pdo->bind_param($li_field_number++, $li_row, \PDO::PARAM_INT);
+			$lo_statement->bindParam($li_field_number, $li_row, \PDO::PARAM_INT);
 
 			// Run the statement to insert the row.
-			$la_result = $lo_pdo->execute();
+			$la_result = $lo_statement->execute();
 
 			if (false === $la_result) {
 				// The query failed.
@@ -120,7 +120,7 @@ class postgresql_store extends abstract_store {
 			}
 			else {
 				// Add this insert's primary key to the list of inserted columns.
-				$this->_a_inserted_ids[] = $la_result[0]['key'];
+				$this->_a_inserted_ids[] = $lo_statement->fetch(\PDO::FETCH_ASSOC);
 			}
 
 			$li_row++;
@@ -133,13 +133,13 @@ class postgresql_store extends abstract_store {
 	/**
 	 * Get the PDO type, schema type & schema format for each column in the CSV file.
 	 *
-	 * @access	private
+	 * @access    private
 	 *
-	 * @return	boolean true on success
+	 * @return    boolean true on success
 	 */
 	private function _set_columns_metadata () {
 		// Get the data type for each of the columns being inserted into.
-		foreach (\json_table\base::$_a_header_columns as $li_csv_field_position => $ls_csv_column_name) {
+		foreach (\JsonTable\Base::$_a_header_columns as $li_csv_field_position => $ls_csv_column_name) {
 			$la_metadata = array();
 
 			// Compensate for 1 based column reference.

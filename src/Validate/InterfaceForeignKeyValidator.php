@@ -1,12 +1,12 @@
 <?php
-namespace json_table;
+namespace JsonTable\Validate;
 
 /**
  * Foreign key validator interface.
  *
  * @package	JSON table
  */
-interface interface_foreign_key_validator {
+interface InterfaceForeignKeyValidator {
 	/**
 	 * Check that the foreign key hash matches the specified resource.
 	 *

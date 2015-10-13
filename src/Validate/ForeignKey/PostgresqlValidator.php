@@ -1,12 +1,12 @@
 <?php
-namespace json_table\foreign_key;
+namespace JsonTable\Validate\ForeignKey;
 
 /**
  * Foreign key postgresql validator.
  *
  * @package	CSV File Validator
  */
-class postgresql_validator implements \json_table\interface_foreign_key_validator {
+class PostgresqlValidator implements \JsonTable\Validate\InterfaceForeignKeyValidator {
 	/**
 	 * Check that the foreign key hash matches the specified resource.
 	 *
@@ -21,9 +21,6 @@ class postgresql_validator implements \json_table\interface_foreign_key_validato
 	public function validate ($ps_row_hash, $ps_reference_resource, array $pa_reference_fields) {
 		$ls_reference_fields = implode(" || ', ' || ", $pa_reference_fields);
 
-		// Get the PDO class.
-		$lo_pdo = \halo_factory::pdo();
-
 		$ls_validation_sql =   "SELECT
 									COUNT(*)
 								FROM
@@ -31,14 +28,10 @@ class postgresql_validator implements \json_table\interface_foreign_key_validato
 								WHERE
 									$ls_reference_fields = :row_hash";
 
-		// Set the query bindings.
-		$la_bindings = array(
-			'row_hash' => array($ps_row_hash, 'string')
-		);
-
 		// Prepare and execute the statement.
-		$lo_pdo->prepare($ls_validation_sql, $la_bindings);
-		$la_results = $lo_pdo->execute();
+		$lo_statement = \JsonTable\Base::$_o_pdo_connection->prepare($ls_validation_sql);
+		$lo_statement->bindParam(':row_hash', $ps_row_hash);
+		$la_results = $lo_statement->execute();
 
 		if (false === $la_results) {
 			// The query failed.

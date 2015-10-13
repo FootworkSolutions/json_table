@@ -1,15 +1,12 @@
 <?php
-namespace json_table;
-
-// Load the base class.
-require_once dirname(__FILE__) . '/base.php';
+namespace JsonTable;
 
 /**
  * Store the data using the JSON table schema to determine the data structure.
  *
  * @package	JSON table
  */
-class store extends base {
+class Store extends Base {
 	/**
 	 * Load and instantiate the specified store.
 	 *
@@ -21,7 +18,7 @@ class store extends base {
 	 */
 	public static function load ($ps_store_type) {
 		// Load the abstract store file.
-		$ls_abstract_store_file = dirname(__FILE__) . "/store/abstract_store.php";
+		$ls_abstract_store_file = dirname(__FILE__) . "/Store/AbstractStore.php";
 
 		if (file_exists($ls_abstract_store_file) && is_readable($ls_abstract_store_file)) {
 			include_once $ls_abstract_store_file;
@@ -31,7 +28,9 @@ class store extends base {
 		}
 
 		// Load the store file for the specified type.
-		$ls_store_file = dirname(__FILE__) . "/store/$ps_store_type.php";
+		$ps_store_type = ucwords($ps_store_type);
+		$ls_store_file = dirname(__FILE__) . "/Store/$ps_store_type" . "Store.php";
+		// $ls_store_file = ucwords($ls_store_file) . 'Store';
 
 		if (file_exists($ls_store_file) && is_readable($ls_store_file)) {
 			include_once $ls_store_file;
@@ -41,7 +40,7 @@ class store extends base {
 		}
 
 		// Check that the class exists.
-		$ls_store_class = "\\json_table\\store\\$ps_store_type" . "_store";
+		$ls_store_class = "\\JsonTable\\Store\\$ps_store_type" . "Store";
 
 		if (!class_exists($ls_store_class)) {
 			throw new \Exception("Could not find the store class $ls_store_class");

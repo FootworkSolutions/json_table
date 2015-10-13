@@ -1,0 +1,111 @@
+{
+	"fields": [{
+		"name": "FIRST_NAME",
+		"title": "First Name",
+		"description": "The user's first name",
+		"type": "string",
+		"constraints": {
+			"required": true
+		}
+	}, {
+		"name": "EMAIL_ADDRESS",
+		"title": "Email Address",
+		"description": "The user's email address",
+		"type": "string",
+		"format": "email",
+		"constraints": {
+			"required": true
+		}
+	}, {
+		"name": "WEBSITE",
+		"title": "Website",
+		"description": "The user's website address",
+		"type": "string",
+		"format": "uri",
+		"constraints": {
+			"required": true
+		}
+	}, {
+		"name": "AVATAR",
+		"title": "Avatar",
+		"description": "The user's avatar image.",
+		"type": "string",
+		"format": "binary"
+	}, {
+		"name": "HOURS_WORKED_IN_DAY",
+		"title": "Hourse Worked In Day",
+		"description": "Number of hours worked in an average day.",
+		"type": "number"
+	}, {
+		"name": "MONEY_IN_POCKET",
+		"title": "Money In Pocket",
+		"description": "How much money does the user have in their pocket.",
+		"type": "number",
+		"format": "currency"
+	}, {
+		"name": "DAYS_SINCE_HAIRCUT",
+		"title": "Days Since Haricut",
+		"description": "Number of days since the user had a haircut.",
+		"type": "integer"
+	}, {
+		"name": "HAS_CAT",
+		"title": "Has Cat",
+		"description": "Does the user have a cat.",
+		"type": "boolean"
+	}, {
+		"name": "DONT_USE",
+		"title": "Don't use",
+		"description": "Don't use this column.",
+		"type": "null"
+	}, {
+		"name": "DATE_OF_BIRTH",
+		"title": "Date Of Birth",
+		"description": "The user's date of birth.",
+		"type": "date"
+	}, {
+		"name": "DATE_OF_BIRTH_UK",
+		"title": "Date Of Birth UK",
+		"description": "The user's date of birth in UK format.",
+		"type": "datetime",
+		"format": "d/m/Y"
+	}, {
+		"name": "LAST_LOGIN",
+		"title": "Last Login",
+		"description": "The time and date the user last logged in.",
+		"type": "datetime"
+	}, {
+		"name": "BREAKFAST_TIME",
+		"title": "Breakfast Time",
+		"description": "The time the user usually has breakfast.",
+		"type": "time"
+	}, {
+		"name": "DATA_DUMP",
+		"title": "Data Dump",
+		"description": "Data dump in any format.",
+		"type": "any"
+	}, {
+		"name": "MOOD",
+		"title": "Mood",
+		"description": "Current mood.",
+		"type": "string",
+		"constraints": {
+			"pattern": "/^(HAPPY|SAD|INDIFFERENT)$/"
+		}
+	}],
+	"primaryKey": ["FIRST_NAME", "EMAIL_ADDRESS"],
+	"foreignKeys": [{
+		"fields": ["FIRST_NAME", "EMAIL_ADDRESS"],
+		"reference": {
+			"datapackage": "postgresql",
+			"resource": "json_table_foreign_key_test",
+			"fields": ["first_name", "email"]
+		}
+	}, {
+		"fields": "WEBSITE",
+		"reference": {
+			"datapackage": "postgresql",
+			"resource": "json_table_foreign_key_test",
+			"fields": ["user_website"]
+		}
+	}]
+}

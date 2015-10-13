@@ -1,12 +1,12 @@
 <?php
-namespace json_table\format;
+namespace JsonTable\Validate\Format;
 
 /**
  * Lexical any validator.
  *
- * @package	CSV File Validator
+ * @package	JSON table
  */
-class any_validator extends \json_table\abstract_format_validator {
+class AnyValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	/**
 	 * Validate that the input is a valid any.
 	 * This doesn't do any checks and always returns true.
