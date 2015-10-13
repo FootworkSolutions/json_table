@@ -36,11 +36,13 @@ try {
 	// Connect to your database.
 	$lo_pdo = new PDO($ls_pdo_connection);
 
-	// Instantiate the class that will do the analysis.
+	// Instantiate the analysis class.
 	$lo_analyser = new \JsonTable\Analyse();
 
-	// Let the analyser know where the schema and file are.
+	// Let the analyser know where the JSON table schema is.
 	$lo_analyser->set_schema($ls_schema_json);
+
+	// Let the analyser know where the CSV file to validate is.
 	$lo_analyser->set_file($ls_file_path);
 
 	// Let the analyser know how to communicate with your database.
@@ -63,7 +65,7 @@ try {
 
 	// If the file is valid, save the data in a PostgreSQL database.
 	if ($lb_file_is_valid) {
-		// Load and instantiate the store class.
+		// Instantiate the store class.
 		$lo_store = \JsonTable\Store::load('postgresql');
 
 		if (!$lo_store->store($ls_store_table_name)) {

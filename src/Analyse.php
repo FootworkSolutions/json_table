@@ -4,44 +4,6 @@ namespace JsonTable;
 /**
  * Analyse data to ensure it validates against a JSON table schema.
  *
- * This doesn't currently support:
- * Formats
- * 	"type": "array"
- * 	"type": "binary" - this is just validated as a string.
- * 	datetime; date; time - "any"
- * 	"geopoint"
- * 	"geojson"
- * 	"type": "any" - currently just returns true.
- *
- * Constraints
- * 	minLength
- * 	maxLength
- * 	unique
- * 	minimum
- * 	maximum
- *
- * Notes
- * datetime; date; time - fmt:[PATTERN] - This supports PHP date formats @see http://php.net/manual/en/datetime.formats.date.php
- * datetime; date; time - ISO8610 - The following formats are validated without specifing a format:
- * 		Combined date and time in UTC:	2015-03-09T13:07:04Z
- * 		Date:							2015-03-09
- * 		Time:							hh:mm:ss
- *
- * Given the range of options that match the ISO8610 format, it is recommended that you always specify a format.
- * Pattens: A delimiter must be included in the regex.
- *
- * Column name checking is case insensitive.
- *
- * Foreign Keys:
- * To meet our specific needs this has been built to reference a DB table and not a Data package as outlined in the specification here: http://dataprotocols.org/json-table-schema/#foreign-keys
- * The same schema structure is accepted but with the following considerations:
- * 		"datapackage" MUST be "postgresql"
- * 		"recource" MUST be the name of the table to use with optional schema qualifier. I.E. "import.t_table_name".
- * 		"fields" follow the JSON table schema specification but refer to the fields in the database table.
- *
- * Foreign keys with a single field can be omitted from the CSV and the foreign key check will be ignored.
- * However, foreign keys with multiple fields must have all those fields in the CSV file.
- *
  * @package	JSON table
  */
 class Analyse extends Base {
