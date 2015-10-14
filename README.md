@@ -23,7 +23,7 @@ Currently the parts of the specification that are **NOT** supported are:
 		* "fields" follow the JSON table schema specification but refer to the fields in the database table.
 
 # Motivation
-This library was written to fulfill a need for [Halo](http://www.halosystem.com) a commercial client management system  maintained by [Footwork Solutions Ltd](https://github.com/FootworkSolutions).
+This library was written to fulfill a need for [Halo](http://www.halosystem.co.uk) a commercial client management system  maintained by [Footwork Solutions Ltd](https://github.com/FootworkSolutions).
 
 It is used to validate and store data as part of a import tool for users of Halo.
 
