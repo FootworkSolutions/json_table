@@ -85,3 +85,6 @@ Please ensure that your code meets the [PSR-1](http://www.php-fig.org/psr/psr-1)
 3. Commit your changes.
 4. Push to the branch (git push origin my-new-feature).
 5. Create a new Pull Request.
+
+# Licence
+This is free software distributed under the terms of the MIT license. See [LICENCE](https://github.com/FootworkSolutions/json_table/blob/master/LICENCE) for the full details.
