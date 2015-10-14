@@ -32,7 +32,6 @@ We use a lot of open source projects at Footwork Solutions and this project, alo
 # Usage
 See the [examples](https://github.com/FootworkSolutions/json_table/tree/master/examples) directory for a detailed run through of how to validate and store a CSV file.
 
-
 #### Quick Start
 Validate a CSV file:
 ```

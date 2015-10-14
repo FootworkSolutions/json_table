@@ -1,6 +1,6 @@
 {
 	"name": "footwork_solutions/json_table",
-	"description": "A PHP validator and storage library using the JSON table schema.",
+	"description": "A validator and storage library using the JSON table schema written in PHP.",
 	"keywords": ["json table schema", "validation", "data protocols", "open knowledge foundation"],
 	"homepage": "https://github.com/FootworkSolutions/json_table",
 	"license": "MIT",
