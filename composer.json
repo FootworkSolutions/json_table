@@ -15,6 +15,7 @@
 		"php-console/php-console": "~3.0"
 	},
 	"require-dev": {
+		"php": ">=5.6.0",
 		"phpunit/phpunit": "5.0.*"
 	},
 	"autoload": {
