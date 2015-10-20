@@ -6,76 +6,77 @@ namespace JsonTable;
  *
  * @package	JSON table
  */
-class Analyse extends Base {
+class Analyse extends Base
+{
 	/**
-	 * @var	string	The description for missing mandatory columns.
+	 * @var string The description for missing mandatory columns.
 	 */
 	const ERROR_REQUIRED_COLUMN_MISSING = '<strong>%d</strong> required column(s) missing:';
 
 	/**
-	 * @var	string	The description for CSV columns that are not in the schema.
+	 * @var string The description for CSV columns that are not in the schema.
 	 */
 	const ERROR_UNSPECIFIED_COLUMN = '<strong>%d</strong> unexpected column(s):';
 
 	/**
-	 * @var	string	The description for rows with missing columns.
+	 * @var string The description for rows with missing columns.
 	 */
 	const ERROR_INCORRECT_COLUMN_COUNT = 'There are the wrong number of columns';
 
 	/**
-	 * @var	string	The description for rows with missing columns.
+	 * @var string The description for rows with missing columns.
 	 */
 	const ERROR_REQUIRED_FIELD_MISSING_DATA = 'There are <strong>%d</strong> required fields with missing data:';
 
 	/**
-	 * @var	string	The description for fields with invalid formats.
+	 * @var string The description for fields with invalid formats.
 	 */
 	const ERROR_INVALID_FORMAT = 'There are <strong>%d</strong> fields that don\'t have the correct format:';
 
 	/**
-	 * @var	string	The description for fields with invalid formats.
+	 * @var string The description for fields with invalid formats.
 	 */
 	const ERROR_INVALID_PATTERN = 'There are <strong>%d</strong> fields that don\'t have the correct pattern:';
 
 	/**
-	 * @var	string	The description for fields with duplicated primary keys.
+	 * @var string The description for fields with duplicated primary keys.
 	 */
 	const ERROR_DUPLICATE_PRIMARY_KEY = 'There are <strong>%d</strong> rows that have duplicated primary keys:';
 
 	/**
-	 * @var	string	The description for fields with invalid foreign keys.
+	 * @var string The description for fields with invalid foreign keys.
 	 */
 	const ERROR_INVALID_FOREIGN_KEY = 'There are <strong>%d</strong> fields that have invalid foreign keys:';
 
 	/**
-	 * @var	string	The format validation type.
+	 * @var string The format validation type.
 	 */
 	const VALIDATION_TYPE_FORMAT = 'Format';
 
 	/**
-	 * @var	string	The foreign key validation type.
+	 * @var string The foreign key validation type.
 	 */
 	const VALIDATION_TYPE_FOREIGN_KEY = 'ForeignKey';
 
 	/**
-	 * @access	private
+	 * @access private
 	 *
-	 * @var	boolean	Should the analysis stop when an error is found.
+	 * @var boolean Should the analysis stop when an error is found.
 	 */
 	private $_b_stop_if_invalid;
 
 	/**
-	 * @access	private
+	 * @access private
 	 *
-	 * @var array	Statistics relating to the file analysis.
+	 * @var array Statistics relating to the file analysis.
 	 */
 	private $_a_statistics = ['rows_with_errors' => []];
 
 	/**
-	 * @access	protected
+	 * @access protected
 	 * @static
 	 *
-	 * @var	array	Error messages.
+	 * @var array Error messages.
 	 */
 	protected static $_a_errors = [];
 
@@ -83,9 +84,10 @@ class Analyse extends Base {
 	/**
 	 * Constructor.
 	 *
-	 * @access	public
+	 * @access public
 	 */
-	public function __construct () {
+	public function __construct()
+	{
 		// Load the abstract and interface validator classes.
 		include dirname(__FILE__) . '/Validate/AbstractFormatValidator.php';
 		include dirname(__FILE__) . '/Validate/InterfaceForeignKeyValidator.php';
@@ -95,13 +97,14 @@ class Analyse extends Base {
 	/**
 	 * Analyse the specified file against the loaded schema.
 	 *
-	 * @access	public
+	 * @access public
 	 *
-	 * @param	boolean	$pb_stop_if_invalid	Should the analysis stop when the file is found to be invalid. The default is false.
+	 * @param boolean $pb_stop_if_invalid Should the analysis stop when the file is found to be invalid. The default is false.
 	 *
-	 * @return	boolean	true if the file passes the validation and false if not.
+	 * @return boolean true if the file passes the validation and false if not.
 	 */
-	public function analyse ($pb_stop_if_invalid = false) {
+	public function analyse ($pb_stop_if_invalid = false)
+	{
 		// Set whether to stop if invalid.
 		$this->_b_stop_if_invalid = (bool) $pb_stop_if_invalid;
 
@@ -147,11 +150,12 @@ class Analyse extends Base {
 	/**
 	 * Get the statistics about the file analysis.
 	 *
-	 * @access	public
+	 * @access public
 	 *
-	 * @return	array	The statistics.
+	 * @return array The statistics.
 	 */
-	public function get_statistics () {
+	public function get_statistics()
+	{
 		// Remove duplicates from the rows with errors.
 		// If a row has multiple errors it will have been added multiple times.
 		$this->_a_statistics['rows_with_errors'] = array_unique($this->_a_statistics['rows_with_errors']);
@@ -171,11 +175,12 @@ class Analyse extends Base {
 	/**
 	 * Validate that all mandatory columns are present.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @return	boolean	Are all mandatory columns present.
+	 * @return boolean Are all mandatory columns present.
 	 */
-	private function _validate_mandatory_columns () {
+	private function _validate_mandatory_columns()
+	{
 		// Default the returned flag.
 		$lb_valid_mandatory_columns = true;
 
@@ -203,11 +208,12 @@ class Analyse extends Base {
 	/**
 	 * Check that there are no columns in the CSV that are not specified in the schema.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @return	boolean	Are all the CSV columns specified in the schema.
+	 * @return boolean Are all the CSV columns specified in the schema.
 	 */
-	private function _validate_unspecified_columns () {
+	private function _validate_unspecified_columns()
+	{
 		// Default the returned flag.
 		$lb_valid_unspecified_columns = true;
 
@@ -234,11 +240,12 @@ class Analyse extends Base {
 	 * Validate that all fields are of the correct type, format and pattern.
 	 * This also checks that each CSV row has the expected number of columns.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @return	boolean	Is all data lexically valid.
+	 * @return boolean Is all data lexically valid.
 	 */
-	private function _validate_lexical () {
+	private function _validate_lexical()
+	{
 		// Default the returned flag.
 		$lb_valid_lexical = true;
 
@@ -334,14 +341,15 @@ class Analyse extends Base {
 	/**
 	 * Check that the input matches the specified pattern.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @param	string	$ps_pattern	The pattern to validate against.
-	 * @param	mixed	$lm_input	The input to validate.
+	 * @param string $ps_pattern	The pattern to validate against.
+	 * @param mixed $lm_input	The input to validate.
 	 *
-	 * @return	boolean	Is the data valid.
+	 * @return boolean Is the data valid.
 	 */
-	private function _validate_pattern ($ps_pattern, $lm_input) {
+	private function _validate_pattern($ps_pattern, $lm_input)
+	{
 		// Check that a pattern has been specified and there is some data to analyse.
 		if (is_null($ps_pattern) || '' === $lm_input) {
 			return true;
@@ -354,11 +362,12 @@ class Analyse extends Base {
 	/**
 	 * Validate that any specified primary key contraints have been met.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @return	boolean	Does the data meet the primary key constraints.
+	 * @return boolean Does the data meet the primary key constraints.
 	 */
-	private function _validate_primary_key () {
+	private function _validate_primary_key()
+	{
 		// Check that a primary key has been specified.
 		if (false === property_exists(self::$_o_schema_json, 'primaryKey')) {
 			// There is no primary key specified so validate as successfully passed.
@@ -405,8 +414,8 @@ class Analyse extends Base {
 			// Check that this primary key hash hasn't already been found in the file.
 			if ($lm_existing_key = array_search($ls_row_hash, $la_file_keys)) {
 				// A duplicate primary key hash has been found.
-				$ls_primary_key_columns = implode(', ', $la_primary_key_columns);
-				$ls_error_message = "The data in columns &quot;$ls_primary_key_columns&quot; should be unique, but rows $lm_existing_key &amp; $li_row have the same values of &quot;$ls_row_key&quot;";
+				$ls_primary_key_columns = implode(', ', $la_primary_key_fields);
+				$ls_error_message = "The data in columns &quot;$ls_primary_key_columns&quot; should be unique, but rows $lm_existing_key &amp; $li_row have the same values of &quot;$ls_row_hash&quot;";
 				$this->_set_error(Analyse::ERROR_DUPLICATE_PRIMARY_KEY, $ls_error_message);
 				$this->_a_statistics['rows_with_errors'][] = $li_row;
 
@@ -429,11 +438,12 @@ class Analyse extends Base {
 	/**
 	 * Validate that any specified foreign key contraints have been met.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @return	boolean	Does the data meet the foreign key constraints.
+	 * @return boolean Does the data meet the foreign key constraints.
 	 */
-	private function _validate_foreign_keys () {
+	private function _validate_foreign_keys()
+	{
 		// Check that a primary key has been specified.
 		if (false === property_exists(self::$_o_schema_json, 'foreignKeys')) {
 			// There is no foreign key specified so validate as successfully passed.
@@ -540,13 +550,14 @@ class Analyse extends Base {
 	/**
 	 * Check if the spefified column is mandatory.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @param	object	$po_schema_column	The schema column object to examine.
+	 * @param object $po_schema_column	The schema column object to examine.
 	 *
-	 * @return	boolean	Whether the column is mandatory.
+	 * @return boolean Whether the column is mandatory.
 	 */
-	private function _is_column_mandatory ($po_schema_column) {
+	private function _is_column_mandatory($po_schema_column)
+	{
 		return (property_exists($po_schema_column, 'constraints') && property_exists($po_schema_column->constraints, 'required') && (true === $po_schema_column->constraints->required));
 	}
 
@@ -554,13 +565,14 @@ class Analyse extends Base {
 	/**
 	 * Get the pattern of the specified column.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @param	object	$po_schema_column	The schema column object to examine.
+	 * @param object $po_schema_column	The schema column object to examine.
 	 *
-	 * @return	string	The pattern or null if no pattern is specified.
+	 * @return string The pattern or null if no pattern is specified.
 	 */
-	private function _get_column_pattern ($po_schema_column) {
+	private function _get_column_pattern($po_schema_column)
+	{
 		return (property_exists($po_schema_column, 'constraints') && property_exists($po_schema_column->constraints, 'pattern')) ? $po_schema_column->constraints->pattern : null;
 	}
 
@@ -568,13 +580,14 @@ class Analyse extends Base {
 	/**
 	 * Get the package of the specified foreign key.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @param	object	$po_foreign_key	The foreign key object to examine.
+	 * @param object $po_foreign_key The foreign key object to examine.
 	 *
-	 * @return	string	The package for the foreign key.
+	 * @return string The package for the foreign key.
 	 */
-	private function _get_foreign_key_package ($po_foreign_key) {
+	private function _get_foreign_key_package($po_foreign_key)
+	{
 		// Return the datapackage attribute if it's spefied or default it to "postgresql".
 		return (property_exists($po_foreign_key->reference, 'datapackage')) ? $po_foreign_key->reference->datapackage : 'postgresql';
 	}
@@ -583,16 +596,17 @@ class Analyse extends Base {
 	/**
 	 * Load and instantiate the specified validator.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @param	string	$ps_validation_type	The type of validator to load.
-	 * @param	string	$ps_type		The type being validated.
-	 *                               			For formats this will be the field type.
-	 *                               			For foreign keys this will be the datapackage type
+	 * @param string $ps_validation_type The type of validator to load.
+	 * @param string $ps_type The type being validated.
+	 *                            For formats this will be the field type.
+	 *                            For foreign keys this will be the datapackage type
 	 *
-	 * @return	object	The validation object. Throws an exception on error.
+	 * @return object The validation object. Throws an exception on error.
 	 */
-	private function _instantiate_validator ($ps_validation_type, $ps_type) {
+	private function _instantiate_validator($ps_validation_type, $ps_type)
+	{
 		// For format validation, "Date", "datetime" and "time" all follow the same schema definition rules so just use the datetime format for them all.
 		if (Analyse::VALIDATION_TYPE_FORMAT === $ps_validation_type && ('date' === $ps_type || 'time' === $ps_type)) {
 			$ps_type = 'datetime';
@@ -624,11 +638,12 @@ class Analyse extends Base {
 	 * Check if the file was found to be valid.
 	 * This checks for any validation errors.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @return	boolean	Is the file valid.
+	 * @return boolean Is the file valid.
 	 */
-	private function _is_file_valid () {
+	private function _is_file_valid()
+	{
 		return (0 === count(self::$_a_errors));
 	}
 
@@ -636,12 +651,13 @@ class Analyse extends Base {
 	/**
 	 * Return all errors.
 	 *
-	 * @access	public
+	 * @access public
 	 *
-	 * @return	array	The error messages.
+	 * @return array The error messages.
 	 */
-	public function get_errors () {
-		$la_errors_formatted = array();
+	public function get_errors()
+	{
+		$la_errors_formatted = [];
 
 		// Format the error type with the number of errors of that type.
 		foreach (self::$_a_errors as $ls_error_type => $la_errors) {
@@ -656,14 +672,15 @@ class Analyse extends Base {
 	/**
 	 * Add an error message.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @param	string	The type of error.
-	 * @param	string	The error message (or field).
+	 * @param string The type of error.
+	 * @param string The error message (or field).
 	 *
-	 * @return	void
+	 * @return void
 	 */
-	protected function _set_error ($ps_type, $ps_error) {
+	protected function _set_error($ps_type, $ps_error)
+	{
 		if (!array_key_exists($ps_type, self::$_a_errors)) {
 			self::$_a_errors[$ps_type] = array();
 		}

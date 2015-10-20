@@ -4,41 +4,41 @@ namespace JsonTable;
 /**
  * @package	JSON table
  */
-abstract class Base {
+abstract class Base
+{
 	/**
-	 * @access	protected
+	 * @access protected
 	 * @static
 	 *
-	 * @var	string	Schema JSON
+	 * @var string Schema JSON
 	 */
 	protected static $_o_schema_json;
 
 	/**
-	 * @access	protected
+	 * @access protected
 	 * @static
 	 *
-	 * @var	string	The path and name of the file to analyse.
+	 * @var string The path and name of the file to analyse.
 	 */
 	protected static $_s_file_name;
 
 	/**
-	 * @access	protected
+	 * @access protected
 	 * @static
 	 *
-	 * @var	array	The columns found in the header.
+	 * @var array The columns found in the header.
 	 *				This is used to validate that each row has the correct number of columns
 	 *				and to get the column name from it's position.
 	 */
 	protected static $_a_header_columns;
 
 	/**
-	 * @access	protected
+	 * @access protected
 	 * @static
 	 *
-	 * @var	object	The SplFileObject of the CSV file.
+	 * @var object The SplFileObject of the CSV file.
 	 */
 	protected static $_o_file;
-
 
 	/**
 	 * @access protected
@@ -53,12 +53,13 @@ abstract class Base {
 	 *
 	 * @access public
 	 *
-	 * @param	string|object	$ps_schema_json 	The schema conforming to the JSON table schema specification.
-	 * @see		http://dataprotocols.org/json-table-schema
+	 * @param string object $ps_schema_json The schema conforming to the JSON table schema specification.
+	 * @see http://dataprotocols.org/json-table-schema
 	 *
-	 * @return	void
+	 * @return void
 	 */
-	public function set_schema ($pm_schema_json) {
+	public function set_schema($pm_schema_json)
+	{
 		// Check if a JSON string or object has been provided.
 		if (is_string($pm_schema_json)) {
 			// Convert the string to an object and check it is valid.
@@ -82,17 +83,26 @@ abstract class Base {
 
 	/**
 	 * Set the file.
+	 * This checks that the file exists.
 	 *
 	 * @access public
 	 *
-	 * @param	string|object	$ps_file 	The path and name of the file to analyse.
-	 * @see	http://dataprotocols.org/json-table-schema
+	 * @param string $ps_file The path and name of the file to analyse.
+	 * @see http://dataprotocols.org/json-table-schema
 	 *
-	 * @return	void
+	 * @return boolean Whether the file was successfully set.
 	 */
-	public function set_file ($ps_file_name) {
-		// Set the file to analyse.
-		self::$_s_file_name = (string) $ps_file_name;
+	public function set_file($ps_file_name)
+	{
+		// Check that the file exists.
+		if (file_exists($ps_file_name)) {
+			// Set the file to analyse.
+			self::$_s_file_name = (string) $ps_file_name;
+
+			return true;
+		}
+
+		return false;
 	}
 
 
@@ -102,24 +112,31 @@ abstract class Base {
 	 * @access protected
 	 * @static
 	 *
-	 * @param resource $po_pdo_connection    The PDO object.
+	 * @param object $po_pdo_connection The PDO object.
 	 *
-	 * @return void
+	 * @return boolean Whether the connection was valid.
 	 */
-	public function set_pdo_connection($po_pdo_connection) {
-		self::$_o_pdo_connection = $po_pdo_connection;
+	public function set_pdo_connection($po_pdo_connection)
+	{
+		if ($po_pdo_connection instanceof \PDO) {
+			self::$_o_pdo_connection = $po_pdo_connection;
+			return true;
+		}
+
+		return false;
 	}
 
 
 	/**
 	 * Open a handle to the file to be analysed.
 	 *
-	 * @access	public
+	 * @access public
 	 * @static
 	 *
-	 * @return	void
+	 * @return void
 	 */
-	protected static function _open_file () {
+	protected static function _open_file()
+	{
 		// Check that a CSV file has been set.
 		if (empty(self::$_s_file_name)) {
 			throw new \Exception('CSV file not set.');
@@ -142,7 +159,8 @@ abstract class Base {
 	 *
 	 * @return true on success or throws exception on error.
 	 */
-	protected static function _set_csv_header_columns () {
+	protected static function _set_csv_header_columns()
+	{
 		// Rewind to first line.
 		self::$_o_file->rewind();
 
@@ -156,12 +174,13 @@ abstract class Base {
 	/**
 	 * Rewind the CSV file pointer to the first line of data.
 	 *
-	 * @access	protected
+	 * @access protected
 	 * @static
 	 *
-	 * @return	void
+	 * @return void
 	 */
-	protected static function _rewind_file_pointer_to_first_data () {
+	protected static function _rewind_file_pointer_to_first_data()
+	{
 		// Rewind to first line.
 		self::$_o_file->seek(1);
 	}
@@ -170,12 +189,13 @@ abstract class Base {
 	/**
 	 * Get the data from the current CSV file row and move the pointer on to the next row.
 	 *
-	 * @access	public
+	 * @access public
 	 * @static
 	 *
-	 * @return	array|boolean	The CSV data or false if the end of the file has been reached.
+	 * @return array boolean The CSV data or false if the end of the file has been reached.
 	 */
-	protected static function _loop_through_file_rows () {
+	protected static function _loop_through_file_rows()
+	{
 		// Check if the end of file has been reached.
 		if (self::$_o_file->eof()) {
 			return false;
@@ -192,13 +212,14 @@ abstract class Base {
 	 * Get the key of the field with the specified name from the schema.
 	 * This can be used to validate that a column exists in the schema.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @param	string	$ps_field_name	The field name
+	 * @param string $ps_field_name The field name
 	 *
-	 * @return	int	The key ID or false if the field is not found.
+	 * @return int The key ID or false if the field is not found.
 	 */
-	protected function _get_schema_key_from_name ($ps_field_name) {
+	protected function _get_schema_key_from_name($ps_field_name)
+	{
 		foreach (self::$_o_schema_json->fields as $li_key => $lo_field) {
 			if ($lo_field->name === $ps_field_name) {
 				return $li_key;
@@ -213,13 +234,14 @@ abstract class Base {
 	 * Get the position of the field with the specified name from the CSV file.
 	 * This can be used to validate that a column exists in the CSV file.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @param	string	$ps_field_name	The field name
+	 * @param string $ps_field_name The field name
 	 *
-	 * @return	int	The position or false if the field is not found.
+	 * @return int The position or false if the field is not found.
 	 */
-	protected function _get_csv_position_from_name ($ps_field_name) {
+	protected function _get_csv_position_from_name($ps_field_name)
+	{
 		return array_search($ps_field_name, self::$_a_header_columns);
 	}
 
@@ -227,13 +249,14 @@ abstract class Base {
 	/**
 	 * Get the schema object for a column, given the columns posion in the CSV file.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @param	int	$pi_csv_column_position	The position of the column in the CSV file.
+	 * @param int $pi_csv_column_position The position of the column in the CSV file.
 	 *
-	 * @return 	object	The schema column.
+	 * @return object The schema column.
 	 */
-	protected function _get_schema_column_from_csv_column_position ($pi_csv_column_position) {
+	protected function _get_schema_column_from_csv_column_position($pi_csv_column_position)
+	{
 		// Get the column name for this column position.
 		$ls_csv_column_name = self::$_a_header_columns[$pi_csv_column_position];
 
@@ -248,13 +271,14 @@ abstract class Base {
 	/**
 	 * Get the type of the specified column.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @param	object	$po_schema_column	The schema column object to examine.
+	 * @param object $po_schema_column The schema column object to examine.
 	 *
-	 * @return	string	The type.
+	 * @return string The type.
 	 */
-	protected function _get_column_type ($po_schema_column) {
+	protected function _get_column_type($po_schema_column)
+	{
 		// If no type is set, the default should be "string".
 		return (property_exists($po_schema_column, 'type')) ? $po_schema_column->type : 'string';
 	}
@@ -263,13 +287,14 @@ abstract class Base {
 	/**
 	 * Get the format of the specified column.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @param	object	$po_schema_column	The schema column object to examine.
+	 * @param object $po_schema_column The schema column object to examine.
 	 *
-	 * @return	string	The format or null if no format is specified.
+	 * @return string The format or null if no format is specified.
 	 */
-	protected function _get_column_format ($po_schema_column) {
+	protected function _get_column_format($po_schema_column)
+	{
 		return (property_exists($po_schema_column, 'format')) ? $po_schema_column->format : 'default';
 	}
 }
