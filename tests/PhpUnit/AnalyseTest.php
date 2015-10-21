@@ -5,6 +5,15 @@ use \JsonTable\Analyse;
 
 class AnalyseTest extends \PHPUnit_Framework_TestCase
 {
+	protected function tearDown()
+	{
+		// Remove any test files that have been created.
+		if (file_exists('test.csv')) {
+			unlink('test.csv');
+		}
+	}
+
+
 	public function testSchemaThrowsExceptionWithInvalidJSONString()
 	{
 		$this->setExpectedException('Exception', 'The schema is not a valid JSON string.');
@@ -122,4 +131,60 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 		$la_errors = $lo_analyser->get_errors();
 		$this->assertEmpty($la_errors);
 	}
+
+
+	public function testAnalyseReturnsFalseOnMissingMandatoryColumnInCSVFile()
+	{
+		// Create a test CSV file with a missing mandatory "WEBSITE" column.
+		$this->_createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
+		$lo_analyser = new Analyse();
+		$lo_analyser->set_schema(file_get_contents('examples/example.json'));
+		$lo_analyser->set_file('test.csv');
+		$lb_file_is_valid = $lo_analyser->analyse();
+
+		$this->assertFalse($lb_file_is_valid);
+	}
+
+
+	public function testErrorIsSetOnMissingMandatoryColumnInCSVFile()
+	{
+		// Create a test CSV file with a missing mandatory "WEBSITE" column.
+		$this->_createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
+		$lo_analyser = new Analyse();
+		$lo_analyser->set_schema(file_get_contents('examples/example.json'));
+		$lo_analyser->set_file('test.csv');
+		$lo_analyser->analyse();
+		$la_errors = $lo_analyser->get_errors();
+
+		$la_expected_error = ['<strong>1</strong> required column(s) missing:' => ['website']];
+		$this->assertEquals($la_expected_error, $la_errors);
+
+	}
+
+
+	/**
+	 * Create a test CSV file with the specified headers and field data.
+	 * The file that is created is named "test.csv" and is in the current directory.
+	 *
+	 * @access public
+	 *
+	 * @param array $pa_column_names The headers.
+	 * @param array $pa_field_values The field values as a multimimentional array.
+	 *
+	 * @return void
+	 */
+	private function _createCSVFile($pa_column_names, $pa_field_values)
+	{
+		$lr_file = fopen('test.csv', 'w');
+
+		fputcsv($lr_file, $pa_column_names);
+
+		foreach ($pa_field_values as $pa_row_values) {
+			fputcsv($lr_file, $pa_row_values);
+		}
+
+		fclose($lr_file);
+	}
+
+
 }

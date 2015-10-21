@@ -103,7 +103,7 @@ class Analyse extends Base
 	 *
 	 * @return boolean true if the file passes the validation and false if not.
 	 */
-	public function analyse ($pb_stop_if_invalid = false)
+	public function analyse($pb_stop_if_invalid = false)
 	{
 		// Set whether to stop if invalid.
 		$this->_b_stop_if_invalid = (bool) $pb_stop_if_invalid;

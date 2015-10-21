@@ -4,17 +4,19 @@ namespace JsonTable\Validate\Format;
 /**
  * Lexical number validator.
  *
- * @package	JSON table
+ * @package JSON table
  */
-class NumberValidator extends \JsonTable\Validate\AbstractFormatValidator {
+class NumberValidator extends \JsonTable\Validate\AbstractFormatValidator
+{
 	/**
 	 * Validate that the input is a valid number (float).
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @return	boolean	Whether the input is valid.
+	 * @return boolean Whether the input is valid.
 	 */
-	protected function _format_default () {
+	protected function _format_default()
+	{
 		return (false !== filter_var($this->_m_input, FILTER_VALIDATE_FLOAT));
 	}
 
@@ -22,11 +24,12 @@ class NumberValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	/**
 	 * Validate that the input is a valid currency.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @return	boolean	Whether the input is valid.
+	 * @return boolean Whether the input is valid.
 	 */
-	protected function _format_currency () {
+	protected function _format_currency()
+	{
 		// Remove any non-digits from the input.
 		//TODO: Validate that any non-digits are valid currency characters.
 		$ls_input = preg_filter('/^\D./', '', $this->_m_input);

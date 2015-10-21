@@ -4,19 +4,21 @@ namespace JsonTable;
 /**
  * Store the data using the JSON table schema to determine the data structure.
  *
- * @package	JSON table
+ * @package JSON table
  */
-class Store extends Base {
+class Store extends Base
+{
 	/**
 	 * Load and instantiate the specified store.
 	 *
-	 * @access	private
+	 * @access private
 	 *
-	 * @param	string	$ps_store_type	The type of store to load.
+	 * @param string $ps_store_type The type of store to load.
 	 *
-	 * @return	object	The store object. Throws an exception on error.
+	 * @return object The store object. Throws an exception on error.
 	 */
-	public static function load ($ps_store_type) {
+	public static function load($ps_store_type)
+	{
 		// Load the abstract store file.
 		$ls_abstract_store_file = dirname(__FILE__) . "/Store/AbstractStore.php";
 
