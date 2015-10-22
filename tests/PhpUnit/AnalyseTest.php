@@ -5,6 +5,12 @@ use \JsonTable\Analyse;
 
 class AnalyseTest extends \PHPUnit_Framework_TestCase
 {
+	/**
+	 * @var string Database connection string.
+	 */
+	const DB_CONNECTION_STRING = 'pgsql:host=localhost;dbname=travis_ci_test;user=postgres';
+
+
 	protected function tearDown()
 	{
 		// Remove any test files that have been created.
@@ -47,7 +53,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
 	public function testSetValidPDOConnection()
 	{
-		$lo_pdo = new \PDO('pgsql:host=localhost;port=5432;dbname=test1;user=json_test;password=mypass');
+		$lo_pdo = new \PDO(self::DB_CONNECTION_STRING);
 		$lo_analyser = new Analyse();
 		$lb_connection_return_value = $lo_analyser->set_pdo_connection($lo_pdo);
 		$this->assertTrue($lb_connection_return_value);
@@ -114,7 +120,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
 	public function testAnalyseAllValidDataIsReturnedAsValid()
 	{
-		$lo_pdo = new \PDO('pgsql:host=localhost;port=5432;dbname=test1;user=json_test;password=mypass');
+		$lo_pdo = new \PDO(self::DB_CONNECTION_STRING);
 		$lo_analyser = new Analyse();
 		$lo_analyser->set_pdo_connection($lo_pdo);
 		$lo_analyser->set_schema(file_get_contents('examples/example.json'));
