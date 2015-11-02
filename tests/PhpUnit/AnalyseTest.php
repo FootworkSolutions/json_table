@@ -3,12 +3,57 @@ namespace tests\PhpUnit;
 
 use \JsonTable\Analyse;
 
-class AnalyseTest extends \PHPUnit_Framework_TestCase
+class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 {
 	/**
 	 * @var string Database connection string.
 	 */
-	const DB_CONNECTION_STRING = 'pgsql:host=localhost;dbname=travis_ci_test;user=postgres';
+	const DB_CONNECTION_STRING = 'pgsql:host=localhost;dbname=test1;user=json_test;password=mypass';
+
+
+	/**
+	 * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
+	 */
+	public function getConnection()
+	{
+		$lo_pdo = new \PDO(self::DB_CONNECTION_STRING);
+		return $this->createDefaultDBConnection($lo_pdo, 'travis_ci_test');
+	}
+
+
+	/**
+	 * @return PHPUnit_Extensions_Database_DataSet_DefaultDataSet
+	 */
+	public function getDataSet()
+	{
+		//TODO: WOrk out how to get PHPunit to create the tables before starting the tests.
+		return new \PHPUnit_Extensions_Database_DataSet_DefaultDataSet();
+	}
+
+
+	/**
+	 * Create a test CSV file with the specified headers and field data.
+	 * The file that is created is named "test.csv" and is in the current directory.
+	 *
+	 * @access public
+	 *
+	 * @param array $pa_column_names The headers.
+	 * @param array $pa_field_values The field values as a multimimentional array.
+	 *
+	 * @return void
+	 */
+	private function _createCSVFile($pa_column_names, $pa_field_values)
+	{
+		$lr_file = fopen('test.csv', 'w');
+
+		fputcsv($lr_file, $pa_column_names);
+
+		foreach ($pa_field_values as $pa_row_values) {
+			fputcsv($lr_file, $pa_row_values);
+		}
+
+		fclose($lr_file);
+	}
 
 
 	protected function tearDown()
@@ -168,29 +213,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 	}
 
 
-	/**
-	 * Create a test CSV file with the specified headers and field data.
-	 * The file that is created is named "test.csv" and is in the current directory.
-	 *
-	 * @access public
-	 *
-	 * @param array $pa_column_names The headers.
-	 * @param array $pa_field_values The field values as a multimimentional array.
-	 *
-	 * @return void
-	 */
-	private function _createCSVFile($pa_column_names, $pa_field_values)
-	{
-		$lr_file = fopen('test.csv', 'w');
 
-		fputcsv($lr_file, $pa_column_names);
-
-		foreach ($pa_field_values as $pa_row_values) {
-			fputcsv($lr_file, $pa_row_values);
-		}
-
-		fclose($lr_file);
-	}
 
 
 }
