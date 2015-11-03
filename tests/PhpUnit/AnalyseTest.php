@@ -8,7 +8,7 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	/**
 	 * @var string Database connection string.
 	 */
-	const DB_CONNECTION_STRING = 'pgsql:host=localhost;dbname=test1;user=postgres';
+	const DB_CONNECTION_STRING = 'pgsql:host=localhost;dbname=travis_ci_test;user=postgres';
 
 
 	/**
