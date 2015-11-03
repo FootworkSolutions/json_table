@@ -7,6 +7,6 @@ php:
 
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
-  - psql -U postfres -d travis_ci_test -f examples/example.sql
+  - psql -U postgres -d travis_ci_test -f examples/example.sql
   - composer install --ignore-platform-reqs
   - phpunit --process-isolation
