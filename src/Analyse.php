@@ -108,6 +108,9 @@ class Analyse extends Base
 		// Set whether to stop if invalid.
 		$this->_b_stop_if_invalid = (bool) $pb_stop_if_invalid;
 
+		// Ensure that there are no errors present from a previous run.
+		self::$_a_errors = [];
+		
 		// Open the CSV file for reading.
 		self::_open_file();
 
