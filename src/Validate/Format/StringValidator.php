@@ -4,17 +4,19 @@ namespace JsonTable\Validate\Format;
 /**
  * Lexical string validator.
  *
- * @package	JSON table
+ * @package JSON table
  */
-class StringValidator extends \JsonTable\Validate\AbstractFormatValidator {
+class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
+{
 	/**
 	 * Validate that the input is a valid string.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @return	boolean	Whether the input is valid.
+	 * @return boolean Whether the input is valid.
 	 */
-	protected function _format_default () {
+	protected function _format_default()
+	{
 		return is_string($this->_m_input);
 	}
 
@@ -22,11 +24,12 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	/**
 	 * Validate that the input is a valid email address.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @return	boolean	Whether the input is valid.
+	 * @return boolean Whether the input is valid.
 	 */
-	protected function _format_email () {
+	protected function _format_email()
+	{
 		return (false !== filter_var($this->_m_input, FILTER_VALIDATE_EMAIL));
 	}
 
@@ -37,11 +40,12 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	 *
 	 * This validator allows the input to miss this off so an input of "www.example.com" will be passed as valid.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @return	boolean	Whether the input is valid.
+	 * @return boolean Whether the input is valid.
 	 */
-	protected function _format_uri () {
+	protected function _format_uri()
+	{
 		// Parse the URI to check if there is a schema.
 		if ($la_uri_parts = parse_url($this->_m_input)) {
 			if (!isset($la_uri_parts['scheme'])) {
@@ -58,11 +62,12 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator {
 	 * As PHP treats all stings as binary, this is currently just a check that the input is a string.
 	 * TODO: Find a better way of validating that the string is a binary.
 	 *
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @return	boolean	Whether the input is valid.
+	 * @return boolean Whether the input is valid.
 	 */
-	protected function _format_binary () {
+	protected function _format_binary()
+	{
 		return is_string($this->_m_input);
 	}
 }

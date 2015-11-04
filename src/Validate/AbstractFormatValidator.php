@@ -4,18 +4,19 @@ namespace JsonTable\Validate;
 /**
  * Format validator abstract.
  *
- * @package	JSON table
+ * @package JSON table
  */
-abstract class AbstractFormatValidator {
+abstract class AbstractFormatValidator
+{
 	/**
-	 * @access	protected
-	 * @var	string	The type of validation being done. eg "string", "number".
+	 * @access protected
+	 * @var string The type of validation being done. eg "string", "number".
 	 */
 	protected $_s_type;
 
 	/**
-	 * @access	protected
-	 * @var	mixed	The input being validated.
+	 * @access protected
+	 * @var mixed The input being validated.
 	 */
 	protected $_m_input;
 
@@ -23,11 +24,12 @@ abstract class AbstractFormatValidator {
 	/**
 	 * Construct the validator.
 	 *
-	 * @access	public
+	 * @access public
 	 *
-	 * @param	string	$ps_type	The type of validation being validated.
+	 * @param string $ps_type The type of validation being validated.
 	 */
-	public function __construct ($ps_type) {
+	public function __construct($ps_type)
+	{
 		$this->_s_type = (string) $ps_type;
 	}
 
@@ -37,11 +39,12 @@ abstract class AbstractFormatValidator {
 	 *
 	 * @access public
 	 *
-	 * @param	mixed	The input to validate.
+	 * @param mixed The input to validate.
 	 *
 	 * @return void
 	 */
-	public function set_input ($pm_input) {
+	public function set_input($pm_input)
+	{
 		$this->_m_input = $pm_input;
 	}
 
@@ -49,13 +52,14 @@ abstract class AbstractFormatValidator {
 	/**
 	 * Check that the input matches the specified format.
 	 *
-	 * @access	public
+	 * @access public
 	 *
-	 * @param	string	$ps_format	The format to validate against.
+	 * @param string $ps_format The format to validate against.
 	 *
-	 * @return	boolean	Is the data valid.
+	 * @return boolean Is the data valid.
 	 */
-	public function validate_format ($ps_format) {
+	public function validate_format($ps_format)
+	{
 		// Default the return flag.
 		$lb_valid = true;
 

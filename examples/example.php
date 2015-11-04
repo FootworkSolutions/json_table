@@ -13,6 +13,8 @@
  *
  * @see https://en.wikipedia.org/wiki/Hungarian_notation
  */
+use \JsonTable\Analyse;
+use \JsonTable\Store;
 
 // Use composer's autoloading.
 require __DIR__ . '/../vendor/autoload.php';
@@ -24,7 +26,7 @@ PhpConsole\Helper::register();
  */
 $ls_file_path = 'example.csv'; // Where the file to validate is located.
 $ls_json_schema_file_path = 'example.json'; // Where the JSON schema is located.
-$ls_pdo_connection = 'pgsql:host=localhost;port=5432;dbname=test1;user=json_test;password=mypass'; // The database connection information.
+$ls_pdo_connection = 'pgsql:host=localhost;port=5432;dbname=test;user=postgres;password=mypass'; // The database connection information.
 $ls_store_table_name = 'json_table_stored_data_test'; // The name of the table to store the data in.
 
 try {
@@ -37,7 +39,7 @@ try {
 	$lo_pdo = new PDO($ls_pdo_connection);
 
 	// Instantiate the analysis class.
-	$lo_analyser = new \JsonTable\Analyse();
+	$lo_analyser = new Analyse();
 
 	// Let the analyser know where the JSON table schema is.
 	$lo_analyser->set_schema($ls_schema_json);
@@ -66,7 +68,7 @@ try {
 	// If the file is valid, save the data in a PostgreSQL database.
 	if ($lb_file_is_valid) {
 		// Instantiate the store class.
-		$lo_store = \JsonTable\Store::load('postgresql');
+		$lo_store = Store::load('postgresql');
 
 		if (!$lo_store->store($ls_store_table_name)) {
 			throw new \Exception ('Could not save the file to the PostgreSQL database.');

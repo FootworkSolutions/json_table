@@ -4,9 +4,10 @@ namespace JsonTable\Store;
 /**
  * Postgresql store.
  *
- * @package	JSON table
+ * @package JSON table
  */
-class PostgresqlStore extends AbstractStore {
+class PostgresqlStore extends AbstractStore
+{
 	/**
 	 * @access    private
 	 *
@@ -44,13 +45,14 @@ class PostgresqlStore extends AbstractStore {
 	 *
 	 * @access public
 	 *
-	 * @param    string    $ps_table_name         The name of the table to save the data in. With optional schema prefix.
-	 * @param    string    $ps_primary_key        The name of the primary key on the table. [optional] The default is "id".
-	 *                                            The primary key does not need to be listed in the CSV if it has a serial associated with it.
+	 * @param string $ps_table_name  The name of the table to save the data in. With optional schema prefix.
+	 * @param string $ps_primary_key The name of the primary key on the table. [optional] The default is "id".
+	 *                               The primary key does not need to be listed in the CSV if it has a serial associated with it.
 	 *
-	 * @return   boolean                          true on success false on failure.
+	 * @return boolean true on success false on failure.
 	 */
-	public function store ($ps_table_name, $ps_primary_key = 'id') {
+	public function store($ps_table_name, $ps_primary_key = 'id')
+	{
 		// Open the CSV file for reading.
 		\JsonTable\Base::_open_file();
 
@@ -133,11 +135,12 @@ class PostgresqlStore extends AbstractStore {
 	/**
 	 * Get the PDO type, schema type & schema format for each column in the CSV file.
 	 *
-	 * @access    private
+	 * @access private
 	 *
-	 * @return    boolean true on success
+	 * @return boolean true on success
 	 */
-	private function _set_columns_metadata () {
+	private function _set_columns_metadata()
+	{
 		// Get the data type for each of the columns being inserted into.
 		foreach (\JsonTable\Base::$_a_header_columns as $li_csv_field_position => $ls_csv_column_name) {
 			$la_metadata = array();

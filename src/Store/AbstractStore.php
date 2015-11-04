@@ -5,13 +5,14 @@ namespace JsonTable\Store;
  * Abstract store class.
  * All store classes should extent this class.
  *
- * @package	JSON table
+ * @package JSON table
  */
-abstract class AbstractStore extends \JsonTable\Base {
+abstract class AbstractStore extends \JsonTable\Base
+{
 	/**
-	 * @access	protected
+	 * @access protected
 	 *
-	 * @var 	array The values of the primary key of the last inserted data.
+	 * @var array The values of the primary key of the last inserted data.
 	 */
 	protected $_a_inserted_ids = array();
 
@@ -23,7 +24,8 @@ abstract class AbstractStore extends \JsonTable\Base {
 	 *
 	 * @return array The primary keys.
 	 */
-	public function inserted_records () {
+	public function inserted_records()
+	{
 		return $this->_a_inserted_ids;
 	}
 
@@ -31,12 +33,13 @@ abstract class AbstractStore extends \JsonTable\Base {
 	/**
 	 * Convert a date from a specific format into ISO date format of YYYY-MM-DD.
 	 *
-	 * @access	public
+	 * @access public
 	 * @static
 	 *
-	 * @return	string	The formatted date.
+	 * @return string The formatted date.
 	 */
-	public static function iso_date_from_format ($ps_format, $ps_date) {
+	public static function iso_date_from_format($ps_format, $ps_date)
+	{
 		if (!$lo_date = \DateTime::createFromFormat($ps_format, $ps_date)) {
 			throw new \Exception ("Could not reformat date $ps_date from format $ps_format");
 		}
@@ -48,12 +51,13 @@ abstract class AbstractStore extends \JsonTable\Base {
 	/**
 	 * Convert a value from being something that passes the FILTER_VALIDATE_BOOLEAN filter to be an actual boolean.
 	 *
-	 * @access	public
+	 * @access public
 	 * @static
 	 *
-	 * @return	boolean	or null The converted value.
+	 * @return boolean or null The converted value.
 	 */
-	public static function boolean_from_filter_booleans ($pm_value) {
+	public static function boolean_from_filter_booleans($pm_value)
+	{
 		// Convert strings to lowercase as checking should be case insensitive.
 		if (is_string($pm_value)) {
 			$pm_value = strtolower($pm_value);
