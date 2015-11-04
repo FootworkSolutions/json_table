@@ -1,4 +1,4 @@
-# JSON Table
+# JSON Table [![Build Status](https://travis-ci.org/FootworkSolutions/json_table.svg?branch=master)](https://travis-ci.org/FootworkSolutions/json_table)
 A validator and storage library using the [JSON table schema](http://dataprotocols.org/json-table-schema/) written in PHP.
 
 This is a great utility library for validating that CSV files, streams or any other data source validates against a predefined JSON table schema definition.
