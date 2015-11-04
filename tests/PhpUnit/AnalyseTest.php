@@ -208,6 +208,8 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 		$la_errors = $lo_analyser->get_errors();
 
 		$la_expected_error = ['<strong>1</strong> required column(s) missing:' => ['website']];
+		print_r($la_expected_error);
+		print_r($la_errors);
 		$this->assertEquals($la_expected_error, $la_errors);
 
 	}
