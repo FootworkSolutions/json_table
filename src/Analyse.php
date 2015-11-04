@@ -89,8 +89,8 @@ class Analyse extends Base
 	public function __construct()
 	{
 		// Load the abstract and interface validator classes.
-		include dirname(__FILE__) . '/Validate/AbstractFormatValidator.php';
-		include dirname(__FILE__) . '/Validate/InterfaceForeignKeyValidator.php';
+		include_once dirname(__FILE__) . '/Validate/AbstractFormatValidator.php';
+		include_once dirname(__FILE__) . '/Validate/InterfaceForeignKeyValidator.php';
 	}
 
 
