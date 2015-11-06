@@ -41,7 +41,7 @@ abstract class AbstractStore extends \JsonTable\Base
     public static function iso_date_from_format($ps_format, $ps_date)
     {
         if (!$lo_date = \DateTime::createFromFormat($ps_format, $ps_date)) {
-            throw new \Exception ("Could not reformat date $ps_date from format $ps_format");
+            throw new \Exception("Could not reformat date $ps_date from format $ps_format");
         }
 
         return $lo_date->format('Y-m-d');

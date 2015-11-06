@@ -1,6 +1,9 @@
 engines:
   phpcodesniffer:
     enabled: true
+    checks:
+      PSR2 Classes PropertyDeclaration Underscore:
+        enabled: false
   phpmd:
     enabled: true
     config:
