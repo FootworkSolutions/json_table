@@ -6,6 +6,10 @@ engines:
     checks:
       Controversial/CamelCaseVariableName:
         enabled: false
+      Controversial/CamelCaseParameterName:
+        enabled: false
+      Naming/LongVariable:
+        enabled: false
 exclude_paths:
   - tests/**/*
   - vendor/**/*
