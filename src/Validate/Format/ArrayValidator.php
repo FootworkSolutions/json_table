@@ -8,15 +8,15 @@ namespace JsonTable\Validate\Format;
  */
 class ArrayValidator extends \JsonTable\Validate\AbstractFormatValidator
 {
-	/**
-	 * Validate that the input is a valid null.
-	 *
-	 * @access protected
-	 *
-	 * @return boolean Whether the input is valid.
-	 */
-	protected function _format_default()
-	{
-		return false;
-	}
+    /**
+     * Validate that the input is a valid null.
+     *
+     * @access protected
+     *
+     * @return boolean Whether the input is valid.
+     */
+    protected function _format_default()
+    {
+        return false;
+    }
 }
