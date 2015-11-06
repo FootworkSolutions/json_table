@@ -4,6 +4,8 @@ engines:
     checks:
       PSR2 Classes PropertyDeclaration Underscore:
         enabled: false
+      PSR2 Methods MethodDeclaration Underscore:
+        enabled: false
   phpmd:
     enabled: true
     config:

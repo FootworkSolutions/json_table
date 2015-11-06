@@ -66,8 +66,7 @@ abstract class Base
             if (is_null($pm_schema_json = json_decode($pm_schema_json))) {
                 throw new \Exception('The schema is not a valid JSON string.');
             }
-        }
-        elseif (!is_object($pm_schema_json)) {
+        } elseif (!is_object($pm_schema_json)) {
             throw new \Exception('Invalid schema data type.');
         }
 
