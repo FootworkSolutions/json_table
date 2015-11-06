@@ -69,7 +69,7 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	{
 		$this->setExpectedException('Exception', 'The schema is not a valid JSON string.');
 		$lo_analyser = new Analyse();
-		$lo_analyser->set_schema('This is not a valid JSON string.');
+		$lo_analyser->setSchema('This is not a valid JSON string.');
 	}
 
 
@@ -82,7 +82,7 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	{
 		$this->setExpectedException('Exception', 'Invalid schema data type.');
 		$lo_analyser = new Analyse();
-		$lo_analyser->set_schema($pm_invalid_values);
+		$lo_analyser->setSchema($pm_invalid_values);
 	}
 
 
@@ -100,7 +100,7 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	{
 		$lo_pdo = new \PDO(self::DB_CONNECTION_STRING);
 		$lo_analyser = new Analyse();
-		$lb_connection_return_value = $lo_analyser->set_pdo_connection($lo_pdo);
+		$lb_connection_return_value = $lo_analyser->setPdoConnection($lo_pdo);
 		$this->assertTrue($lb_connection_return_value);
 	}
 
@@ -113,7 +113,7 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	public function testSetInvalidPDOConnection($pm_invalid_values)
 	{
 		$lo_analyser = new Analyse();
-		$lb_connection_return_value = $lo_analyser->set_pdo_connection($pm_invalid_values);
+		$lb_connection_return_value = $lo_analyser->setPdoConnection($pm_invalid_values);
 		$this->assertFalse($lb_connection_return_value);
 	}
 
@@ -133,7 +133,7 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	public function testSetValidFilePath()
 	{
 		$lo_analyser = new Analyse();
-		$lb_set_file_return_value = $lo_analyser->set_file('examples/example.csv');
+		$lb_set_file_return_value = $lo_analyser->setFile('examples/example.csv');
 		$this->assertTrue($lb_set_file_return_value);
 	}
 
@@ -146,7 +146,7 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	public function testSetInvalidFilePath($pm_invalid_values)
 	{
 		$lo_analyser = new Analyse();
-		$lb_set_file_return_value = $lo_analyser->set_file($pm_invalid_values);
+		$lb_set_file_return_value = $lo_analyser->setFile($pm_invalid_values);
 		$this->assertFalse($lb_set_file_return_value);
 	}
 
@@ -167,9 +167,9 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	{
 		$lo_pdo = new \PDO(self::DB_CONNECTION_STRING);
 		$lo_analyser = new Analyse();
-		$lo_analyser->set_pdo_connection($lo_pdo);
-		$lo_analyser->set_schema(file_get_contents('examples/example.json'));
-		$lo_analyser->set_file('examples/example.csv');
+		$lo_analyser->setPdoConnection($lo_pdo);
+		$lo_analyser->setSchema(file_get_contents('examples/example.json'));
+		$lo_analyser->setFile('examples/example.csv');
 		$lb_file_is_valid = $lo_analyser->analyse();
 
 		$this->assertEquals(true, $lb_file_is_valid);
@@ -179,7 +179,7 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 	public function testGetEmptyErrorsReturnsEmptyArray()
 	{
 		$lo_analyser = new Analyse();
-		$la_errors = $lo_analyser->get_errors();
+		$la_errors = $lo_analyser->getErrors();
 		$this->assertEmpty($la_errors);
 	}
 
@@ -189,8 +189,8 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 		// Create a test CSV file with a missing mandatory "WEBSITE" column.
 		$this->_createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
 		$lo_analyser = new Analyse();
-		$lo_analyser->set_schema(file_get_contents('examples/example.json'));
-		$lo_analyser->set_file('test.csv');
+		$lo_analyser->setSchema(file_get_contents('examples/example.json'));
+		$lo_analyser->setFile('test.csv');
 		$lb_file_is_valid = $lo_analyser->analyse();
 
 		$this->assertFalse($lb_file_is_valid);
@@ -202,10 +202,10 @@ class AnalyseTest extends \PHPUnit_Extensions_Database_TestCase
 		// Create a test CSV file with a missing mandatory "WEBSITE" column.
 		$this->_createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
 		$lo_analyser = new Analyse();
-		$lo_analyser->set_schema(file_get_contents('examples/example.json'));
-		$lo_analyser->set_file('test.csv');
+		$lo_analyser->setSchema(file_get_contents('examples/example.json'));
+		$lo_analyser->setFile('test.csv');
 		$lo_analyser->analyse();
-		$la_errors = $lo_analyser->get_errors();
+		$la_errors = $lo_analyser->getErrors();
 
 		$la_expected_error = ['<strong>1</strong> required column(s) missing:' => ['website']];
 		$this->assertEquals($la_expected_error, $la_errors);

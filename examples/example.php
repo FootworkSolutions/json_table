@@ -42,21 +42,21 @@ try {
 	$lo_analyser = new Analyse();
 
 	// Let the analyser know where the JSON table schema is.
-	$lo_analyser->set_schema($ls_schema_json);
+	$lo_analyser->setSchema($ls_schema_json);
 
 	// Let the analyser know where the CSV file to validate is.
-	$lo_analyser->set_file($ls_file_path);
+	$lo_analyser->setFile($ls_file_path);
 
 	// Let the analyser know how to communicate with your database.
 	// This is used to check foreign keys and store data.
-	$lo_analyser->set_pdo_connection($lo_pdo);
+	$lo_analyser->setPdoConnection($lo_pdo);
 
 	// Check whether the file is valid against the schema.
 	$lb_file_is_valid = $lo_analyser->analyse();
 
 	// Get errors and statistics about the analysis.
-	$la_validation_errors = $lo_analyser->get_errors();
-	$la_statistics = $lo_analyser->get_statistics();
+	$la_validation_errors = $lo_analyser->getErrors();
+	$la_statistics = $lo_analyser->getStatistics();
 
 	// Collect together all the information about this validation.
 	$la_return_data = [
