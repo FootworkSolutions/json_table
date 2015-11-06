@@ -58,7 +58,7 @@ abstract class Base
      *
      * @return void
      */
-    public function set_schema($pm_schema_json)
+    public function setSchema($pm_schema_json)
     {
         // Check if a JSON string or object has been provided.
         if (is_string($pm_schema_json)) {
@@ -91,7 +91,7 @@ abstract class Base
      *
      * @return boolean Whether the file was successfully set.
      */
-    public function set_file($ps_file_name)
+    public function setFile($ps_file_name)
     {
         // Check that the file exists.
         if (file_exists($ps_file_name)) {
@@ -115,7 +115,7 @@ abstract class Base
      *
      * @return boolean Whether the connection was valid.
      */
-    public function set_pdo_connection($po_pdo_connection)
+    public function setPdoConnection($po_pdo_connection)
     {
         if ($po_pdo_connection instanceof \PDO) {
             self::$_o_pdo_connection = $po_pdo_connection;
@@ -134,7 +134,7 @@ abstract class Base
      *
      * @return void
      */
-    protected static function _open_file()
+    protected static function _openFile()
     {
         // Check that a CSV file has been set.
         if (empty(self::$_s_file_name)) {
@@ -158,7 +158,7 @@ abstract class Base
      *
      * @return true on success or throws exception on error.
      */
-    protected static function _set_csv_header_columns()
+    protected static function _setCsvHeaderColumns()
     {
         // Rewind to first line.
         self::$_o_file->rewind();
@@ -178,7 +178,7 @@ abstract class Base
      *
      * @return void
      */
-    protected static function _rewind_file_pointer_to_first_data()
+    protected static function _rewindFilePointerToFirstData()
     {
         // Rewind to first line.
         self::$_o_file->seek(1);
@@ -193,7 +193,7 @@ abstract class Base
      *
      * @return array boolean The CSV data or false if the end of the file has been reached.
      */
-    protected static function _loop_through_file_rows()
+    protected static function _loopThroughFileRows()
     {
         // Check if the end of file has been reached.
         if (self::$_o_file->eof()) {
@@ -217,7 +217,7 @@ abstract class Base
      *
      * @return int The key ID or false if the field is not found.
      */
-    protected function _get_schema_key_from_name($ps_field_name)
+    protected function _getSchemaKeyFromName($ps_field_name)
     {
         foreach (self::$_o_schema_json->fields as $li_key => $lo_field) {
             if ($lo_field->name === $ps_field_name) {
@@ -239,7 +239,7 @@ abstract class Base
      *
      * @return int The position or false if the field is not found.
      */
-    protected function _get_csv_position_from_name($ps_field_name)
+    protected function _getCsvPositionFromName($ps_field_name)
     {
         return array_search($ps_field_name, self::$_a_header_columns);
     }
@@ -254,13 +254,13 @@ abstract class Base
      *
      * @return object The schema column.
      */
-    protected function _get_schema_column_from_csv_column_position($pi_csv_column_position)
+    protected function _getSchemaColumnFromCsvColumnPosition($pi_csv_column_position)
     {
         // Get the column name for this column position.
         $ls_csv_column_name = self::$_a_header_columns[$pi_csv_column_position];
 
         // Get the schema key for this column name.
-        $li_schema_key = $this->_get_schema_key_from_name($ls_csv_column_name);
+        $li_schema_key = $this->_getSchemaKeyFromName($ls_csv_column_name);
 
         // Return the field object for this schema field key.
         return self::$_o_schema_json->fields[$li_schema_key];
@@ -276,7 +276,7 @@ abstract class Base
      *
      * @return string The type.
      */
-    protected function _get_column_type($po_schema_column)
+    protected function _getColumnType($po_schema_column)
     {
         // If no type is set, the default should be "string".
         return (property_exists($po_schema_column, 'type')) ? $po_schema_column->type : 'string';
@@ -292,7 +292,7 @@ abstract class Base
      *
      * @return string The format or null if no format is specified.
      */
-    protected function _get_column_format($po_schema_column)
+    protected function _getColumnFormat($po_schema_column)
     {
         return (property_exists($po_schema_column, 'format')) ? $po_schema_column->format : 'default';
     }

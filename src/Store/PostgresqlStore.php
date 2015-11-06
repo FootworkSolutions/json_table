@@ -54,7 +54,7 @@ class PostgresqlStore extends AbstractStore
     public function store($ps_table_name, $ps_primary_key = 'id')
     {
         // Open the CSV file for reading.
-        \JsonTable\Base::_open_file();
+        \JsonTable\Base::_openFile();
 
         // Get a list of columns being inserted into from the CSV header row.
         $ls_column_list = implode(', ', \JsonTable\Base::$_a_header_columns);
@@ -72,13 +72,13 @@ class PostgresqlStore extends AbstractStore
         $ls_insert_parameters .= ', ?';
 
         // Rewind the CSV file pointer to the first line of data.
-        \JsonTable\Base::_rewind_file_pointer_to_first_data();
+        \JsonTable\Base::_rewindFilePointerToFirstData();
 
         // Set the row flag.
         $li_row = 1;
 
         // Read each row in the file.
-        while ($la_csv_row = \JsonTable\Base::_loop_through_file_rows()) {
+        while ($la_csv_row = \JsonTable\Base::_loopThroughFileRows()) {
             // Set up the SQL statement for the insert.
             $ls_insert_sql = "INSERT INTO $ps_table_name ($ls_column_list) VALUES ($ls_insert_parameters) RETURNING $ps_primary_key AS key";
             $lo_statement = self::$_o_pdo_connection->prepare($ls_insert_sql);
@@ -149,19 +149,19 @@ class PostgresqlStore extends AbstractStore
             $li_csv_field_position += 1;
 
             // Get the schema key for this column name.
-            $li_schema_key = $this->_get_schema_key_from_name($ls_csv_column_name);
+            $li_schema_key = $this->_getSchemaKeyFromName($ls_csv_column_name);
 
             // Get the field object for this schema key.
             $lo_schema_field = self::$_o_schema_json->fields[$li_schema_key];
 
             // Get the schema type for this column.
-            $la_metadata['type'] = $this->_get_column_type($lo_schema_field);
+            $la_metadata['type'] = $this->_getColumnType($lo_schema_field);
 
             // Set the PDO data type for this column.
             $la_metadata['pdo_type'] = self::$_a_pdo_type_mappings[$la_metadata['type']];
 
             // Set the format for this column.
-            $la_metadata['format'] = $this->_get_column_format($lo_schema_field);
+            $la_metadata['format'] = $this->_getColumnFormat($lo_schema_field);
 
             // Set the metadata for this column.
             $this->_a_column_metadata[$li_csv_field_position] = $la_metadata;
