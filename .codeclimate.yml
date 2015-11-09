@@ -7,8 +7,8 @@ engines:
       file_extensions: "php"
       rulesets: "codesize,design,unusedcode"
 exclude_paths:
-  - tests/**/*
-  - vendor/**/*
+  - "tests/**/*"
+  - "vendor/**/*"
 ratings:
   paths:
     - "**.php"
