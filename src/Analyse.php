@@ -99,7 +99,8 @@ class Analyse extends Base
      *
      * @access public
      *
-     * @param boolean $pb_stop_if_invalid Should the analysis stop when the file is found to be invalid. The default is false.
+     * @param boolean $pb_stop_if_invalid Should the analysis stop when the file is found to be invalid.
+     *                                    The default is false.
      *
      * @return boolean true if the file passes the validation and false if not.
      */
@@ -120,7 +121,8 @@ class Analyse extends Base
         self::_setCsvHeaderColumns();
 
         // Validate that the mandatory columns are all present.
-        // If this fails, no further analysis will be done regarless of whether the stop on invalid flag is set to false.
+        // If this fails, no further analysis will be done regarless of whether
+        // the stop on invalid flag is set to false.
         if (!$this->_validateMandatoryColumns()) {
             $lb_continue_analysis = false;
         }
@@ -165,7 +167,8 @@ class Analyse extends Base
 
         // Calculate the % of rows with errors.
         if ($this->_a_statistics['rows_analysed'] > 0) {
-            $this->_a_statistics['percent_rows_with_errors'] = (count($this->_a_statistics['rows_with_errors']) / $this->_a_statistics['rows_analysed']) * 100;
+            $this->_a_statistics['percent_rows_with_errors'] =
+                (count($this->_a_statistics['rows_with_errors']) / $this->_a_statistics['rows_analysed']) * 100;
         }
         else {
             $this->_a_statistics['percent_rows_with_errors'] = 0;
@@ -265,7 +268,8 @@ class Analyse extends Base
             $li_header_column_count = count(self::$_a_header_columns);
 
             if ($li_header_column_count !== $li_column_count) {
-                $this->_setError(Analyse::ERROR_INCORRECT_COLUMN_COUNT, "Row $li_row has $li_column_count columns but should have $li_header_column_count.");
+                $this->_setError(Analyse::ERROR_INCORRECT_COLUMN_COUNT,
+                    "Row $li_row has $li_column_count columns but should have $li_header_column_count.");
                 $this->_a_statistics['rows_with_errors'][] = $li_row;
             }
 
@@ -279,7 +283,8 @@ class Analyse extends Base
                     // Check if the field has any data in it.
                     if ('' === $la_csv_row[$li_column_number]) {
                         // This is a mandatory column without any data in it, so set an error.
-                        $this->_setError(Analyse::ERROR_REQUIRED_FIELD_MISSING_DATA, "$lo_schema_column->name on row $li_row is missing.");
+                        $this->_setError(Analyse::ERROR_REQUIRED_FIELD_MISSING_DATA,
+                            "$lo_schema_column->name on row $li_row is missing.");
                         $this->_a_statistics['rows_with_errors'][] = $li_row;
                         $lb_valid_lexical = false;
 
@@ -305,7 +310,9 @@ class Analyse extends Base
                     $lb_valid_lexical = false;
 
                     // This data didn't match the specified format.
-                    $this->_setError(Analyse::ERROR_INVALID_FORMAT, "The data in column $lo_schema_column->name on row $li_row doesn't match the required format of $ls_format.");
+                    $this->_setError(Analyse::ERROR_INVALID_FORMAT,
+                        "The data in column $lo_schema_column->name on row $li_row doesn't
+                        match the required format of $ls_format.");
                     $this->_a_statistics['rows_with_errors'][] = $li_row;
 
                     // Return if execution should stop if invalid.
@@ -321,7 +328,9 @@ class Analyse extends Base
                     $lb_valid_lexical = false;
 
                     // This data didn't match the specified pattern.
-                    $this->_setError(Analyse::ERROR_INVALID_PATTERN, "The data in column $lo_schema_column->name on row $li_row doesn't match the required pattern of $ls_pattern.");
+                    $this->_setError(Analyse::ERROR_INVALID_PATTERN,
+                        "The data in column $lo_schema_column->name on row $li_row doesn't
+                        match the required pattern of $ls_pattern.");
                     $this->_a_statistics['rows_with_errors'][] = $li_row;
 
                     // Return if execution should stop if invalid.
@@ -358,7 +367,7 @@ class Analyse extends Base
             return true;
         }
 
-        return (false !== filter_var($lm_input, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $ps_pattern))));
+        return (false !== filter_var($lm_input, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => $ps_pattern]]));
     }
 
 
@@ -381,7 +390,7 @@ class Analyse extends Base
         $la_primary_key_fields = (array) self::$_o_schema_json->primaryKey;
 
         // Define the container for the primary keys for every row in the file.
-        $la_file_keys = array();
+        $la_file_keys = [];
 
         // Rewind the CSV file pointer to the first line of data.
         self::_rewindFilePointerToFirstData();
@@ -392,7 +401,7 @@ class Analyse extends Base
         // Read each row in the file.
         while ($la_csv_row = self::_loopThroughFileRows()) {
             // Define the container for the primary key parts for this row.
-            $la_row_key_parts = array();
+            $la_row_key_parts = [];
 
             // Loop through the primary key fields.
             foreach ($la_primary_key_fields as $ls_field_name) {
@@ -401,7 +410,8 @@ class Analyse extends Base
 
                 // Check that the field exists in the schema.
                 if (false === $this->_getSchemaKeyFromName($ls_field_name)) {
-                    throw new \Exception("The primary key &quot;$ls_field_name&quot; was not in the file. Primary key columns should be set as required.");
+                    throw new \Exception("The primary key &quot;$ls_field_name&quot; was not in the file.
+                    Primary key columns should be set as required.");
                 }
 
                 // Get the position of this field in the CSV file.
@@ -418,7 +428,9 @@ class Analyse extends Base
             if ($lm_existing_key = array_search($ls_row_hash, $la_file_keys)) {
                 // A duplicate primary key hash has been found.
                 $ls_primary_key_columns = implode(', ', $la_primary_key_fields);
-                $ls_error_message = "The data in columns &quot;$ls_primary_key_columns&quot; should be unique, but rows $lm_existing_key &amp; $li_row have the same values of &quot;$ls_row_hash&quot;";
+                $ls_error_message = "The data in columns &quot;$ls_primary_key_columns&quot; should be unique,
+                but rows $lm_existing_key &amp; $li_row have the same values of &quot;$ls_row_hash&quot;";
+
                 $this->_setError(Analyse::ERROR_DUPLICATE_PRIMARY_KEY, $ls_error_message);
                 $this->_a_statistics['rows_with_errors'][] = $li_row;
 
@@ -466,7 +478,9 @@ class Analyse extends Base
 
             // Only "postgresql" datapackages are currently supported.
             if ('postgresql' !== $ls_datapackage) {
-                throw new \Exception("Only postgresql foreign keys are currently supported. Please ensure that the datapackage attribute on all foreign keys is defined as &quot;database&quot; or is omitted.");
+                throw new \Exception("Only postgresql foreign keys are currently supported.
+                Please ensure that the datapackage attribute on all foreign keys is defined
+                as &quot;database&quot; or is omitted.");
             }
 
             // Instantiate the foreign key validator for this datapackage type.
@@ -477,14 +491,16 @@ class Analyse extends Base
             $la_reference_fields = (array) $lo_foreign_key->reference->fields;
             $la_csv_positions = array();
 
-            // Loop through the CSV fields listed in the foreign key and build up a list of CSV positions these relate to.
+            // Loop through the CSV fields listed in the foreign
+            // key and build up a list of CSV positions these relate to.
             foreach ($la_csv_fields as $ls_csv_field_name) {
                 // Ensure the field name is lowercase as all field names have been lowercased.
                 $ls_csv_field_name = strtolower($ls_csv_field_name);
 
                 // Check that the field exists in the schema.
                 if (false === $this->_getSchemaKeyFromName($ls_csv_field_name)) {
-                    throw new \Exception("The foreign key field &quot;$ls_csv_field_name&quot; was not defined in the schema.");
+                    throw new \Exception("The foreign key field &quot;$ls_csv_field_name&quot;
+                    was not defined in the schema.");
                 }
 
                 $li_csv_position = $this->_getCsvPositionFromName($ls_csv_field_name);
@@ -497,12 +513,15 @@ class Analyse extends Base
                         continue 2;
                     }
                     else {
-                        // This field is part of a multi field foreign key. Throw an error as this key cannot be validated.
-                        throw new \Exception("The foreign key field &quot;$ls_csv_field_name&quot; was not in the CSV file but is required as part of a multi field foreign key.");
+                        // This field is part of a multi field foreign key.
+                        // Throw an error as this key cannot be validated.
+                        throw new \Exception("The foreign key field &quot;$ls_csv_field_name&quot;
+                        was not in the CSV file but is required as part of a multi field foreign key.");
                     }
                 }
                 else {
-                    // Add the position of this foreign key related CSV field to the container so the data for it can be retrieved.
+                    // Add the position of this foreign key related CSV field to the container
+                    // so the data for it can be retrieved.
                     $la_csv_positions[] = $li_csv_position;
                 }
             }
@@ -524,12 +543,16 @@ class Analyse extends Base
                 $ls_csv_value_hash = implode(', ', $la_row_key_parts);
 
                 // Validate the foreign key.
-                if (!$lo_validator->validate($ls_csv_value_hash, $lo_foreign_key->reference->resource, $la_reference_fields)) {
+                if (!$lo_validator->validate($ls_csv_value_hash,
+                                             $lo_foreign_key->reference->resource,
+                                             $la_reference_fields)) {
                     $lb_valid_foreign_keys = false;
 
                     // This hash didn't match a foreign key.
                     $ls_csv_fields = implode(', ', $la_csv_fields);
-                    $ls_error_message = "The value(s) of &quot;$ls_csv_value_hash&quot; in column(s) $ls_csv_fields on row $li_row doesn't match a foreign key.";
+                    $ls_error_message = "The value(s) of &quot;$ls_csv_value_hash&quot; in column(s) $ls_csv_fields
+                    on row $li_row doesn't match a foreign key.";
+
                     $this->_setError(Analyse::ERROR_INVALID_FOREIGN_KEY, $ls_error_message);
                     $this->_a_statistics['rows_with_errors'][] = $li_row;
 
@@ -561,7 +584,11 @@ class Analyse extends Base
      */
     private function _isColumnMandatory($po_schema_column)
     {
-        return (property_exists($po_schema_column, 'constraints') && property_exists($po_schema_column->constraints, 'required') && (true === $po_schema_column->constraints->required));
+        return (
+            property_exists($po_schema_column, 'constraints') &&
+            property_exists($po_schema_column->constraints, 'required') &&
+            (true === $po_schema_column->constraints->required)
+        );
     }
 
 
@@ -576,7 +603,10 @@ class Analyse extends Base
      */
     private function _getColumnPattern($po_schema_column)
     {
-        return (property_exists($po_schema_column, 'constraints') && property_exists($po_schema_column->constraints, 'pattern')) ? $po_schema_column->constraints->pattern : null;
+        return (
+            property_exists($po_schema_column, 'constraints') &&
+            property_exists($po_schema_column->constraints, 'pattern'))
+            ? $po_schema_column->constraints->pattern : null;
     }
 
 
@@ -592,7 +622,9 @@ class Analyse extends Base
     private function _getForeignKeyPackage($po_foreign_key)
     {
         // Return the datapackage attribute if it's spefied or default it to "postgresql".
-        return (property_exists($po_foreign_key->reference, 'datapackage')) ? $po_foreign_key->reference->datapackage : 'postgresql';
+        return (
+            property_exists($po_foreign_key->reference, 'datapackage'))
+            ? $po_foreign_key->reference->datapackage : 'postgresql';
     }
 
 
@@ -610,7 +642,8 @@ class Analyse extends Base
      */
     private function _instantiateValidator($ps_validation_type, $ps_type)
     {
-        // For format validation, "Date", "datetime" and "time" all follow the same schema definition rules so just use the datetime format for them all.
+        // For format validation, "Date", "datetime" and "time" all follow the same schema definition rules
+        // so just use the datetime format for them all.
         if (Analyse::VALIDATION_TYPE_FORMAT === $ps_validation_type && ('date' === $ps_type || 'time' === $ps_type)) {
             $ps_type = 'datetime';
         }
