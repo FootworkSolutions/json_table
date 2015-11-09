@@ -63,7 +63,7 @@ class PostgresqlStore extends AbstractStore
         $ls_column_list .= ', csv_row';
 
         // Set the metadata for the CSV columns.
-        $this->_set_columns_metadata();
+        $this->_setColumnsMetadata();
 
         // Define the parameter list for the statement.
         $ls_insert_parameters = implode(', ', array_fill(0, count(\JsonTable\Base::$_a_header_columns), '?'));
@@ -93,12 +93,12 @@ class PostgresqlStore extends AbstractStore
                 // Do any data manipulation required on this column.
                 // If the type is date and there is a format, convert this to an ISO date.
                 if ('date' === $la_column_metadata['type'] && 'default' !== $la_column_metadata['format']) {
-                    $lm_field_value = self::iso_date_from_format($la_column_metadata['format'], $lm_field_value);
+                    $lm_field_value = self::isoDateFromFormat($la_column_metadata['format'], $lm_field_value);
                 }
 
                 // If the type is boolean ensure that the value is boolean as the validation will pass for "1/0", "on/off" and "yes/no"
                 if ('boolean' === $la_column_metadata['type']) {
-                    $lm_field_value = self::boolean_from_filter_booleans($lm_field_value);
+                    $lm_field_value = self::booleanFromFilterBooleans($lm_field_value);
                 }
 
                 // Convert empty strings or special "\N" identifiers to null.
@@ -139,7 +139,7 @@ class PostgresqlStore extends AbstractStore
      *
      * @return boolean true on success
      */
-    private function _set_columns_metadata()
+    private function _setColumnsMetadata()
     {
         // Get the data type for each of the columns being inserted into.
         foreach (\JsonTable\Base::$_a_header_columns as $li_csv_field_position => $ls_csv_column_name) {

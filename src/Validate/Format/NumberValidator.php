@@ -15,7 +15,7 @@ class NumberValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_default()
+    protected function _formatDefault()
     {
         return (false !== filter_var($this->_m_input, FILTER_VALIDATE_FLOAT));
     }
@@ -28,7 +28,7 @@ class NumberValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_currency()
+    protected function _formatCurrency()
     {
         // Remove any non-digits from the input.
         //TODO: Validate that any non-digits are valid currency characters.

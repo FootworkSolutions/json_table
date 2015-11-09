@@ -15,7 +15,7 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_default()
+    protected function _formatDefault()
     {
         return is_string($this->_m_input);
     }
@@ -28,7 +28,7 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_email()
+    protected function _formatEmail()
     {
         return (false !== filter_var($this->_m_input, FILTER_VALIDATE_EMAIL));
     }
@@ -44,7 +44,7 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_uri()
+    protected function _formatUri()
     {
         // Parse the URI to check if there is a schema.
         if ($la_uri_parts = parse_url($this->_m_input)) {
@@ -66,7 +66,7 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_binary()
+    protected function _formatBinary()
     {
         return is_string($this->_m_input);
     }

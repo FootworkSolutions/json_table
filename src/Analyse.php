@@ -298,10 +298,10 @@ class Analyse extends Base
                 $lo_validator = $this->_instantiateValidator(Analyse::VALIDATION_TYPE_FORMAT, $ls_type);
 
                 // Pass the data to validate to the validator.
-                $lo_validator->set_input($la_csv_row[$li_column_number]);
+                $lo_validator->setInput($la_csv_row[$li_column_number]);
 
                 // Check that the data matches the specified format.
-                if (!$lo_validator->validate_format($ls_format)) {
+                if (!$lo_validator->validateFormat($ls_format)) {
                     $lb_valid_lexical = false;
 
                     // This data didn't match the specified format.

@@ -15,7 +15,7 @@ class IntegerValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_default()
+    protected function _formatDefault()
     {
         return (false !== filter_var($this->_m_input, FILTER_VALIDATE_INT));
     }
