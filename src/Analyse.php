@@ -329,7 +329,7 @@ class Analyse extends Base
 
                     // This data didn't match the specified pattern.
                     $ls_error_message = "The data in column $lo_schema_column->name on row $li_row doesn't ";
-                    $ls_error_message .= "match the required pattern of $ls_pattern."
+                    $ls_error_message .= "match the required pattern of $ls_pattern.";
                     $this->_setError(Analyse::ERROR_INVALID_PATTERN, $ls_error_message);
                     $this->_a_statistics['rows_with_errors'][] = $li_row;
 
