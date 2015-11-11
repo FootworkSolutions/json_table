@@ -268,8 +268,8 @@ class Analyse extends Base
             $li_header_column_count = count(self::$_a_header_columns);
 
             if ($li_header_column_count !== $li_column_count) {
-                $this->_setError(Analyse::ERROR_INCORRECT_COLUMN_COUNT,
-                    "Row $li_row has $li_column_count columns but should have $li_header_column_count.");
+                $ls_error_message = "Row $li_row has $li_column_count columns but should have $li_header_column_count.";
+                $this->_setError(Analyse::ERROR_INCORRECT_COLUMN_COUNT, $ls_error_message);
                 $this->_a_statistics['rows_with_errors'][] = $li_row;
             }
 
@@ -283,8 +283,8 @@ class Analyse extends Base
                     // Check if the field has any data in it.
                     if ('' === $la_csv_row[$li_column_number]) {
                         // This is a mandatory column without any data in it, so set an error.
-                        $this->_setError(Analyse::ERROR_REQUIRED_FIELD_MISSING_DATA,
-                            "$lo_schema_column->name on row $li_row is missing.");
+                        $ls_error_message = "$lo_schema_column->name on row $li_row is missing.";
+                        $this->_setError(Analyse::ERROR_REQUIRED_FIELD_MISSING_DATA, $ls_error_message);
                         $this->_a_statistics['rows_with_errors'][] = $li_row;
                         $lb_valid_lexical = false;
 
@@ -310,9 +310,9 @@ class Analyse extends Base
                     $lb_valid_lexical = false;
 
                     // This data didn't match the specified format.
-                    $this->_setError(Analyse::ERROR_INVALID_FORMAT,
-                        "The data in column $lo_schema_column->name on row $li_row doesn't
-                        match the required format of $ls_format.");
+                    $ls_error_message = "The data in column $lo_schema_column->name on row $li_row doesn't ";
+                    $ls_error_message .= "match the required format of $ls_format.";
+                    $this->_setError(Analyse::ERROR_INVALID_FORMAT, $ls_error_message);
                     $this->_a_statistics['rows_with_errors'][] = $li_row;
 
                     // Return if execution should stop if invalid.
@@ -328,9 +328,9 @@ class Analyse extends Base
                     $lb_valid_lexical = false;
 
                     // This data didn't match the specified pattern.
-                    $this->_setError(Analyse::ERROR_INVALID_PATTERN,
-                        "The data in column $lo_schema_column->name on row $li_row doesn't
-                        match the required pattern of $ls_pattern.");
+                    $ls_error_message = "The data in column $lo_schema_column->name on row $li_row doesn't ";
+                    $ls_error_message .= "match the required pattern of $ls_pattern."
+                    $this->_setError(Analyse::ERROR_INVALID_PATTERN, $ls_error_message);
                     $this->_a_statistics['rows_with_errors'][] = $li_row;
 
                     // Return if execution should stop if invalid.
@@ -543,9 +543,11 @@ class Analyse extends Base
                 $ls_csv_value_hash = implode(', ', $la_row_key_parts);
 
                 // Validate the foreign key.
-                if (!$lo_validator->validate($ls_csv_value_hash,
-                                             $lo_foreign_key->reference->resource,
-                                             $la_reference_fields)) {
+                if (!$lo_validator->validate(
+                    $ls_csv_value_hash,
+                    $lo_foreign_key->reference->resource,
+                    $la_reference_fields
+                )) {
                     $lb_valid_foreign_keys = false;
 
                     // This hash didn't match a foreign key.
@@ -584,11 +586,10 @@ class Analyse extends Base
      */
     private function _isColumnMandatory($po_schema_column)
     {
-        return (
-            property_exists($po_schema_column, 'constraints') &&
-            property_exists($po_schema_column->constraints, 'required') &&
-            (true === $po_schema_column->constraints->required)
-        );
+        $lb_property_exists = property_exists($po_schema_column, 'constraints') &&
+                              property_exists($po_schema_column->constraints, 'required') &&
+                              (true === $po_schema_column->constraints->required);
+        return $lb_property_exists;
     }
 
 
@@ -603,10 +604,9 @@ class Analyse extends Base
      */
     private function _getColumnPattern($po_schema_column)
     {
-        return (
-            property_exists($po_schema_column, 'constraints') &&
-            property_exists($po_schema_column->constraints, 'pattern'))
-            ? $po_schema_column->constraints->pattern : null;
+        $lb_property_exists = property_exists($po_schema_column, 'constraints') &&
+                              property_exists($po_schema_column->constraints, 'pattern'));
+        return $lb_property_exists ? $po_schema_column->constraints->pattern : null;
     }
 
 
@@ -621,10 +621,9 @@ class Analyse extends Base
      */
     private function _getForeignKeyPackage($po_foreign_key)
     {
-        // Return the datapackage attribute if it's spefied or default it to "postgresql".
-        return (
-            property_exists($po_foreign_key->reference, 'datapackage'))
-            ? $po_foreign_key->reference->datapackage : 'postgresql';
+        // Return the datapackage attribute if it's specified or default it to "postgresql".
+        $lb_property_exists = property_exists($po_foreign_key->reference, 'datapackage'));
+        return $lb_property_exists ? $po_foreign_key->reference->datapackage : 'postgresql';
     }
 
 
@@ -652,12 +651,11 @@ class Analyse extends Base
         $ps_type_class_name = ucwords($ps_type) . 'Validator';
         $ls_validator_file = dirname(__FILE__) . "/Validate/$ps_validation_type/$ps_type_class_name.php";
 
-        if (file_exists($ls_validator_file) && is_readable($ls_validator_file)) {
-            include_once $ls_validator_file;
-        }
-        else {
+        if (!file_exists($ls_validator_file) || is_readable($ls_validator_file)) {
             throw new \Exception("Could not load the validator file for $ps_validation_type $ps_type.");
         }
+
+        include_once $ls_validator_file;
 
         // Check that the class exists.
         $ls_validator_class = "\\JsonTable\\Validate\\$ps_validation_type\\$ps_type_class_name";
