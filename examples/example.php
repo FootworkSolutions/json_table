@@ -30,72 +30,72 @@ $ls_pdo_connection = 'pgsql:host=localhost;port=5432;dbname=test;user=postgres;p
 $ls_store_table_name = 'json_table_stored_data_test'; // The name of the table to store the data in.
 
 try {
-	// The validator expects a string for the JSON schema, this allows
-	// you to load this from anywhere you like. e.g. a database table,
-	// a file etc. In this example we're loading it from a file.
-	$ls_schema_json = file_get_contents($ls_json_schema_file_path);
+    // The validator expects a string for the JSON schema, this allows
+    // you to load this from anywhere you like. e.g. a database table,
+    // a file etc. In this example we're loading it from a file.
+    $ls_schema_json = file_get_contents($ls_json_schema_file_path);
 
-	// Connect to your database.
-	$lo_pdo = new PDO($ls_pdo_connection);
+    // Connect to your database.
+    $lo_pdo = new PDO($ls_pdo_connection);
 
-	// Instantiate the analysis class.
-	$lo_analyser = new Analyse();
+    // Instantiate the analysis class.
+    $lo_analyser = new Analyse();
 
-	// Let the analyser know where the JSON table schema is.
-	$lo_analyser->setSchema($ls_schema_json);
+    // Let the analyser know where the JSON table schema is.
+    $lo_analyser->setSchema($ls_schema_json);
 
-	// Let the analyser know where the CSV file to validate is.
-	$lo_analyser->setFile($ls_file_path);
+    // Let the analyser know where the CSV file to validate is.
+    $lo_analyser->setFile($ls_file_path);
 
-	// Let the analyser know how to communicate with your database.
-	// This is used to check foreign keys and store data.
-	$lo_analyser->setPdoConnection($lo_pdo);
+    // Let the analyser know how to communicate with your database.
+    // This is used to check foreign keys and store data.
+    $lo_analyser->setPdoConnection($lo_pdo);
 
-	// Check whether the file is valid against the schema.
-	$lb_file_is_valid = $lo_analyser->analyse();
+    // Check whether the file is valid against the schema.
+    $lb_file_is_valid = $lo_analyser->analyse();
 
-	// Get errors and statistics about the analysis.
-	$la_validation_errors = $lo_analyser->getErrors();
-	$la_statistics = $lo_analyser->getStatistics();
+    // Get errors and statistics about the analysis.
+    $la_validation_errors = $lo_analyser->getErrors();
+    $la_statistics = $lo_analyser->getStatistics();
 
-	// Collect together all the information about this validation.
-	$la_return_data = [
-		'valid' => $lb_file_is_valid,
-		'errors' => $la_validation_errors,
-		'statistics' => $la_statistics
-	];
+    // Collect together all the information about this validation.
+    $la_return_data = [
+        'valid' => $lb_file_is_valid,
+        'errors' => $la_validation_errors,
+        'statistics' => $la_statistics
+    ];
 
-	// If the file is valid, save the data in a PostgreSQL database.
-	if ($lb_file_is_valid) {
-		// Instantiate the store class.
-		$lo_store = Store::load('postgresql');
+    // If the file is valid, save the data in a PostgreSQL database.
+    if ($lb_file_is_valid) {
+        // Instantiate the store class.
+        $lo_store = Store::load('postgresql');
 
-		if (!$lo_store->store($ls_store_table_name)) {
-			throw new \Exception ('Could not save the file to the PostgreSQL database.');
-		}
+        if (!$lo_store->store($ls_store_table_name)) {
+            throw new \Exception('Could not save the file to the PostgreSQL database.');
+        }
 
-		// Get the primary key of the records that were inserted.
-		$la_inserted_records = $lo_store->inserted_records();
+        // Get the primary key of the records that were inserted.
+        $la_inserted_records = $lo_store->insertedRecords();
 
-		// Add the store operation data to the validation information so there is
-		// a complete picture of everything that has happened.
-		$la_return_data['inserted_records'] = $la_inserted_records;
-	}
+        // Add the store operation data to the validation information so there is
+        // a complete picture of everything that has happened.
+        $la_return_data['inserted_records'] = $la_inserted_records;
+    }
 
-	// You will probably want to do something else with this information,
-	// like return it to a calling function or as JSON from an API request.
-	$ls_html_output = print_r($la_return_data, true);
+    // You will probably want to do something else with this information,
+    // like return it to a calling function or as JSON from an API request.
+    $ls_html_output = print_r($la_return_data, true);
 } catch (\Exception $e) {
-	// All JSON Table exceptions are considered to be end user friendly.
-	// So if you are allowing users to upload their own files you should be
-	// safe to let them see these messages.
-	$ls_html_output = print_r($e->getMessage(), true);
+    // All JSON Table exceptions are considered to be end user friendly.
+    // So if you are allowing users to upload their own files you should be
+    // safe to let them see these messages.
+    $ls_html_output = print_r($e->getMessage(), true);
 }
 ?>
 <html>
 <head>
 </head>
 <body>
-	<pre><?php echo $ls_html_output; ?></pre>
+    <pre><?php echo $ls_html_output; ?></pre>
 </body>
 </html>

@@ -16,7 +16,7 @@ class AnyValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_default()
+    protected function _formatDefault()
     {
         return true;
     }

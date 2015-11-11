@@ -24,7 +24,7 @@ abstract class AbstractStore extends \JsonTable\Base
      *
      * @return array The primary keys.
      */
-    public function inserted_records()
+    public function insertedRecords()
     {
         return $this->_a_inserted_ids;
     }
@@ -38,7 +38,7 @@ abstract class AbstractStore extends \JsonTable\Base
      *
      * @return string The formatted date.
      */
-    public static function iso_date_from_format($ps_format, $ps_date)
+    public static function isoDateFromFormat($ps_format, $ps_date)
     {
         if (!$lo_date = \DateTime::createFromFormat($ps_format, $ps_date)) {
             throw new \Exception("Could not reformat date $ps_date from format $ps_format");
@@ -56,7 +56,7 @@ abstract class AbstractStore extends \JsonTable\Base
      *
      * @return boolean or null The converted value.
      */
-    public static function boolean_from_filter_booleans($pm_value)
+    public static function booleanFromFilterBooleans($pm_value)
     {
         // Convert strings to lowercase as checking should be case insensitive.
         if (is_string($pm_value)) {

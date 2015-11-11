@@ -43,7 +43,7 @@ abstract class AbstractFormatValidator
      *
      * @return void
      */
-    public function set_input($pm_input)
+    public function setInput($pm_input)
     {
         $this->_m_input = $pm_input;
     }
@@ -58,7 +58,7 @@ abstract class AbstractFormatValidator
      *
      * @return boolean Is the data valid.
      */
-    public function validate_format($ps_format)
+    public function validateFormat($ps_format)
     {
         // Default the return flag.
         $lb_valid = true;
@@ -69,22 +69,20 @@ abstract class AbstractFormatValidator
         }
 
         // Define the name of the method to check this format.
+        $ls_format_method_name = '_format' . ucwords($ps_format);
+        $ls_format_parameter = null;
+
         if ('datetime' === $this->_s_type && 'default' !== $ps_format) {
-            $ls_format_method_name = "_format_date";
+            $ls_format_method_name = "_formatDate";
             $ls_format_parameter = $ps_format;
-        }
-        else {
-            $ls_format_method_name = "_format_$ps_format";
-            $ls_format_parameter = null;
         }
 
         // Check the method exists and then call it.
-        if (method_exists($this, $ls_format_method_name)) {
-            $lb_valid = $this->$ls_format_method_name($ls_format_parameter);
-        }
-        else {
+        if (!method_exists($this, $ls_format_method_name)) {
             throw new \Exception("Could not find a method to validate the $ps_format format.");
         }
+
+        $lb_valid = $this->$ls_format_method_name($ls_format_parameter);
 
         return $lb_valid;
     }

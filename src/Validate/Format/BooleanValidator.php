@@ -21,7 +21,7 @@ class BooleanValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_default()
+    protected function _formatDefault()
     {
         $lm_value = (is_string($this->_m_input)) ? strtolower($this->_m_input) : $this->_m_input;
 

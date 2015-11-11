@@ -16,7 +16,7 @@ class NullValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_default()
+    protected function _formatDefault()
     {
         return ('' === $this->_m_input || '\N' === $this->_m_input);
     }

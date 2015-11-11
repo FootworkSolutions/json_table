@@ -15,20 +15,20 @@ class DatetimeValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_default()
+    protected function _formatDefault()
     {
         // Check if this is an ISO8601 datetime format (in the UTC timezone).
         if (true == preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/', $this->_m_input)) {
             // Check that PHP can build a date object from the input.
             return (false !== \DateTime::createFromFormat(DATE_ISO8601, $this->_m_input));
         }
-        elseif ($this->_format_date('Y-m-d H:i:s')) {
+        elseif ($this->_formatDate('Y-m-d H:i:s')) {
             return true;
         }
-        elseif ($this->_format_date('Y-m-d')) {
+        elseif ($this->_formatDate('Y-m-d')) {
             return true;
         }
-        elseif ($this->_format_date('H:i:s')) {
+        elseif ($this->_formatDate('H:i:s')) {
             return true;
         }
 
@@ -46,7 +46,7 @@ class DatetimeValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _format_date($ps_format)
+    protected function _formatDate($ps_format)
     {
         $lo_date = \DateTime::createFromFormat($ps_format, $this->_m_input);
 
