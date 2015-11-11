@@ -651,7 +651,7 @@ class Analyse extends Base
         $ps_type_class_name = ucwords($ps_type) . 'Validator';
         $ls_validator_file = dirname(__FILE__) . "/Validate/$ps_validation_type/$ps_type_class_name.php";
 
-        if (!file_exists($ls_validator_file) || is_readable($ls_validator_file)) {
+        if (!file_exists($ls_validator_file) || !is_readable($ls_validator_file)) {
             throw new \Exception("Could not load the validator file for $ps_validation_type $ps_type.");
         }
 
