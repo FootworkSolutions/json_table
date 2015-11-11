@@ -605,7 +605,7 @@ class Analyse extends Base
     private function _getColumnPattern($po_schema_column)
     {
         $lb_property_exists = property_exists($po_schema_column, 'constraints') &&
-                              property_exists($po_schema_column->constraints, 'pattern'));
+                              property_exists($po_schema_column->constraints, 'pattern');
         return $lb_property_exists ? $po_schema_column->constraints->pattern : null;
     }
 
@@ -622,7 +622,7 @@ class Analyse extends Base
     private function _getForeignKeyPackage($po_foreign_key)
     {
         // Return the datapackage attribute if it's specified or default it to "postgresql".
-        $lb_property_exists = property_exists($po_foreign_key->reference, 'datapackage'));
+        $lb_property_exists = property_exists($po_foreign_key->reference, 'datapackage');
         return $lb_property_exists ? $po_foreign_key->reference->datapackage : 'postgresql';
     }
 
