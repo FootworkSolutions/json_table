@@ -37,11 +37,11 @@ class PostgresqlValidator implements \JsonTable\Validate\InterfaceForeignKeyVali
 
         if (false === $la_results) {
             // The query failed.
-            throw new \Exception("Could not validate the foreign key for $ps_reference_resource fields $ls_reference_fields with hash of $ps_row_hash.");
+            throw new \Exception("Could not validate the foreign key for $ps_reference_resource
+                fields $ls_reference_fields with hash of $ps_row_hash.");
         }
-        else {
-            // Return whether any matching rows were found.
-            return (0 !== $la_results[0]['count']);
-        }
+
+        // Return whether any matching rows were found.
+        return (0 !== $la_results[0]['count']);
     }
 }

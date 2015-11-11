@@ -24,10 +24,17 @@ PhpConsole\Helper::register();
  * These are the three things that need to be configured for this
  * example to work.
  */
-$ls_file_path = 'example.csv'; // Where the file to validate is located.
-$ls_json_schema_file_path = 'example.json'; // Where the JSON schema is located.
-$ls_pdo_connection = 'pgsql:host=localhost;port=5432;dbname=test;user=postgres;password=mypass'; // The database connection information.
-$ls_store_table_name = 'json_table_stored_data_test'; // The name of the table to store the data in.
+// Where the file to validate is located.
+$ls_file_path = 'example.csv';
+
+// Where the JSON schema is located.
+$ls_json_schema_file_path = 'example.json';
+
+// The database connection information.
+$ls_pdo_connection = 'pgsql:host=localhost;port=5432;dbname=test;user=postgres;password=mypass';
+
+// The name of the table to store the data in.
+$ls_store_table_name = 'json_table_stored_data_test';
 
 try {
     // The validator expects a string for the JSON schema, this allows

@@ -47,7 +47,8 @@ class PostgresqlStore extends AbstractStore
      *
      * @param string $ps_table_name  The name of the table to save the data in. With optional schema prefix.
      * @param string $ps_primary_key The name of the primary key on the table. [optional] The default is "id".
-     *                               The primary key does not need to be listed in the CSV if it has a serial associated with it.
+     *                               The primary key does not need to be listed in the CSV if it has
+     *                               a serial associated with it.
      *
      * @return boolean true on success false on failure.
      */
@@ -59,7 +60,8 @@ class PostgresqlStore extends AbstractStore
         // Get a list of columns being inserted into from the CSV header row.
         $ls_column_list = implode(', ', \JsonTable\Base::$_a_header_columns);
 
-        // Add the csv_row field to the column list. This field stores the CSV row number to help make error messages more useful.
+        // Add the csv_row field to the column list.
+        //This field stores the CSV row number to help make error messages more useful.
         $ls_column_list .= ', csv_row';
 
         // Set the metadata for the CSV columns.
@@ -80,7 +82,14 @@ class PostgresqlStore extends AbstractStore
         // Read each row in the file.
         while ($la_csv_row = \JsonTable\Base::_loopThroughFileRows()) {
             // Set up the SQL statement for the insert.
-            $ls_insert_sql = "INSERT INTO $ps_table_name ($ls_column_list) VALUES ($ls_insert_parameters) RETURNING $ps_primary_key AS key";
+            $ls_insert_sql = "INSERT INTO $ps_table_name (
+                                  $ls_column_list
+                              )
+                              VALUES (
+                                  $ls_insert_parameters
+                              )
+                              RETURNING
+                                $ps_primary_key AS key";
             $lo_statement = self::$_o_pdo_connection->prepare($ls_insert_sql);
 
             // Loop through each column in the CSV row.
@@ -96,7 +105,8 @@ class PostgresqlStore extends AbstractStore
                     $lm_field_value = self::isoDateFromFormat($la_column_metadata['format'], $lm_field_value);
                 }
 
-                // If the type is boolean ensure that the value is boolean as the validation will pass for "1/0", "on/off" and "yes/no"
+                // If the type is boolean ensure that the value is boolean
+                // as the validation will pass for "1/0", "on/off" and "yes/no".
                 if ('boolean' === $la_column_metadata['type']) {
                     $lm_field_value = self::booleanFromFilterBooleans($lm_field_value);
                 }
@@ -118,12 +128,11 @@ class PostgresqlStore extends AbstractStore
 
             if (false === $la_result) {
                 // The query failed.
-                throw new \Exception ("Could not insert row $li_row into the database.");
+                throw new \Exception("Could not insert row $li_row into the database.");
             }
-            else {
-                // Add this insert's primary key to the list of inserted columns.
-                $this->_a_inserted_ids[] = $lo_statement->fetch(\PDO::FETCH_ASSOC);
-            }
+
+            // Add this insert's primary key to the list of inserted columns.
+            $this->_a_inserted_ids[] = $lo_statement->fetch(\PDO::FETCH_ASSOC);
 
             $li_row++;
         }

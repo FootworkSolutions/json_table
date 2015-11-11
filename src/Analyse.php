@@ -166,12 +166,11 @@ class Analyse extends Base
         $this->_a_statistics['rows_with_errors'] = array_unique($this->_a_statistics['rows_with_errors']);
 
         // Calculate the % of rows with errors.
+        $this->_a_statistics['percent_rows_with_errors'] = 0;
+
         if ($this->_a_statistics['rows_analysed'] > 0) {
             $this->_a_statistics['percent_rows_with_errors'] =
                 (count($this->_a_statistics['rows_with_errors']) / $this->_a_statistics['rows_analysed']) * 100;
-        }
-        else {
-            $this->_a_statistics['percent_rows_with_errors'] = 0;
         }
 
         return $this->_a_statistics;
@@ -508,22 +507,20 @@ class Analyse extends Base
                 // Get the position of this field in the CSV file.
                 if (false === $li_csv_position) {
                     // The field isn't in the CSV.
-                    if (1 === count($la_csv_fields)) {
-                        // This is the only field in the foreign key so skip the validation of this foreign key.
-                        continue 2;
-                    }
-                    else {
+                    if (1 !== count($la_csv_fields)) {
                         // This field is part of a multi field foreign key.
                         // Throw an error as this key cannot be validated.
                         throw new \Exception("The foreign key field &quot;$ls_csv_field_name&quot;
                         was not in the CSV file but is required as part of a multi field foreign key.");
                     }
+
+                    // This is the only field in the foreign key so skip the validation of this foreign key.
+                    continue 2;
                 }
-                else {
-                    // Add the position of this foreign key related CSV field to the container
-                    // so the data for it can be retrieved.
-                    $la_csv_positions[] = $li_csv_position;
-                }
+
+                // Add the position of this foreign key related CSV field to the container
+                // so the data for it can be retrieved.
+                $la_csv_positions[] = $li_csv_position;
             }
 
             // Set the row flag.
