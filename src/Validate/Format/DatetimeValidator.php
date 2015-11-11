@@ -21,14 +21,11 @@ class DatetimeValidator extends \JsonTable\Validate\AbstractFormatValidator
         if (true == preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/', $this->_m_input)) {
             // Check that PHP can build a date object from the input.
             return (false !== \DateTime::createFromFormat(DATE_ISO8601, $this->_m_input));
-        }
-        elseif ($this->_formatDate('Y-m-d H:i:s')) {
+        } elseif ($this->_formatDate('Y-m-d H:i:s')) {
             return true;
-        }
-        elseif ($this->_formatDate('Y-m-d')) {
+        } elseif ($this->_formatDate('Y-m-d')) {
             return true;
-        }
-        elseif ($this->_formatDate('H:i:s')) {
+        } elseif ($this->_formatDate('H:i:s')) {
             return true;
         }
 

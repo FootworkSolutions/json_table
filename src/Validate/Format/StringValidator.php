@@ -36,9 +36,11 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
 
     /**
      * Validate that the input is a valid URI.
-     * Although the specification for a URI states that it must have a scheme i.e. "http://" @see http://www.faqs.org/rfcs/rfc2396.html
+     * Although the specification for a URI states
+     * that it must have a scheme i.e. "http://" @see http://www.faqs.org/rfcs/rfc2396.html
      *
-     * This validator allows the input to miss this off so an input of "www.example.com" will be passed as valid.
+     * This validator allows the input to miss this off so an input
+     * of "www.example.com" will be passed as valid.
      *
      * @access protected
      *
