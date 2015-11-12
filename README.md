@@ -1,7 +1,10 @@
-# JSON Table [ ![Codeship Status for FootworkSolutions/json_table](https://codeship.com/projects/14e1d660-4e3f-0133-7e74-5a2039af3b63/status?branch=master)](https://codeship.com/projects/106819) [![Code Climate](https://codeclimate.com/github/FootworkSolutions/json_table/badges/gpa.svg)](https://codeclimate.com/github/FootworkSolutions/json_table) [![Dependency Status](https://www.versioneye.com/user/projects/5644681d22c568002900005d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5644681d22c568002900005d)
+# JSON Table
+[ ![Codeship Status for FootworkSolutions/json_table](https://codeship.com/projects/14e1d660-4e3f-0133-7e74-5a2039af3b63/status?branch=master)](https://codeship.com/projects/106819) [![Code Climate](https://codeclimate.com/github/FootworkSolutions/json_table/badges/gpa.svg)](https://codeclimate.com/github/FootworkSolutions/json_table) [![Dependency Status](https://www.versioneye.com/user/projects/5644681d22c568002900005d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5644681d22c568002900005d)
+
 A validator and storage library using the [JSON table schema](http://dataprotocols.org/json-table-schema/) written in PHP.
 
 This is a great utility library for validating that CSV files, streams or any other data source validates against a predefined JSON table schema definition.
+
 
 #### Limitations
 Although this library has many great features, it does not (yet) adhere to the entire JSON table schema specification.
@@ -21,7 +24,6 @@ Currently the parts of the specification that are **NOT** supported are:
 		* "datapackage" MUST be "postgresql".
 		* "resource" MUST be the name of the table to use with optional schema qualifier. I.E. "import.t_table_name".
 		* "fields" follow the JSON table schema specification but refer to the fields in the database table.
-
 
 # Motivation
 This library was written to fulfill a need for [Halo](http://www.halosystem.co.uk) a commercial client management system  maintained by [Footwork Solutions Ltd](https://github.com/FootworkSolutions).
