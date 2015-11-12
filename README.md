@@ -1,5 +1,5 @@
 # JSON Table
-[ ![Codeship Status for FootworkSolutions/json_table](https://codeship.com/projects/14e1d660-4e3f-0133-7e74-5a2039af3b63/status?branch=master)](https://codeship.com/projects/106819) [![Code Climate](https://codeclimate.com/github/FootworkSolutions/json_table/badges/gpa.svg)](https://codeclimate.com/github/FootworkSolutions/json_table) [![Dependency Status](https://www.versioneye.com/user/projects/5644681d22c568002900005d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5644681d22c568002900005d)
+[ ![Codeship Status for FootworkSolutions/json_table](https://codeship.com/projects/14e1d660-4e3f-0133-7e74-5a2039af3b63/status?branch=master)](https://codeship.com/projects/106819) [![Code Climate](https://codeclimate.com/github/FootworkSolutions/json_table/badges/gpa.svg)](https://codeclimate.com/github/FootworkSolutions/json_table) [![Test Coverage](https://codeclimate.com/github/FootworkSolutions/json_table/badges/coverage.svg)](https://codeclimate.com/github/FootworkSolutions/json_table/coverage) [![Dependency Status](https://www.versioneye.com/user/projects/5644681d22c568002900005d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5644681d22c568002900005d)
 
 A validator and storage library using the [JSON table schema](http://dataprotocols.org/json-table-schema/) written in PHP.
 
