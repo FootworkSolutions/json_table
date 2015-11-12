@@ -22,6 +22,7 @@ Currently the parts of the specification that are **NOT** supported are:
 		* "resource" MUST be the name of the table to use with optional schema qualifier. I.E. "import.t_table_name".
 		* "fields" follow the JSON table schema specification but refer to the fields in the database table.
 
+
 # Motivation
 This library was written to fulfill a need for [Halo](http://www.halosystem.co.uk) a commercial client management system  maintained by [Footwork Solutions Ltd](https://github.com/FootworkSolutions).
 
