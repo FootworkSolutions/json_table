@@ -3,3 +3,4 @@ tags
 .tag_swap
 /vendor
 composer.lock
+.idea
