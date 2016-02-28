@@ -1,12 +1,14 @@
 <?php
 namespace JsonTable\Validate\Format;
 
+use \JsonTable\Validate\AbstractFormatValidator;
+
 /**
  * Lexical boolean validator.
  *
  * @package JSON table
  */
-class BooleanValidator extends \JsonTable\Validate\AbstractFormatValidator
+class BooleanValidator extends AbstractFormatValidator
 {
     /**
      * Validate that the input is a valid boolean.
@@ -21,9 +23,9 @@ class BooleanValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatDefault()
+    protected function formatDefault()
     {
-        $lm_value = (is_string($this->_m_input)) ? strtolower($this->_m_input) : $this->_m_input;
+        $lm_value = (is_string($this->input)) ? strtolower($this->input) : $this->input;
 
         return (null !== filter_var($lm_value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
     }

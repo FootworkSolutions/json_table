@@ -12,7 +12,7 @@ abstract class Base
      *
      * @var string Schema JSON
      */
-    protected static $_o_schema_json;
+    protected static $schema_json;
 
     /**
      * @access protected
@@ -20,7 +20,7 @@ abstract class Base
      *
      * @var string The path and name of the file to analyse.
      */
-    protected static $_s_file_name;
+    protected static $file_name;
 
     /**
      * @access protected
@@ -30,7 +30,7 @@ abstract class Base
      *                This is used to validate that each row has the correct number of columns
      *                and to get the column name from it's position.
      */
-    protected static $_a_header_columns;
+    protected static $header_columns;
 
     /**
      * @access protected
@@ -38,14 +38,14 @@ abstract class Base
      *
      * @var object The SplFileObject of the CSV file.
      */
-    protected static $_o_file;
+    protected static $file;
 
     /**
      * @access protected
      *
      * @var object The PDO object.
      */
-    public static $_o_pdo_connection;
+    public static $pdo_connection;
 
 
     /**
@@ -76,7 +76,7 @@ abstract class Base
         }
         unset($lo_field);
 
-        self::$_o_schema_json = $pm_schema_json;
+        self::$schema_json = $pm_schema_json;
     }
 
 
@@ -96,7 +96,7 @@ abstract class Base
         // Check that the file exists.
         if (file_exists($ps_file_name)) {
             // Set the file to analyse.
-            self::$_s_file_name = (string) $ps_file_name;
+            self::$file_name = (string) $ps_file_name;
 
             return true;
         }
@@ -118,7 +118,7 @@ abstract class Base
     public function setPdoConnection($po_pdo_connection)
     {
         if ($po_pdo_connection instanceof \PDO) {
-            self::$_o_pdo_connection = $po_pdo_connection;
+            self::$pdo_connection = $po_pdo_connection;
             return true;
         }
 
@@ -134,18 +134,18 @@ abstract class Base
      *
      * @return void
      */
-    protected static function _openFile()
+    protected static function openFile()
     {
         // Check that a CSV file has been set.
-        if (empty(self::$_s_file_name)) {
+        if (empty(self::$file_name)) {
             throw new \Exception('CSV file not set.');
         }
 
         // Construct a new file object.
-        self::$_o_file = new \SplFileObject(self::$_s_file_name);
+        self::$file = new \SplFileObject(self::$file_name);
 
         // Set the flags to read the file as a CSV and to skip any empty rows.
-        self::$_o_file->setFlags(\SplFileObject::READ_CSV | \SplFileObject::SKIP_EMPTY);
+        self::$file->setFlags(\SplFileObject::READ_CSV | \SplFileObject::SKIP_EMPTY);
     }
 
 
@@ -158,13 +158,13 @@ abstract class Base
      *
      * @return true on success or throws exception on error.
      */
-    protected static function _setCsvHeaderColumns()
+    protected static function setCsvHeaderColumns()
     {
         // Rewind to first line.
-        self::$_o_file->rewind();
+        self::$file->rewind();
 
         // Get the first line and convert the header columns to lowercase.
-        self::$_a_header_columns = array_map('strtolower', self::$_o_file->current());
+        self::$header_columns = array_map('strtolower', self::$file->current());
 
         return true;
     }
@@ -178,10 +178,10 @@ abstract class Base
      *
      * @return void
      */
-    protected static function _rewindFilePointerToFirstData()
+    protected static function rewindFilePointerToFirstData()
     {
         // Rewind to first line.
-        self::$_o_file->seek(1);
+        self::$file->seek(1);
     }
 
 
@@ -193,15 +193,15 @@ abstract class Base
      *
      * @return array boolean The CSV data or false if the end of the file has been reached.
      */
-    protected static function _loopThroughFileRows()
+    protected static function loopThroughFileRows()
     {
         // Check if the end of file has been reached.
-        if (self::$_o_file->eof()) {
+        if (self::$file->eof()) {
             return false;
         }
 
-        $la_csv_row = self::$_o_file->current();
-        self::$_o_file->next();
+        $la_csv_row = self::$file->current();
+        self::$file->next();
 
         return $la_csv_row;
     }
@@ -217,9 +217,9 @@ abstract class Base
      *
      * @return int The key ID or false if the field is not found.
      */
-    protected function _getSchemaKeyFromName($ps_field_name)
+    protected function getSchemaKeyFromName($ps_field_name)
     {
-        foreach (self::$_o_schema_json->fields as $li_key => $lo_field) {
+        foreach (self::$schema_json->fields as $li_key => $lo_field) {
             if ($lo_field->name === $ps_field_name) {
                 return $li_key;
             }
@@ -239,9 +239,9 @@ abstract class Base
      *
      * @return int The position or false if the field is not found.
      */
-    protected function _getCsvPositionFromName($ps_field_name)
+    protected function getCsvPositionFromName($ps_field_name)
     {
-        return array_search($ps_field_name, self::$_a_header_columns);
+        return array_search($ps_field_name, self::$header_columns);
     }
 
 
@@ -254,16 +254,16 @@ abstract class Base
      *
      * @return object The schema column.
      */
-    protected function _getSchemaColumnFromCsvColumnPosition($pi_csv_column_position)
+    protected function getSchemaColumnFromCsvColumnPosition($pi_csv_column_position)
     {
         // Get the column name for this column position.
-        $ls_csv_column_name = self::$_a_header_columns[$pi_csv_column_position];
+        $ls_csv_column_name = self::$header_columns[$pi_csv_column_position];
 
         // Get the schema key for this column name.
-        $li_schema_key = $this->_getSchemaKeyFromName($ls_csv_column_name);
+        $li_schema_key = $this->getSchemaKeyFromName($ls_csv_column_name);
 
         // Return the field object for this schema field key.
-        return self::$_o_schema_json->fields[$li_schema_key];
+        return self::$schema_json->fields[$li_schema_key];
     }
 
 
@@ -276,7 +276,7 @@ abstract class Base
      *
      * @return string The type.
      */
-    protected function _getColumnType($po_schema_column)
+    protected function getColumnType($po_schema_column)
     {
         // If no type is set, the default should be "string".
         return (property_exists($po_schema_column, 'type')) ? $po_schema_column->type : 'string';
@@ -292,7 +292,7 @@ abstract class Base
      *
      * @return string The format or null if no format is specified.
      */
-    protected function _getColumnFormat($po_schema_column)
+    protected function getColumnFormat($po_schema_column)
     {
         return (property_exists($po_schema_column, 'format')) ? $po_schema_column->format : 'default';
     }

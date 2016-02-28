@@ -1,12 +1,14 @@
 <?php
 namespace JsonTable\Validate\Format;
 
+use \JsonTable\Validate\AbstractFormatValidator;
+
 /**
  * Lexical string validator.
  *
  * @package JSON table
  */
-class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
+class StringValidator extends AbstractFormatValidator
 {
     /**
      * Validate that the input is a valid string.
@@ -15,9 +17,9 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatDefault()
+    protected function formatDefault()
     {
-        return is_string($this->_m_input);
+        return is_string($this->input);
     }
 
 
@@ -28,9 +30,9 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatEmail()
+    protected function formatEmail()
     {
-        return (false !== filter_var($this->_m_input, FILTER_VALIDATE_EMAIL));
+        return (false !== filter_var($this->input, FILTER_VALIDATE_EMAIL));
     }
 
 
@@ -46,16 +48,16 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatUri()
+    protected function formatUri()
     {
         // Parse the URI to check if there is a schema.
-        if ($la_uri_parts = parse_url($this->_m_input)) {
+        if ($la_uri_parts = parse_url($this->input)) {
             if (!isset($la_uri_parts['scheme'])) {
-                $this->_m_input = "http://$this->_m_input";
+                $this->input = "http://$this->input";
             }
         }
 
-        return (false !== filter_var($this->_m_input, FILTER_VALIDATE_URL));
+        return (false !== filter_var($this->input, FILTER_VALIDATE_URL));
     }
 
 
@@ -68,8 +70,8 @@ class StringValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatBinary()
+    protected function formatBinary()
     {
-        return is_string($this->_m_input);
+        return is_string($this->input);
     }
 }

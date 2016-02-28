@@ -1,12 +1,14 @@
 <?php
 namespace JsonTable\Validate\Format;
 
+use \JsonTable\Validate\AbstractFormatValidator;
+
 /**
  * Lexical array validator.
  *
  * @package JSON table
  */
-class ArrayValidator extends \JsonTable\Validate\AbstractFormatValidator
+class ArrayValidator extends AbstractFormatValidator
 {
     /**
      * Validate that the input is a valid null.
@@ -15,7 +17,7 @@ class ArrayValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatDefault()
+    protected function formatDefault()
     {
         return false;
     }

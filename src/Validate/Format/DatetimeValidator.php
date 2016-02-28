@@ -1,12 +1,14 @@
 <?php
 namespace JsonTable\Validate\Format;
 
+use \JsonTable\Validate\AbstractFormatValidator;
+
 /**
  * Lexical datetime validator.
  *
  * @package JSON table
  */
-class DatetimeValidator extends \JsonTable\Validate\AbstractFormatValidator
+class DatetimeValidator extends AbstractFormatValidator
 {
     /**
      * Validate that the input is a valid ISO8601 formatted date.
@@ -15,17 +17,23 @@ class DatetimeValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatDefault()
+    protected function formatDefault()
     {
         // Check if this is an ISO8601 datetime format (in the UTC timezone).
-        if (true == preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/', $this->_m_input)) {
+        if (true == preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/', $this->input)) {
             // Check that PHP can build a date object from the input.
-            return (false !== \DateTime::createFromFormat(DATE_ISO8601, $this->_m_input));
-        } elseif ($this->_formatDate('Y-m-d H:i:s')) {
+            return (false !== \DateTime::createFromFormat(DATE_ISO8601, $this->input));
+        }
+
+        if ($this->formatDate('Y-m-d H:i:s')) {
             return true;
-        } elseif ($this->_formatDate('Y-m-d')) {
+        }
+
+        if ($this->formatDate('Y-m-d')) {
             return true;
-        } elseif ($this->_formatDate('H:i:s')) {
+        }
+
+        if ($this->formatDate('H:i:s')) {
             return true;
         }
 
@@ -43,10 +51,10 @@ class DatetimeValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatDate($ps_format)
+    protected function formatDate($ps_format)
     {
-        $lo_date = \DateTime::createFromFormat($ps_format, $this->_m_input);
+        $lo_date = \DateTime::createFromFormat($ps_format, $this->input);
 
-        return $lo_date && ($lo_date->format($ps_format) === $this->_m_input);
+        return $lo_date && ($lo_date->format($ps_format) === $this->input);
     }
 }

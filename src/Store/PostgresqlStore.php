@@ -1,6 +1,8 @@
 <?php
 namespace JsonTable\Store;
 
+use \JsonTable\Base;
+
 /**
  * Postgresql store.
  *
@@ -17,7 +19,7 @@ class PostgresqlStore extends AbstractStore
      *                     "type" - The schema data type
      *                     "format" - The schema format.
      */
-    private $_a_column_metadata = [];
+    private $column_metadata = [];
 
 
     /**
@@ -26,7 +28,7 @@ class PostgresqlStore extends AbstractStore
      *
      * @var array Mappings of JSON table types to PDO param types.
      */
-    private static $_a_pdo_type_mappings = [
+    private static $pdo_type_mappings = [
         'any' => \PDO::PARAM_STR,
         'array' => \PDO::PARAM_STR,
         'boolean' => \PDO::PARAM_BOOL,
@@ -55,32 +57,32 @@ class PostgresqlStore extends AbstractStore
     public function store($ps_table_name, $ps_primary_key = 'id')
     {
         // Open the CSV file for reading.
-        \JsonTable\Base::_openFile();
+        Base::openFile();
 
         // Get a list of columns being inserted into from the CSV header row.
-        $ls_column_list = implode(', ', \JsonTable\Base::$_a_header_columns);
+        $ls_column_list = implode(', ', Base::$header_columns);
 
         // Add the csv_row field to the column list.
         //This field stores the CSV row number to help make error messages more useful.
         $ls_column_list .= ', csv_row';
 
         // Set the metadata for the CSV columns.
-        $this->_setColumnsMetadata();
+        $this->setColumnsMetadata();
 
         // Define the parameter list for the statement.
-        $ls_insert_parameters = implode(', ', array_fill(0, count(\JsonTable\Base::$_a_header_columns), '?'));
+        $ls_insert_parameters = implode(', ', array_fill(0, count(Base::$header_columns), '?'));
 
         // Add an additional parameter for the csv_row field.
         $ls_insert_parameters .= ', ?';
 
         // Rewind the CSV file pointer to the first line of data.
-        \JsonTable\Base::_rewindFilePointerToFirstData();
+        Base::rewindFilePointerToFirstData();
 
         // Set the row flag.
         $li_row = 1;
 
         // Read each row in the file.
-        while ($la_csv_row = \JsonTable\Base::_loopThroughFileRows()) {
+        while ($la_csv_row = Base::loopThroughFileRows()) {
             // Set up the SQL statement for the insert.
             $ls_insert_sql = "INSERT INTO $ps_table_name (
                                   $ls_column_list
@@ -90,14 +92,14 @@ class PostgresqlStore extends AbstractStore
                               )
                               RETURNING
                                 $ps_primary_key AS key";
-            $lo_statement = self::$_o_pdo_connection->prepare($ls_insert_sql);
+            $lo_statement = self::$pdo_connection->prepare($ls_insert_sql);
 
             // Loop through each column in the CSV row.
             $li_field_number = 1;
 
             foreach ($la_csv_row as &$lm_field_value) {
                 // Get this column's metadata for easy access and readability.
-                $la_column_metadata = $this->_a_column_metadata[$li_field_number];
+                $la_column_metadata = $this->column_metadata[$li_field_number];
 
                 // Do any data manipulation required on this column.
                 // If the type is date and there is a format, convert this to an ISO date.
@@ -132,7 +134,7 @@ class PostgresqlStore extends AbstractStore
             }
 
             // Add this insert's primary key to the list of inserted columns.
-            $this->_a_inserted_ids[] = $lo_statement->fetch(\PDO::FETCH_ASSOC);
+            $this->inserted_ids[] = $lo_statement->fetch(\PDO::FETCH_ASSOC);
 
             $li_row++;
         }
@@ -148,32 +150,32 @@ class PostgresqlStore extends AbstractStore
      *
      * @return boolean true on success
      */
-    private function _setColumnsMetadata()
+    private function setColumnsMetadata()
     {
         // Get the data type for each of the columns being inserted into.
-        foreach (\JsonTable\Base::$_a_header_columns as $li_csv_field_position => $ls_csv_column_name) {
-            $la_metadata = array();
+        foreach (Base::$header_columns as $li_csv_field_position => $ls_csv_column_name) {
+            $la_metadata = [];
 
             // Compensate for 1 based column reference.
             $li_csv_field_position += 1;
 
             // Get the schema key for this column name.
-            $li_schema_key = $this->_getSchemaKeyFromName($ls_csv_column_name);
+            $li_schema_key = $this->getSchemaKeyFromName($ls_csv_column_name);
 
             // Get the field object for this schema key.
-            $lo_schema_field = self::$_o_schema_json->fields[$li_schema_key];
+            $lo_schema_field = self::$schema_json->fields[$li_schema_key];
 
             // Get the schema type for this column.
-            $la_metadata['type'] = $this->_getColumnType($lo_schema_field);
+            $la_metadata['type'] = $this->getColumnType($lo_schema_field);
 
             // Set the PDO data type for this column.
-            $la_metadata['pdo_type'] = self::$_a_pdo_type_mappings[$la_metadata['type']];
+            $la_metadata['pdo_type'] = self::$pdo_type_mappings[$la_metadata['type']];
 
             // Set the format for this column.
-            $la_metadata['format'] = $this->_getColumnFormat($lo_schema_field);
+            $la_metadata['format'] = $this->getColumnFormat($lo_schema_field);
 
             // Set the metadata for this column.
-            $this->_a_column_metadata[$li_csv_field_position] = $la_metadata;
+            $this->column_metadata[$li_csv_field_position] = $la_metadata;
         }
 
         return true;

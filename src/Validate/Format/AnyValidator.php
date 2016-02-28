@@ -1,12 +1,14 @@
 <?php
 namespace JsonTable\Validate\Format;
 
+use \JsonTable\Validate\AbstractFormatValidator;
+
 /**
  * Lexical any validator.
  *
  * @package JSON table
  */
-class AnyValidator extends \JsonTable\Validate\AbstractFormatValidator
+class AnyValidator extends AbstractFormatValidator
 {
     /**
      * Validate that the input is a valid any.
@@ -16,7 +18,7 @@ class AnyValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatDefault()
+    protected function formatDefault()
     {
         return true;
     }

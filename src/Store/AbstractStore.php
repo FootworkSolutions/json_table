@@ -1,20 +1,21 @@
 <?php
 namespace JsonTable\Store;
 
+use \JsonTable\Base;
 /**
  * Abstract store class.
  * All store classes should extent this class.
  *
  * @package JSON table
  */
-abstract class AbstractStore extends \JsonTable\Base
+abstract class AbstractStore extends Base
 {
     /**
      * @access protected
      *
      * @var array The values of the primary key of the last inserted data.
      */
-    protected $_a_inserted_ids = array();
+    protected $inserted_ids = [];
 
 
     /**
@@ -26,7 +27,7 @@ abstract class AbstractStore extends \JsonTable\Base
      */
     public function insertedRecords()
     {
-        return $this->_a_inserted_ids;
+        return $this->inserted_ids;
     }
 
 
@@ -64,18 +65,18 @@ abstract class AbstractStore extends \JsonTable\Base
         }
 
         // Define the allowed true and false values.
-        $la_truths = array('1', 1, true, 'on', 'yes');
-        $la_false = array('0', 0, false, 'off', 'no');
+        $la_truths = ['1', 1, true, 'on', 'yes'];
+        $la_false = ['0', 0, false, 'off', 'no'];
 
         // Check if the specified value is in either the true or false arrays, if not default it to null.
-        $lb_value = null;
-
         if (in_array($pm_value, $la_truths, true)) {
-            $lb_value = true;
-        } elseif (in_array($pm_value, $la_false, true)) {
-            $lb_value = false;
+            return true;
         }
 
-        return $lb_value;
+        if (in_array($pm_value, $la_false, true)) {
+            return false;
+        }
+
+        return null;
     }
 }

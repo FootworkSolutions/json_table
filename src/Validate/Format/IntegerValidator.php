@@ -1,12 +1,14 @@
 <?php
 namespace JsonTable\Validate\Format;
 
+use \JsonTable\Validate\AbstractFormatValidator;
+
 /**
  * Lexical integer validator.
  *
  * @package JSON table
  */
-class IntegerValidator extends \JsonTable\Validate\AbstractFormatValidator
+class IntegerValidator extends AbstractFormatValidator
 {
     /**
      * Validate that the input is a valid integer.
@@ -15,8 +17,8 @@ class IntegerValidator extends \JsonTable\Validate\AbstractFormatValidator
      *
      * @return boolean Whether the input is valid.
      */
-    protected function _formatDefault()
+    protected function formatDefault()
     {
-        return (false !== filter_var($this->_m_input, FILTER_VALIDATE_INT));
+        return (false !== filter_var($this->input, FILTER_VALIDATE_INT));
     }
 }

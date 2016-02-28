@@ -12,13 +12,13 @@ abstract class AbstractFormatValidator
      * @access protected
      * @var string The type of validation being done. eg "string", "number".
      */
-    protected $_s_type;
+    protected $type;
 
     /**
      * @access protected
      * @var mixed The input being validated.
      */
-    protected $_m_input;
+    protected $input;
 
 
     /**
@@ -30,7 +30,7 @@ abstract class AbstractFormatValidator
      */
     public function __construct($ps_type)
     {
-        $this->_s_type = (string) $ps_type;
+        $this->type = (string) $ps_type;
     }
 
 
@@ -45,7 +45,7 @@ abstract class AbstractFormatValidator
      */
     public function setInput($pm_input)
     {
-        $this->_m_input = $pm_input;
+        $this->input = $pm_input;
     }
 
 
@@ -64,16 +64,16 @@ abstract class AbstractFormatValidator
         $lb_valid = true;
 
         // Check that there is a value to validate.
-        if ('' === $this->_m_input) {
+        if ('' === $this->input) {
             return true;
         }
 
         // Define the name of the method to check this format.
-        $ls_format_method_name = '_format' . ucwords($ps_format);
+        $ls_format_method_name = 'format' . ucwords($ps_format);
         $ls_format_parameter = null;
 
-        if ('datetime' === $this->_s_type && 'default' !== $ps_format) {
-            $ls_format_method_name = "_formatDate";
+        if ('datetime' === $this->type && 'default' !== $ps_format) {
+            $ls_format_method_name = "formatDate";
             $ls_format_parameter = $ps_format;
         }
 

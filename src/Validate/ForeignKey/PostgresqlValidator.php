@@ -1,12 +1,15 @@
 <?php
 namespace JsonTable\Validate\ForeignKey;
 
+use \JsonTable\Validate\ForeignKeyValidatorInterface;
+use \JsonTable\Base;
+
 /**
  * Foreign key postgresql validator.
  *
  * @package JSON table
  */
-class PostgresqlValidator implements \JsonTable\Validate\InterfaceForeignKeyValidator
+class PostgresqlValidator implements ForeignKeyValidatorInterface
 {
     /**
      * Check that the foreign key hash matches the specified resource.
@@ -31,7 +34,7 @@ class PostgresqlValidator implements \JsonTable\Validate\InterfaceForeignKeyVali
                                     $ls_reference_fields = :row_hash";
 
         // Prepare and execute the statement.
-        $lo_statement = \JsonTable\Base::$_o_pdo_connection->prepare($ls_validation_sql);
+        $lo_statement = Base::$pdo_connection->prepare($ls_validation_sql);
         $lo_statement->bindParam(':row_hash', $ps_row_hash);
         $la_results = $lo_statement->execute();
 
