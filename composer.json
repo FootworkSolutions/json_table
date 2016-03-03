@@ -16,9 +16,8 @@
 	},
 	"require-dev": {
 		"php": ">=5.6.0",
-		"phpunit/phpunit": "5.0.*",
-		"phpunit/dbunit": ">=1.2",
-		"codeclimate/php-test-reporter": "dev-master"
+		"phpunit/phpunit": "~5.0",
+		"phpunit/dbunit": ">=1.2"
 	},
 	"autoload": {
 		"psr-4": {
