@@ -15,7 +15,7 @@ abstract class AbstractStore extends Base
      *
      * @var array The values of the primary key of the last inserted data.
      */
-    protected $inserted_ids = [];
+    protected $insertedIds = [];
 
 
     /**
@@ -27,7 +27,7 @@ abstract class AbstractStore extends Base
      */
     public function insertedRecords()
     {
-        return $this->inserted_ids;
+        return $this->insertedIds;
     }
 
 
@@ -37,43 +37,45 @@ abstract class AbstractStore extends Base
      * @access public
      * @static
      *
-     * @return string The formatted date.
+     * @param   string  $format  The format to convert from.
+     * @param   string  $dateToConvert    The date to convert.
+     *
+     * @return  string  The formatted date.
+     *
+     * @throws  \Exception is the date couldn't be reformatted.
      */
-    public static function isoDateFromFormat($ps_format, $ps_date)
+    public static function isoDateFromFormat($format, $dateToConvert)
     {
-        if (!$lo_date = \DateTime::createFromFormat($ps_format, $ps_date)) {
-            throw new \Exception("Could not reformat date $ps_date from format $ps_format");
+        if (!$date = \DateTime::createFromFormat($format, $dateToConvert)) {
+            throw new \Exception("Could not reformat date $dateToConvert from format $format");
         }
 
-        return $lo_date->format('Y-m-d');
+        return $date->format('Y-m-d');
     }
 
 
     /**
      * Convert a value from being something that passes the FILTER_VALIDATE_BOOLEAN filter to be an actual boolean.
      *
-     * @access public
+     * @access  public
      * @static
      *
-     * @return boolean or null The converted value.
+     * @return  boolean|null The converted value.
      */
-    public static function booleanFromFilterBooleans($pm_value)
+    public static function booleanFromFilterBooleans($value)
     {
-        // Convert strings to lowercase as checking should be case insensitive.
-        if (is_string($pm_value)) {
-            $pm_value = strtolower($pm_value);
+        if (is_string($value)) {
+            $value = strtolower($value);
         }
 
-        // Define the allowed true and false values.
-        $la_truths = ['1', 1, true, 'on', 'yes'];
-        $la_false = ['0', 0, false, 'off', 'no'];
+        $truths = ['1', 1, true, 'on', 'yes'];
+        $false = ['0', 0, false, 'off', 'no'];
 
-        // Check if the specified value is in either the true or false arrays, if not default it to null.
-        if (in_array($pm_value, $la_truths, true)) {
+        if (in_array($value, $truths, true)) {
             return true;
         }
 
-        if (in_array($pm_value, $la_false, true)) {
+        if (in_array($value, $false, true)) {
             return false;
         }
 

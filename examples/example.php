@@ -13,7 +13,7 @@
  *
  * @see https://en.wikipedia.org/wiki/Hungarian_notation
  */
-use \JsonTable\Analyse;
+use \JsonTable\Analyse\Analyse;
 use \JsonTable\Store;
 
 // Use composer's autoloading.
@@ -59,7 +59,7 @@ try {
     $lo_analyser->setPdoConnection($lo_pdo);
 
     // Check whether the file is valid against the schema.
-    $lb_file_is_valid = $lo_analyser->analyse();
+    $lb_file_is_valid = $lo_analyser->validate();
 
     // Get errors and statistics about the analysis.
     $la_validation_errors = $lo_analyser->getErrors();

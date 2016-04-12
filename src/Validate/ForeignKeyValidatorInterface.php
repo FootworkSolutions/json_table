@@ -13,11 +13,11 @@ interface ForeignKeyValidatorInterface
      *
      * @access public
      *
-     * @param string $ps_row_hash The hash of data from the CSV row to be validated.
-     * @param string $ps_reference_resource The reference resource.
-     * @param array $pa_reference_fields The reference fields.
+     * @param string $rowHash The hash of data from the CSV row to be validated.
+     * @param string $referenceResource The reference resource.
+     * @param array $referenceFields The reference fields.
      *
      * @return boolean Is the data valid.
      */
-    public function validate($ps_row_hash, $ps_reference_resource, array $pa_reference_fields);
+    public function validate($rowHash, $referenceResource, array $referenceFields);
 }

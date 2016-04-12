@@ -60,7 +60,7 @@ class PostgresqlStore extends AbstractStore
         Base::openFile();
 
         // Get a list of columns being inserted into from the CSV header row.
-        $ls_column_list = implode(', ', Base::$header_columns);
+        $ls_column_list = implode(', ', Base::$headerColumns);
 
         // Add the csv_row field to the column list.
         //This field stores the CSV row number to help make error messages more useful.
@@ -70,7 +70,7 @@ class PostgresqlStore extends AbstractStore
         $this->setColumnsMetadata();
 
         // Define the parameter list for the statement.
-        $ls_insert_parameters = implode(', ', array_fill(0, count(Base::$header_columns), '?'));
+        $ls_insert_parameters = implode(', ', array_fill(0, count(Base::$headerColumns), '?'));
 
         // Add an additional parameter for the csv_row field.
         $ls_insert_parameters .= ', ?';
@@ -92,7 +92,7 @@ class PostgresqlStore extends AbstractStore
                               )
                               RETURNING
                                 $ps_primary_key AS key";
-            $lo_statement = self::$pdo_connection->prepare($ls_insert_sql);
+            $lo_statement = self::$pdoConnection->prepare($ls_insert_sql);
 
             // Loop through each column in the CSV row.
             $li_field_number = 1;
@@ -134,7 +134,7 @@ class PostgresqlStore extends AbstractStore
             }
 
             // Add this insert's primary key to the list of inserted columns.
-            $this->inserted_ids[] = $lo_statement->fetch(\PDO::FETCH_ASSOC);
+            $this->insertedIds[] = $lo_statement->fetch(\PDO::FETCH_ASSOC);
 
             $li_row++;
         }
@@ -153,7 +153,7 @@ class PostgresqlStore extends AbstractStore
     private function setColumnsMetadata()
     {
         // Get the data type for each of the columns being inserted into.
-        foreach (Base::$header_columns as $li_csv_field_position => $ls_csv_column_name) {
+        foreach (Base::$headerColumns as $li_csv_field_position => $ls_csv_column_name) {
             $la_metadata = [];
 
             // Compensate for 1 based column reference.
@@ -163,7 +163,7 @@ class PostgresqlStore extends AbstractStore
             $li_schema_key = $this->getSchemaKeyFromName($ls_csv_column_name);
 
             // Get the field object for this schema key.
-            $lo_schema_field = self::$schema_json->fields[$li_schema_key];
+            $lo_schema_field = self::$schemaJson->fields[$li_schema_key];
 
             // Get the schema type for this column.
             $la_metadata['type'] = $this->getColumnType($lo_schema_field);

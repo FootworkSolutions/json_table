@@ -13,9 +13,9 @@ class IntegerValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid integer.
      *
-     * @access protected
+     * @access  protected
      *
-     * @return boolean Whether the input is valid.
+     * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()
     {

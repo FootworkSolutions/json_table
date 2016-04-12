@@ -13,9 +13,9 @@ class DatetimeValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid ISO8601 formatted date.
      *
-     * @access protected
+     * @access  protected
      *
-     * @return boolean Whether the input is valid.
+     * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()
     {
@@ -45,16 +45,16 @@ class DatetimeValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid date in the specified format.
      *
-     * @access protected
+     * @access  protected
      *
-     * @param string   The date format to validate against.
+     * @param   string   $format   The date format to validate against.
      *
-     * @return boolean Whether the input is valid.
+     * @return  boolean            Whether the input is valid.
      */
-    protected function formatDate($ps_format)
+    protected function formatDate($format)
     {
-        $lo_date = \DateTime::createFromFormat($ps_format, $this->input);
+        $date = \DateTime::createFromFormat($format, $this->input);
 
-        return $lo_date && ($lo_date->format($ps_format) === $this->input);
+        return $date && ($date->format($format) === $this->input);
     }
 }

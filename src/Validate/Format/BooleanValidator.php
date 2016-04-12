@@ -19,14 +19,14 @@ class BooleanValidator extends AbstractFormatValidator
      * "yes" or "YES" and "no" or "NO"
      * true and false
      *
-     * @access protected
+     * @access  protected
      *
-     * @return boolean Whether the input is valid.
+     * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()
     {
-        $lm_value = (is_string($this->input)) ? strtolower($this->input) : $this->input;
+        $value = (is_string($this->input)) ? strtolower($this->input) : $this->input;
 
-        return (null !== filter_var($lm_value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
+        return (null !== filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
     }
 }

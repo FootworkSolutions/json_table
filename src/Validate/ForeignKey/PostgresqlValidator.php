@@ -14,37 +14,36 @@ class PostgresqlValidator implements ForeignKeyValidatorInterface
     /**
      * Check that the foreign key hash matches the specified resource.
      *
-     * @access public
+     * @access  public
      *
-     * @param string $ps_row_hash           The hash of data from the CSV row to be validated.
-     * @param string $ps_reference_resource The reference resource.
-     * @param array  $pa_reference_fields   The reference fields.
+     * @param   string  $rowHash           The hash of data from the CSV row to be validated.
+     * @param   string  $referenceResource The reference resource.
+     * @param   array   $referenceFields   The reference fields.
      *
-     * @return boolean Is the data valid.
+     * @return  boolean Is the data valid.
+     *
+     * @throws  \Exception if the foreign key couldn't be validated.
      */
-    public function validate($ps_row_hash, $ps_reference_resource, array $pa_reference_fields)
+    public function validate($rowHash, $referenceResource, array $referenceFields)
     {
-        $ls_reference_fields = implode(" || ', ' || ", $pa_reference_fields);
+        $referenceFields = implode(" || ', ' || ", $referenceFields);
 
-        $ls_validation_sql =   "SELECT
+        $validationSql =   "SELECT
                                     COUNT(*)
                                 FROM
-                                    $ps_reference_resource
+                                    $referenceResource
                                 WHERE
-                                    $ls_reference_fields = :row_hash";
+                                    $referenceFields = :row_hash";
 
-        // Prepare and execute the statement.
-        $lo_statement = Base::$pdo_connection->prepare($ls_validation_sql);
-        $lo_statement->bindParam(':row_hash', $ps_row_hash);
-        $la_results = $lo_statement->execute();
+        $statement = Base::$pdoConnection->prepare($validationSql);
+        $statement->bindParam(':row_hash', $rowHash);
+        $results = $statement->execute();
 
-        if (false === $la_results) {
-            // The query failed.
-            throw new \Exception("Could not validate the foreign key for $ps_reference_resource
-                fields $ls_reference_fields with hash of $ps_row_hash.");
+        if (false === $results) {
+            throw new \Exception("Could not validate the foreign key for $referenceResource
+                fields $referenceFields with hash of $rowHash.");
         }
 
-        // Return whether any matching rows were found.
-        return (0 !== $la_results[0]['count']);
+        return (0 !== $results[0]['count']);
     }
 }

@@ -13,9 +13,9 @@ class StringValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid string.
      *
-     * @access protected
+     * @access  protected
      *
-     * @return boolean Whether the input is valid.
+     * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()
     {
@@ -26,9 +26,9 @@ class StringValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid email address.
      *
-     * @access protected
+     * @access  protected
      *
-     * @return boolean Whether the input is valid.
+     * @return  boolean Whether the input is valid.
      */
     protected function formatEmail()
     {
@@ -44,15 +44,14 @@ class StringValidator extends AbstractFormatValidator
      * This validator allows the input to miss this off so an input
      * of "www.example.com" will be passed as valid.
      *
-     * @access protected
+     * @access  protected
      *
-     * @return boolean Whether the input is valid.
+     * @return  boolean Whether the input is valid.
      */
     protected function formatUri()
     {
-        // Parse the URI to check if there is a schema.
-        if ($la_uri_parts = parse_url($this->input)) {
-            if (!isset($la_uri_parts['scheme'])) {
+        if ($urlParts = parse_url($this->input)) {
+            if (!isset($urlParts['scheme'])) {
                 $this->input = "http://$this->input";
             }
         }

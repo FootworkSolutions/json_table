@@ -13,38 +13,85 @@ class Store extends Base
      *
      * @access private
      *
-     * @param string $ps_store_type The type of store to load.
+     * @param string $storeType The type of store to load.
      *
      * @return object The store object. Throws an exception on error.
      */
-    public static function load($ps_store_type)
+    public static function load($storeType)
     {
-        // Load the abstract store file.
-        $ls_abstract_store_file = dirname(__FILE__) . "/Store/AbstractStore.php";
+        self::loadAbstractStoreFile();
+        self::loadStoreTypeFile($storeType);
+        self::instantiateStoreClass($storeType);
+    }
 
-        if (!file_exists($ls_abstract_store_file) || !is_readable($ls_abstract_store_file)) {
+
+    /**
+     * Load the abstract store file.
+     *
+     * @access  private
+     * @static
+     *
+     * @return  void
+     *
+     * @throws  \Exception is the abstract store file couldn't be loaded.
+     */
+    private static function loadAbstractStoreFile()
+    {
+        $abstractStoreFile = dirname(__FILE__) . "/Store/AbstractStore.php";
+
+        if (!file_exists($abstractStoreFile) || !is_readable($abstractStoreFile)) {
             throw new \Exception("Could not load the abstract store file.");
         }
 
-        include_once $ls_abstract_store_file;
+        include_once $abstractStoreFile;
+    }
 
-        // Load the store file for the specified type.
-        $ps_store_type = ucwords($ps_store_type);
-        $ls_store_file = dirname(__FILE__) . "/Store/$ps_store_type" . "Store.php";
 
-        if (!file_exists($ls_store_file) || !is_readable($ls_store_file)) {
-            throw new \Exception("Could not load the store file for $ps_store_type.");
+    /**
+     * Load the store file for the specified type.
+     *
+     * @access  private
+     * @static
+     *
+     * @param   string  $storeType The type of store to load.
+     *
+     * @return  void
+     *
+     * @throws  \Exception is the store file couldn't be loaded.
+     */
+    private static function loadStoreTypeFile($storeType)
+    {
+        $storeType = ucwords($storeType);
+        $storeFile = dirname(__FILE__) . "/Store/$storeType" . "Store.php";
+
+        if (!file_exists($storeFile) || !is_readable($storeFile)) {
+            throw new \Exception("Could not load the store file for $storeType.");
         }
 
-        include_once $ls_store_file;
+        include_once $storeFile;
+    }
 
-        // Check that the class exists.
-        $ls_store_class = "\\JsonTable\\Store\\$ps_store_type" . "Store";
 
-        if (!class_exists($ls_store_class)) {
-            throw new \Exception("Could not find the store class $ls_store_class");
+    /**
+     * Instantiate the store class for the specified type.
+     *
+     * @access  private
+     * @static
+     *
+     * @param   string  $storeType The type of store to load.
+     *
+     * @return  object  The store class instance.
+     *
+     * @throws  \Exception is the store class couldn't be found.
+     */
+    private static function instantiateStoreClass($storeType)
+    {
+        $storeClass = "\\JsonTable\\Store\\$storeType" . "Store";
+
+        if (!class_exists($storeClass)) {
+            throw new \Exception("Could not find the store class $storeClass");
         }
 
-        return new $ls_store_class();
+        return new $storeClass();
     }
 }

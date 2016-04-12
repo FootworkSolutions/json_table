@@ -12,7 +12,7 @@ abstract class Base
      *
      * @var string Schema JSON
      */
-    protected static $schema_json;
+    protected static $schemaJson;
 
     /**
      * @access protected
@@ -20,7 +20,7 @@ abstract class Base
      *
      * @var string The path and name of the file to analyse.
      */
-    protected static $file_name;
+    protected static $fileName;
 
     /**
      * @access protected
@@ -30,7 +30,7 @@ abstract class Base
      *                This is used to validate that each row has the correct number of columns
      *                and to get the column name from it's position.
      */
-    protected static $header_columns;
+    protected static $headerColumns;
 
     /**
      * @access protected
@@ -45,7 +45,7 @@ abstract class Base
      *
      * @var object The PDO object.
      */
-    public static $pdo_connection;
+    public static $pdoConnection;
 
 
     /**
@@ -53,30 +53,30 @@ abstract class Base
      *
      * @access public
      *
-     * @param string object $ps_schema_json The schema conforming to the JSON table schema specification.
+     * @param string $schemaJson The schema conforming to the JSON table schema specification.
      * @see http://dataprotocols.org/json-table-schema
      *
      * @return void
+     *
+     * @throws \Exception if the schema is not a valid JSON string.
+     * @throws \Exception if the schema is an invalid data type.
      */
-    public function setSchema($pm_schema_json)
+    public function setSchema($schemaJson)
     {
-        // Check if a JSON string or object has been provided.
-        if (is_string($pm_schema_json)) {
-            // Convert the string to an object and check it is valid.
-            if (is_null($pm_schema_json = json_decode($pm_schema_json))) {
+        if (is_string($schemaJson)) {
+            if (is_null($schemaJson = json_decode($schemaJson))) {
                 throw new \Exception('The schema is not a valid JSON string.');
             }
-        } elseif (!is_object($pm_schema_json)) {
+        } elseif (!is_object($schemaJson)) {
             throw new \Exception('Invalid schema data type.');
         }
 
-        // Convert all field names to be lowercase.
-        foreach ($pm_schema_json->fields as &$lo_field) {
-            $lo_field->name = strtolower($lo_field->name);
+        foreach ($schemaJson->fields as &$field) {
+            $field->name = strtolower($field->name);
         }
-        unset($lo_field);
+        unset($field);
 
-        self::$schema_json = $pm_schema_json;
+        self::$schemaJson = $schemaJson;
     }
 
 
@@ -84,20 +84,17 @@ abstract class Base
      * Set the file.
      * This checks that the file exists.
      *
-     * @access public
+     * @access  public
      *
-     * @param string $ps_file The path and name of the file to analyse.
+     * @param   string  $fileName    The path and name of the file to analyse.
      * @see http://dataprotocols.org/json-table-schema
      *
-     * @return boolean Whether the file was successfully set.
+     * @return  boolean Whether the file was successfully set.
      */
-    public function setFile($ps_file_name)
+    public function setFile($fileName)
     {
-        // Check that the file exists.
-        if (file_exists($ps_file_name)) {
-            // Set the file to analyse.
-            self::$file_name = (string) $ps_file_name;
-
+        if (file_exists($fileName)) {
+            self::$fileName = (string) $fileName;
             return true;
         }
 
@@ -111,14 +108,14 @@ abstract class Base
      * @access protected
      * @static
      *
-     * @param object $po_pdo_connection The PDO object.
+     * @param object $pdoConnection The PDO object.
      *
      * @return boolean Whether the connection was valid.
      */
-    public function setPdoConnection($po_pdo_connection)
+    public function setPdoConnection($pdoConnection)
     {
-        if ($po_pdo_connection instanceof \PDO) {
-            self::$pdo_connection = $po_pdo_connection;
+        if ($pdoConnection instanceof \PDO) {
+            self::$pdoConnection = $pdoConnection;
             return true;
         }
 
@@ -133,18 +130,16 @@ abstract class Base
      * @static
      *
      * @return void
+     *
+     * @throws \Exception if a CSV file has not been set.
      */
     protected static function openFile()
     {
-        // Check that a CSV file has been set.
-        if (empty(self::$file_name)) {
+        if (empty(self::$fileName)) {
             throw new \Exception('CSV file not set.');
         }
 
-        // Construct a new file object.
-        self::$file = new \SplFileObject(self::$file_name);
-
-        // Set the flags to read the file as a CSV and to skip any empty rows.
+        self::$file = new \SplFileObject(self::$fileName);
         self::$file->setFlags(\SplFileObject::READ_CSV | \SplFileObject::SKIP_EMPTY);
     }
 
@@ -156,16 +151,12 @@ abstract class Base
      * @access protected
      * @static
      *
-     * @return true on success or throws exception on error.
+     * @return true on success.
      */
     protected static function setCsvHeaderColumns()
     {
-        // Rewind to first line.
         self::$file->rewind();
-
-        // Get the first line and convert the header columns to lowercase.
-        self::$header_columns = array_map('strtolower', self::$file->current());
-
+        self::$headerColumns = array_map('strtolower', self::$file->current());
         return true;
     }
 
@@ -180,7 +171,6 @@ abstract class Base
      */
     protected static function rewindFilePointerToFirstData()
     {
-        // Rewind to first line.
         self::$file->seek(1);
     }
 
@@ -195,15 +185,14 @@ abstract class Base
      */
     protected static function loopThroughFileRows()
     {
-        // Check if the end of file has been reached.
         if (self::$file->eof()) {
             return false;
         }
 
-        $la_csv_row = self::$file->current();
+        $csvRow = self::$file->current();
         self::$file->next();
 
-        return $la_csv_row;
+        return $csvRow;
     }
 
 
@@ -213,15 +202,15 @@ abstract class Base
      *
      * @access protected
      *
-     * @param string $ps_field_name The field name
+     * @param string $fieldName The field name.
      *
      * @return int The key ID or false if the field is not found.
      */
-    protected function getSchemaKeyFromName($ps_field_name)
+    protected function getSchemaKeyFromName($fieldName)
     {
-        foreach (self::$schema_json->fields as $li_key => $lo_field) {
-            if ($lo_field->name === $ps_field_name) {
-                return $li_key;
+        foreach (self::$schemaJson->fields as $key => $field) {
+            if ($field->name === $fieldName) {
+                return $key;
             }
         }
 
@@ -235,35 +224,31 @@ abstract class Base
      *
      * @access protected
      *
-     * @param string $ps_field_name The field name
+     * @param string $fieldName The field name.
      *
      * @return int The position or false if the field is not found.
      */
-    protected function getCsvPositionFromName($ps_field_name)
+    protected function getCsvPositionFromName($fieldName)
     {
-        return array_search($ps_field_name, self::$header_columns);
+        return array_search($fieldName, self::$headerColumns);
     }
 
 
     /**
-     * Get the schema object for a column, given the columns posion in the CSV file.
+     * Get the schema object for a column, given the columns position in the CSV file.
      *
      * @access protected
      *
-     * @param int $pi_csv_column_position The position of the column in the CSV file.
+     * @param int $csvColumnPosition The position of the column in the CSV file.
      *
      * @return object The schema column.
      */
-    protected function getSchemaColumnFromCsvColumnPosition($pi_csv_column_position)
+    protected function getSchemaColumnFromCsvColumnPosition($csvColumnPosition)
     {
-        // Get the column name for this column position.
-        $ls_csv_column_name = self::$header_columns[$pi_csv_column_position];
+        $csvColumnName = self::$headerColumns[$csvColumnPosition];
+        $schemaKey = $this->getSchemaKeyFromName($csvColumnName);
 
-        // Get the schema key for this column name.
-        $li_schema_key = $this->getSchemaKeyFromName($ls_csv_column_name);
-
-        // Return the field object for this schema field key.
-        return self::$schema_json->fields[$li_schema_key];
+        return self::$schemaJson->fields[$schemaKey];
     }
 
 
@@ -272,14 +257,13 @@ abstract class Base
      *
      * @access protected
      *
-     * @param object $po_schema_column The schema column object to examine.
+     * @param object $schemaColumn The schema column object to examine.
      *
      * @return string The type.
      */
-    protected function getColumnType($po_schema_column)
+    protected function getColumnType($schemaColumn)
     {
-        // If no type is set, the default should be "string".
-        return (property_exists($po_schema_column, 'type')) ? $po_schema_column->type : 'string';
+        return (property_exists($schemaColumn, 'type')) ? $schemaColumn->type : 'string';
     }
 
 
@@ -288,12 +272,12 @@ abstract class Base
      *
      * @access protected
      *
-     * @param object $po_schema_column The schema column object to examine.
+     * @param object $schemaColumn The schema column object to examine.
      *
      * @return string The format or null if no format is specified.
      */
-    protected function getColumnFormat($po_schema_column)
+    protected function getColumnFormat($schemaColumn)
     {
-        return (property_exists($po_schema_column, 'format')) ? $po_schema_column->format : 'default';
+        return (property_exists($schemaColumn, 'format')) ? $schemaColumn->format : 'default';
     }
 }

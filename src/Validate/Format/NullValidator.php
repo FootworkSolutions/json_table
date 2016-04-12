@@ -14,9 +14,9 @@ class NullValidator extends AbstractFormatValidator
      * Validate that the input is a valid null.
      * This actually has to check that the value is an empty string as all inputs are received as strings.
      *
-     * @access protected
+     * @access  protected
      *
-     * @return boolean Whether the input is valid.
+     * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()
     {
