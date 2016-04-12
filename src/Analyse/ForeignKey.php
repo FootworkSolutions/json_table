@@ -12,8 +12,13 @@ class ForeignKey extends Analyse implements AnalyseInterface
      * @var string The description for fields with invalid foreign keys.
      */
     const ERROR_INVALID_FOREIGN_KEY = 'There are <strong>%d</strong> fields that have invalid foreign keys:';
-    
-    
+
+    /**
+     * @var string  The name of the datapackage the current foreign key references.
+     */
+    private $dataPackage;
+
+
     /**
      * Validate that any specified foreign key constraints have been met.
      *
@@ -25,29 +30,20 @@ class ForeignKey extends Analyse implements AnalyseInterface
      */
     public function validate()
     {
-        // Check that a primary key has been specified.
         if (false === property_exists(self::$schemaJson, 'foreignKeys')) {
-            // There is no foreign key specified so validate as successfully passed.
             return true;
         }
 
-        // Rewind the CSV file pointer to the first line of data.
         self::rewindFilePointerToFirstData();
 
-        // Loop through the foreign keys.
         foreach (self::$schemaJson->foreignKeys as $foreignKey) {
-            // Get the datapackage for this foreign key.
-            $dataPackage = $this->getForeignKeyPackage($foreignKey);
+            $this->dataPackage = $this->getForeignKeyPackage($foreignKey);
 
-            // Only "postgresql" datapackages are currently supported.
-            if ('postgresql' !== $dataPackage) {
-                throw new \Exception("Only postgresql foreign keys are currently supported.
-                Please ensure that the datapackage attribute on all foreign keys is defined
-                as &quot;database&quot; or is omitted.");
+            if (!$this->checkValidDataPackageType()) {
+                $this->handleInvalidDataPackageType();
             }
 
-            // Instantiate the foreign key validator for this datapackage type.
-            $validator = $this->instantiateValidator(Analyse::VALIDATION_TYPE_FOREIGN_KEY, $dataPackage);
+            $validator = $this->instantiateValidator(Analyse::VALIDATION_TYPE_FOREIGN_KEY, $this->dataPackage);
 
             // Get the fields in the CSV and the resource for this foreign key.
             $csvFields = (array) $foreignKey->fields;
@@ -68,9 +64,7 @@ class ForeignKey extends Analyse implements AnalyseInterface
 
                 $csvPosition = $this->getCsvPositionFromName($csvFieldName);
 
-                // Get the position of this field in the CSV file.
                 if (false === $csvPosition) {
-                    // The field isn't in the CSV.
                     if (1 !== count($csvFields)) {
                         // This field is part of a multi field foreign key.
                         // Throw an error as this key cannot be validated.
@@ -113,7 +107,7 @@ class ForeignKey extends Analyse implements AnalyseInterface
                     $errorMessage = "The value(s) of &quot;$csvValueHash&quot; in column(s) $csvFields
                     on row $row doesn't match a foreign key.";
 
-                    $this->setError(Analyse::ERROR_INVALID_FOREIGN_KEY, $errorMessage);
+                    $this->setError(self::ERROR_INVALID_FOREIGN_KEY, $errorMessage);
                     $this->statistics['rows_with_errors'][] = $row;
 
                     if ($this->stopIfInvalid) {
@@ -144,5 +138,35 @@ class ForeignKey extends Analyse implements AnalyseInterface
     {
         $propertyExists = property_exists($foreignKey->reference, 'datapackage');
         return $propertyExists ? $foreignKey->reference->datapackage : 'postgresql';
+    }
+
+
+    /**
+     * Check that the data package for the current foreign key is a valid package type.
+     *
+     * @access  private
+     *
+     * @return  boolean Whether the data package is valid
+     */
+    private function checkValidDataPackageType()
+    {
+        return ('postgresql' !== $this->dataPackage);
+    }
+
+
+    /**
+     * Handle an invalid data package being referenced in a foreign key.
+     *
+     * @access  private
+     *
+     * @return  void
+     *
+     * @throws  \Exception if the data package is not valid.
+     */
+    private function handleInvalidDataPackageType()
+    {
+        throw new \Exception("Only postgresql foreign keys are currently supported.
+                Please ensure that the datapackage attribute on all foreign keys is defined
+                as &quot;database&quot; or is omitted.");
     }
 }
