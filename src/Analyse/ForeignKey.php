@@ -150,7 +150,7 @@ class ForeignKey extends Analyse implements AnalyseInterface
      */
     private function checkValidDataPackageType()
     {
-        return ('postgresql' !== $this->dataPackage);
+        return ('postgresql' === $this->dataPackage);
     }
 
 

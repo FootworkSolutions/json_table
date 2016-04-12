@@ -229,7 +229,7 @@ class Analyse extends Base implements AnalyseInterface
         }
 
         $typeClassName = ucwords($type) . 'Validator';
-        $validatorFile = dirname(__FILE__) . "/Validate/$validationType/$typeClassName.php";
+        $validatorFile = dirname(dirname(__FILE__)) . "/Validate/$validationType/$typeClassName.php";
 
         if (!file_exists($validatorFile) || !is_readable($validatorFile)) {
             throw new \Exception("Could not load the validator file for $validationType $type.");

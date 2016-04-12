@@ -1,7 +1,7 @@
 <?php
 namespace tests\PhpUnit\Tests;
 
-use \JsonTable\Analyse;
+use \JsonTable\Analyse\Analyse;
 use \tests\PhpUnit\Fixtures\Mock;
 
 class AnalyseTest extends \PHPUnit_Framework_TestCase
@@ -13,7 +13,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
      * @access private
      *
      * @param array $pa_column_names The headers.
-     * @param array $pa_field_values The field values as a multimimentional array.
+     * @param array $pa_field_values The field values as a multi-mimentional array.
      *
      * @return void
      */
@@ -114,7 +114,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $lo_analyser->setPdoConnection($lo_pdo);
         $lo_analyser->setSchema(file_get_contents('examples/example.json'));
         $lo_analyser->setFile('examples/example.csv');
-        $lb_file_is_valid = $lo_analyser->analyse();
+        $lb_file_is_valid = $lo_analyser->validate();
 
         $this->assertEquals(true, $lb_file_is_valid);
     }
@@ -135,7 +135,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $lo_analyser = new Analyse();
         $lo_analyser->setSchema(file_get_contents('examples/example.json'));
         $lo_analyser->setFile('test.csv');
-        $lb_file_is_valid = $lo_analyser->analyse();
+        $lb_file_is_valid = $lo_analyser->validate();
 
         $this->assertFalse($lb_file_is_valid);
     }
@@ -148,7 +148,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $lo_analyser = new Analyse();
         $lo_analyser->setSchema(file_get_contents('examples/example.json'));
         $lo_analyser->setFile('test.csv');
-        $lo_analyser->analyse();
+        $lo_analyser->validate();
         $la_errors = $lo_analyser->getErrors();
 
         $la_expected_error = ['<strong>1</strong> required column(s) missing:' => ['website']];
