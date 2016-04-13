@@ -5,6 +5,14 @@ build:
     dependencies:
             override:
                 - composer install --dev --no-progress --no-interaction
+build:
+    tests:
+        override:
+            -
+                command: phpunit --coverage-clover=my-coverage-file
+                coverage:
+                    file: my-coverage-file
+                    format: php-clover
 filter:
     excluded_paths:
         - 'tests/*'
