@@ -37,7 +37,7 @@ class PostgresqlValidator implements ForeignKeyValidatorInterface
 
         $statement = Base::$pdoConnection->prepare($validationSql);
         $statement->bindParam(':row_hash', $rowHash);
-        $results = $statement->execute();
+        $results = $statement->fetchAll();
 
         if (false === $results) {
             throw new \Exception("Could not validate the foreign key for $referenceResource

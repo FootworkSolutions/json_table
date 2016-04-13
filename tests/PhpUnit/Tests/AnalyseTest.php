@@ -17,22 +17,22 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    private function createCSVFile($pa_column_names, $pa_field_values)
+    private function createCSVFile($columnNames, $fieldValues)
     {
-        $lr_file = fopen('test.csv', 'w');
+        $file = fopen('test.csv', 'w');
 
-        fputcsv($lr_file, $pa_column_names);
+        fputcsv($file, $columnNames);
 
-        foreach ($pa_field_values as $pa_row_values) {
-            fputcsv($lr_file, $pa_row_values);
+        foreach ($fieldValues as $rowValues) {
+            fputcsv($file, $rowValues);
         }
 
-        fclose($lr_file);
+        fclose($file);
     }
 
 
     /**
-     * Remove any test files that have been created.
+     * Remove any test files that have been created during the testing process.
      */
     protected function tearDown()
     {
@@ -42,27 +42,37 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * Test that setting a JSON schema with an invalid JSON string throws an exception.
+     */
     public function testSchemaThrowsExceptionWithInvalidJSONString()
     {
         $this->expectException(\Exception::class);
-        $lo_analyser = new Analyse();
-        $lo_analyser->setSchema('This is not a valid JSON string.');
+        $analyser = new Analyse();
+        $analyser->setSchema('This is not a valid JSON string.');
     }
 
 
     /**
-     * @param mixed $pm_invalid_values Invalid schema values.
+     * Test that setting an invalid JSON schema throws an exception.
      *
-     * @dataProvider providerInvalidSchemaValues
+     * @param   mixed $pm_invalid_values    Invalid schema values.
+     *
+     * @dataProvider    providerInvalidSchemaValues
      */
-    public function testSchemaThrowsExceptionWithInvalidValues($pm_invalid_values)
+    public function testSchemaThrowsExceptionWithInvalidValues($invalidValues)
     {
         $this->expectException(\Exception::class);
-        $lo_analyser = new Analyse();
-        $lo_analyser->setSchema($pm_invalid_values);
+        $analyser = new Analyse();
+        $analyser->setSchema($invalidValues);
     }
 
 
+    /**
+     * Provider of invalid schema values.
+     *
+     * @return  array   The invalid schema values.
+     */
     public function providerInvalidSchemaValues()
     {
         return [
@@ -73,28 +83,38 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * Test that setting a valid CSV file path returns true.
+     */
     public function testSetValidFilePath()
     {
-        $lo_analyser = new Analyse();
-        $lb_set_file_return_value = $lo_analyser->setFile('examples/example.csv');
-        $this->assertTrue($lb_set_file_return_value);
+        $analyser = new Analyse();
+        $setFileReturnValue = $analyser->setFile('examples/example.csv');
+        $this->assertTrue($setFileReturnValue);
     }
 
 
     /**
-     * @param mixed $pm_invalid_values Invalid file path.
+     * Test that setting an invalid file path returns false.
      *
-     * @dataProvider providerInvalidPathStrings
+     * @param   mixed   $pm_invalid_values  Invalid file path.
+     *
+     * @dataProvider    providerInvalidPaths
      */
     public function testSetInvalidFilePath($pm_invalid_values)
     {
-        $lo_analyser = new Analyse();
-        $lb_set_file_return_value = $lo_analyser->setFile($pm_invalid_values);
-        $this->assertFalse($lb_set_file_return_value);
+        $analyser = new Analyse();
+        $setFileReturnValue = $analyser->setFile($pm_invalid_values);
+        $this->assertFalse($setFileReturnValue);
     }
 
 
-    public function providerInvalidPathStrings()
+    /**
+     * Provider of invalid file paths.
+     *
+     * @return  array   The invalid paths.
+     */
+    public function providerInvalidPaths()
     {
         return [
             ['not a valid path'],
@@ -105,31 +125,29 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-//TODO: Work out why this expects is not working or causing an error.
-//    public function testAnalyseAllValidDataIsReturnedAsValid()
-//    {
-//        $lo_mock = new Mock();
-//        $lo_pdo = $lo_mock->PDO();
-//
-//        $lo_analyser = new Analyse();
-//        $lo_analyser->setPdoConnection($lo_pdo);
-//        $lo_analyser->setSchema(file_get_contents('examples/example.json'));
-//        $lo_analyser->setFile('examples/example.csv');
-//
-//        $lo_pdo->expects($this->once())
-//            ->method('bindParam')
-//            ->will($this->returnValue(false));
-//
-//        $lb_file_is_valid = $lo_analyser->validate();
-//        $this->assertEquals(false, $lb_file_is_valid);
-//    }
+
+    public function testAnalyseAllValidDataIsReturnedAsValid()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema(file_get_contents('examples/example.json'));
+        $analyser->setFile('examples/example.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $fileIsValid = $analyser->validate();
+        $this->assertEquals(true, $fileIsValid);
+    }
 
 
     public function testGetEmptyErrorsReturnsEmptyArray()
     {
-        $lo_analyser = new Analyse();
-        $la_errors = $lo_analyser->getErrors();
-        $this->assertEmpty($la_errors);
+        $analyser = new Analyse();
+        $errors = $analyser->getErrors();
+        $this->assertEmpty($errors);
     }
 
 
@@ -137,12 +155,12 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     {
         // Create a test CSV file with a missing mandatory "WEBSITE" column.
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
-        $lo_analyser = new Analyse();
-        $lo_analyser->setSchema(file_get_contents('examples/example.json'));
-        $lo_analyser->setFile('test.csv');
-        $lb_file_is_valid = $lo_analyser->validate();
+        $analyser = new Analyse();
+        $analyser->setSchema(file_get_contents('examples/example.json'));
+        $analyser->setFile('test.csv');
+        $fileIsValid = $analyser->validate();
 
-        $this->assertFalse($lb_file_is_valid);
+        $this->assertFalse($fileIsValid);
     }
 
 
@@ -150,32 +168,32 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     {
         // Create a test CSV file with a missing mandatory "WEBSITE" column.
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
-        $lo_analyser = new Analyse();
-        $lo_analyser->setSchema(file_get_contents('examples/example.json'));
-        $lo_analyser->setFile('test.csv');
-        $lo_analyser->validate();
-        $la_errors = $lo_analyser->getErrors();
+        $analyser = new Analyse();
+        $analyser->setSchema(file_get_contents('examples/example.json'));
+        $analyser->setFile('test.csv');
+        $analyser->validate();
+        $errors = $analyser->getErrors();
 
-        $la_expected_error = ['<strong>1</strong> required column(s) missing:' => ['website']];
-        $this->assertEquals($la_expected_error, $la_errors);
+        $expectedError = ['<strong>1</strong> required column(s) missing:' => ['website']];
+        $this->assertEquals($expectedError, $errors);
     }
 
 
 //    public function testGetStatisticsWhenNoErrors()
 //    {
-//        $lo_mock = new Mock();
-//        $lo_pdo = $lo_mock->PDO();
+//        $mock = new Mock();
+//        $pdo = $mock->PDO();
 //
-//        $lo_analyser = new Analyse();
-//        $lo_analyser->setPdoConnection($lo_pdo);
-//        $lo_analyser->setSchema(file_get_contents('examples/example.json'));
-//        $lo_analyser->setFile('examples/example.csv');
-//        $lo_pdo->expects($this->once())
+//        $analyser = new Analyse();
+//        $analyser->setPdoConnection($pdo);
+//        $analyser->setSchema(file_get_contents('examples/example.json'));
+//        $analyser->setFile('examples/example.csv');
+//        $pdo->expects($this->once())
 //            ->method('bindParam')
 //            ->will($this->returnValue(false));
 
-//        $lo_analyser->validate();
-//        $la_statistics = $lo_analyser->getStatistics();
+//        $analyser->validate();
+//        $la_statistics = $analyser->getStatistics();
 //
 //        $la_expected_statistics = [
 //            'rows_with_errors' => [],
