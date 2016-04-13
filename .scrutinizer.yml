@@ -5,7 +5,6 @@ build:
     dependencies:
             override:
                 - composer install --dev --no-progress --no-interaction
-build:
     tests:
         override:
             -
