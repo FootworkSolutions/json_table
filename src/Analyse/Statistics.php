@@ -38,7 +38,7 @@ class Statistics
     /**
      * Add the row number of a row with an error to the analysis statistics.
      *
-     * @param   int $row_number   The position of the row with the error in the CSV file.
+     * @param   int $rowNumber   The position of the row with the error in the CSV file.
      *
      * @return  void
      */

@@ -139,6 +139,9 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * Test that all valid data returns as valid from the analysis class.
+     */
     public function testAnalyseAllValidDataIsReturnedAsValid()
     {
         $mock = new Mock();
@@ -156,6 +159,9 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * Test that the getting errors returns an empty array when no errors have been set.
+     */
     public function testGetEmptyErrorsReturnsEmptyArray()
     {
         $analyser = new Analyse();
@@ -164,29 +170,31 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testAValidateReturnsFalseOnMissingMandatoryColumnInCSVFile()
+    /**
+     * Test that a missing mandatory column is invalid.
+     */
+    public function testValidateReturnsFalseOnMissingMandatoryColumnInCSVFile()
     {
-        // Create a test CSV file with a missing mandatory "WEBSITE" column.
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
         $analyser = new Analyse();
         $analyser->setSchema($this->getExampleSchemaString());
         $analyser->setFile('test.csv');
         $fileIsValid = $analyser->validate();
-
         $this->assertFalse($fileIsValid);
     }
 
 
+    /**
+     * Test that a missing mandatory column sets the correct error.
+     */
     public function testErrorIsSetOnMissingMandatoryColumnInCSVFile()
     {
-        // Create a test CSV file with a missing mandatory "WEBSITE" column.
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
         $analyser = new Analyse();
         $analyser->setSchema($this->getExampleSchemaString());
         $analyser->setFile('test.csv');
         $analyser->validate();
         $errors = $analyser->getErrors();
-
         $expectedError = ['<strong>1</strong> required column(s) missing:' => ['website']];
         $this->assertEquals($expectedError, $errors);
     }

@@ -54,6 +54,8 @@ abstract class AbstractStore extends Base
      *
      * @static
      *
+     * @param   mixed   $value  The value to convert to a boolean.
+     *
      * @return  boolean|null The converted value.
      */
     public static function booleanFromFilterBooleans($value)

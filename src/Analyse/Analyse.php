@@ -86,28 +86,26 @@ class Analyse extends Base implements AnalyseInterface
         self::openFile();
         self::setCsvHeaderColumns();
 
-        if (!$this->validateMandatoryColumns()) {
+        $analyseColumns = new Column($this->statistics, $this->error);
+
+        if (!$analyseColumns->validate()) {
             $continueAnalysis = false;
         }
 
-        if ($continueAnalysis && !$this->validateUnspecifiedColumns() && $this->stopIfInvalid) {
-            $continueAnalysis = false;
-        }
-
-        $analyseLexical = new Lexical($this->statistics);
+        $analyseLexical = new Lexical($this->statistics, $this->error);
 
         if ($continueAnalysis && !$analyseLexical->validate() && $this->stopIfInvalid) {
             $continueAnalysis = false;
         }
 
-        $analysePrimaryKey = new PrimaryKey($this->statistics);
+        $analysePrimaryKey = new PrimaryKey($this->statistics, $this->error);
         
         if ($continueAnalysis && !$analysePrimaryKey->validate() && $this->stopIfInvalid) {
             $continueAnalysis = false;
         }
 
         if ($continueAnalysis) {
-            $analyseForeignKey = new ForeignKey($this->statistics);
+            $analyseForeignKey = new ForeignKey($this->statistics, $this->error);
             $analyseForeignKey->validate();
         }
 
@@ -134,56 +132,6 @@ class Analyse extends Base implements AnalyseInterface
     public function getStatistics()
     {
         return $this->statistics->getStatistics();
-    }
-
-
-    /**
-     * Validate that all mandatory columns are present.
-     *
-     * @return boolean Are all mandatory columns present.
-     */
-    private function validateMandatoryColumns()
-    {
-        $validMandatoryColumns = true;
-
-        foreach (self::$schemaJson->fields as $field) {
-            if ($this->isColumnMandatory($field)) {
-                if (!in_array($field->name, self::$headerColumns)) {
-                    $this->error->setError(Analyse::ERROR_REQUIRED_COLUMN_MISSING, $field->name);
-                    $validMandatoryColumns = false;
-
-                    if ($this->stopIfInvalid) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return $validMandatoryColumns;
-    }
-
-
-    /**
-     * Check that there are no columns in the CSV that are not specified in the schema.
-     *
-     * @return boolean Are all the CSV columns specified in the schema.
-     */
-    private function validateUnspecifiedColumns()
-    {
-        $validUnspecifiedColumns = true;
-
-        foreach (self::$headerColumns as $csvColumnName) {
-            if (false === $this->getSchemaKeyFromName($csvColumnName)) {
-                $this->error->setError(Analyse::ERROR_UNSPECIFIED_COLUMN, $csvColumnName);
-                $validUnspecifiedColumns = false;
-
-                if ($this->stopIfInvalid) {
-                    return false;
-                }
-            }
-        }
-
-        return $validUnspecifiedColumns;
     }
 
 

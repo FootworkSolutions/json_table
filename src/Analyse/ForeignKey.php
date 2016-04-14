@@ -105,7 +105,7 @@ class ForeignKey extends Analyse implements AnalyseInterface
                     $errorMessage = "The value(s) of &quot;$csvValueHash&quot; in column(s) $csvFields
                     on row $row doesn't match a foreign key.";
 
-                    $this->setError(self::ERROR_INVALID_FOREIGN_KEY, $errorMessage);
+                    $this->error->setError(self::ERROR_INVALID_FOREIGN_KEY, $errorMessage);
                     $this->statistics->setErrorRow($row);
 
                     if ($this->stopIfInvalid) {

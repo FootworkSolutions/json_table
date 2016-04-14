@@ -42,12 +42,14 @@ class PostgresqlStore extends AbstractStore
     /**
      * Store the data.
      *
-     * @param string $ps_table_name  The name of the table to save the data in. With optional schema prefix.
-     * @param string $ps_primary_key The name of the primary key on the table. [optional] The default is "id".
-     *                               The primary key does not need to be listed in the CSV if it has
-     *                               a serial associated with it.
+     * @param   string  $ps_table_name  The name of the table to save the data in. With optional schema prefix.
+     * @param   string  $ps_primary_key The name of the primary key on the table. [optional] The default is "id".
+     *                                  The primary key does not need to be listed in the CSV if it has
+     *                                  a serial associated with it.
      *
-     * @return boolean true on success false on failure.
+     * @return  boolean true on success false on failure.
+     *
+     * @throws  \Exception if the row couldn't be inserted into the database.
      */
     public function store($ps_table_name, $ps_primary_key = 'id')
     {
