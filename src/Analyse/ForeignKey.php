@@ -108,7 +108,7 @@ class ForeignKey extends Analyse implements AnalyseInterface
                     on row $row doesn't match a foreign key.";
 
                     $this->setError(self::ERROR_INVALID_FOREIGN_KEY, $errorMessage);
-                    $this->statistics['rows_with_errors'][] = $row;
+                    $this->setErrorRowStatistic($row);
 
                     if ($this->stopIfInvalid) {
                         return false;

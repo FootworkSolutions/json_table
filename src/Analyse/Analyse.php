@@ -52,7 +52,11 @@ class Analyse extends Base implements AnalyseInterface
      *
      * @var array   Statistics relating to the file analysis.
      */
-    protected $statistics = ['rows_with_errors' => []];
+    protected static $statistics = [
+        'rows_with_errors' => [],
+        'percent_rows_with_errors' => 0,
+        'rows_analysed' => 0
+    ];
 
     /**
      * @access  protected
@@ -61,7 +65,7 @@ class Analyse extends Base implements AnalyseInterface
      * @var array   Error messages.
      */
     protected static $errors = [];
-
+    
 
     /**
      * Analyse the specified file against the loaded schema.
@@ -121,15 +125,13 @@ class Analyse extends Base implements AnalyseInterface
      */
     public function getStatistics()
     {
-        $this->statistics['rows_with_errors'] = array_unique($this->statistics['rows_with_errors']);
-        $this->statistics['percent_rows_with_errors'] = 0;
+        $this->cleanErrorRowStatistic();
 
-        if ($this->statistics['rows_analysed'] > 0) {
-            $this->statistics['percent_rows_with_errors'] =
-                (count($this->statistics['rows_with_errors']) / $this->statistics['rows_analysed']) * 100;
+        if (self::$statistics['rows_analysed'] > 0) {
+            self::$statistics['percent_rows_with_errors'] = $this->getErrorRowPercent();
         }
 
-        return $this->statistics;
+        return self::$statistics;
     }
 
 
@@ -299,5 +301,47 @@ class Analyse extends Base implements AnalyseInterface
         }
 
         array_push(self::$errors[$type], $error);
+    }
+
+
+    /**
+     * Add the row number of a row with an error to the analysis statistics.
+     *
+     * @access  protected
+     *
+     * @param   int $row_number   The position of the row with the error in the CSV file.
+     *
+     * @return  void
+     */
+    protected function setErrorRowStatistic($row_number)
+    {
+        self::$statistics['rows_with_errors'][] = $row_number;
+    }
+
+
+    /**
+     * Clean the rows with errors statistic.
+     * This removes duplicated records where the same row has had multiple errors.
+     *
+     * @access  private
+     *
+     * @return  void
+     */
+    private function cleanErrorRowStatistic()
+    {
+        self::$statistics['rows_with_errors'] = array_unique(self::$statistics['rows_with_errors']);
+    }
+
+
+    /**
+     * Get the percentage of analysed rows that have had a error with them.
+     *
+     * @access  private
+     *
+     * @return  int The percentage.
+     */
+    private function getErrorRowPercent()
+    {
+        return round((count(self::$statistics['rows_with_errors']) / self::$statistics['rows_analysed']) * 100);
     }
 }

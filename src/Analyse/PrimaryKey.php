@@ -198,6 +198,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
                 but rows $existingKey &amp; $this->rowNumber have the same values of &quot;$this->hash&quot;";
 
         $this->setError(self::ERROR_DUPLICATE_PRIMARY_KEY, $errorMessage);
-        $this->statistics['rows_with_errors'][] = $this->rowNumber;
+        $this->setErrorRowStatistic($this->rowNumber);
     }
 }
