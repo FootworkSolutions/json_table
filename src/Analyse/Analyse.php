@@ -41,36 +41,36 @@ class Analyse extends Base implements AnalyseInterface
     const VALIDATION_TYPE_FOREIGN_KEY = 'ForeignKey';
 
     /**
-     * @access  protected
-     *
      * @var boolean Should the analysis stop when an error is found.
      */
     protected $stopIfInvalid;
 
     /**
-     * @access  protected
-     *
-     * @var array   Statistics relating to the file analysis.
+     * @var Statistics  Statistics information regarding the analysis.
      */
-    protected static $statistics = [
-        'rows_with_errors' => [],
-        'percent_rows_with_errors' => 0,
-        'rows_analysed' => 0
-    ];
+    protected $statistics;
 
     /**
-     * @access  protected
-     * @static
-     *
-     * @var array   Error messages.
+     * @var Error  Details of errors found during the analysis.
      */
-    protected static $errors = [];
-    
+    protected $error;
+
+
+    /**
+     * Set the dependencies if they've been provided.
+     *
+     * @param   Statistics  $statistics Statistics information regarding the analysis. Optional.
+     * @param   Error       $error      Details of errors found during the analysis. Optional.
+     */
+    public function __construct(Statistics $statistics = null, Error $error = null)
+    {
+        $this->statistics = (is_null($statistics)) ? new Statistics() : $statistics;
+        $this->error = (is_null($error)) ? new Error() : $error;
+    }
+
 
     /**
      * Analyse the specified file against the loaded schema.
-     *
-     * @access  public
      *
      * @param   boolean $stopIfInvalid Should the analysis stop when the file is found to be invalid.
      *                                          The default is false.
@@ -81,7 +81,6 @@ class Analyse extends Base implements AnalyseInterface
     {
         $this->stopIfInvalid = (bool) $stopIfInvalid;
 
-        self::$errors = [];
         $continueAnalysis = true;
 
         self::openFile();
@@ -95,20 +94,20 @@ class Analyse extends Base implements AnalyseInterface
             $continueAnalysis = false;
         }
 
-        $analyseLexical = new Lexical();
+        $analyseLexical = new Lexical($this->statistics);
 
         if ($continueAnalysis && !$analyseLexical->validate() && $this->stopIfInvalid) {
             $continueAnalysis = false;
         }
 
-        $analysePrimaryKey = new PrimaryKey();
+        $analysePrimaryKey = new PrimaryKey($this->statistics);
         
         if ($continueAnalysis && !$analysePrimaryKey->validate() && $this->stopIfInvalid) {
             $continueAnalysis = false;
         }
 
         if ($continueAnalysis) {
-            $analyseForeignKey = new ForeignKey();
+            $analyseForeignKey = new ForeignKey($this->statistics);
             $analyseForeignKey->validate();
         }
 
@@ -117,28 +116,29 @@ class Analyse extends Base implements AnalyseInterface
 
 
     /**
-     * Get the statistics about the file analysis.
+     * Return all errors.
      *
-     * @access  public
+     * @return  array   The error messages.
+     */
+    public function getErrors()
+    {
+        return $this->error->getErrors();
+    }
+
+
+    /**
+     * Return the statistics about this analysis.
      *
      * @return  array   The statistics.
      */
     public function getStatistics()
     {
-        $this->cleanErrorRowStatistic();
-
-        if (self::$statistics['rows_analysed'] > 0) {
-            self::$statistics['percent_rows_with_errors'] = $this->getErrorRowPercent();
-        }
-
-        return self::$statistics;
+        return $this->statistics->getStatistics();
     }
 
 
     /**
      * Validate that all mandatory columns are present.
-     *
-     * @access private
      *
      * @return boolean Are all mandatory columns present.
      */
@@ -149,7 +149,7 @@ class Analyse extends Base implements AnalyseInterface
         foreach (self::$schemaJson->fields as $field) {
             if ($this->isColumnMandatory($field)) {
                 if (!in_array($field->name, self::$headerColumns)) {
-                    $this->setError(Analyse::ERROR_REQUIRED_COLUMN_MISSING, $field->name);
+                    $this->error->setError(Analyse::ERROR_REQUIRED_COLUMN_MISSING, $field->name);
                     $validMandatoryColumns = false;
 
                     if ($this->stopIfInvalid) {
@@ -166,8 +166,6 @@ class Analyse extends Base implements AnalyseInterface
     /**
      * Check that there are no columns in the CSV that are not specified in the schema.
      *
-     * @access private
-     *
      * @return boolean Are all the CSV columns specified in the schema.
      */
     private function validateUnspecifiedColumns()
@@ -176,7 +174,7 @@ class Analyse extends Base implements AnalyseInterface
 
         foreach (self::$headerColumns as $csvColumnName) {
             if (false === $this->getSchemaKeyFromName($csvColumnName)) {
-                $this->setError(Analyse::ERROR_UNSPECIFIED_COLUMN, $csvColumnName);
+                $this->error->setError(Analyse::ERROR_UNSPECIFIED_COLUMN, $csvColumnName);
                 $validUnspecifiedColumns = false;
 
                 if ($this->stopIfInvalid) {
@@ -191,8 +189,6 @@ class Analyse extends Base implements AnalyseInterface
 
     /**
      * Check if the specified column is mandatory.
-     *
-     * @access  protected
      *
      * @param   object  $schemaColumn    The schema column object to examine.
      *
@@ -209,8 +205,6 @@ class Analyse extends Base implements AnalyseInterface
 
     /**
      * Load and instantiate the specified validator.
-     *
-     * @access protected
      *
      * @param string $validationType The type of validator to load.
      * @param string $type The type being validated.
@@ -253,95 +247,10 @@ class Analyse extends Base implements AnalyseInterface
      * Check if the file was found to be valid.
      * This checks for any validation errors.
      *
-     * @access  private
-     *
      * @return  boolean Is the file valid.
      */
     private function isFileValid()
     {
-        return (0 === count(self::$errors));
-    }
-
-
-    /**
-     * Return all errors.
-     *
-     * @access  public
-     *
-     * @return  array   The error messages.
-     */
-    public function getErrors()
-    {
-        $errorsFormatted = [];
-
-        // Format the error type with the number of errors of that type.
-        foreach (self::$errors as $errorType => $errors) {
-            $errorTypeFormatted = sprintf($errorType, count($errors));
-            $errorsFormatted[$errorTypeFormatted] = $errors;
-        }
-
-        return $errorsFormatted;
-    }
-
-
-    /**
-     * Add an error message.
-     *
-     * @access  protected
-     *
-     * @param   string  $type   The type of error.
-     * @param   string  $error  The error message (or field).
-     *
-     * @return  void
-     */
-    protected function setError($type, $error)
-    {
-        if (!array_key_exists($type, self::$errors)) {
-            self::$errors[$type] = [];
-        }
-
-        array_push(self::$errors[$type], $error);
-    }
-
-
-    /**
-     * Add the row number of a row with an error to the analysis statistics.
-     *
-     * @access  protected
-     *
-     * @param   int $row_number   The position of the row with the error in the CSV file.
-     *
-     * @return  void
-     */
-    protected function setErrorRowStatistic($row_number)
-    {
-        self::$statistics['rows_with_errors'][] = $row_number;
-    }
-
-
-    /**
-     * Clean the rows with errors statistic.
-     * This removes duplicated records where the same row has had multiple errors.
-     *
-     * @access  private
-     *
-     * @return  void
-     */
-    private function cleanErrorRowStatistic()
-    {
-        self::$statistics['rows_with_errors'] = array_unique(self::$statistics['rows_with_errors']);
-    }
-
-
-    /**
-     * Get the percentage of analysed rows that have had a error with them.
-     *
-     * @access  private
-     *
-     * @return  int The percentage.
-     */
-    private function getErrorRowPercent()
-    {
-        return round((count(self::$statistics['rows_with_errors']) / self::$statistics['rows_analysed']) * 100);
+        return (0 === count($this->error->getErrors()));
     }
 }

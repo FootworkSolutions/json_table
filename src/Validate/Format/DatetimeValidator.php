@@ -13,8 +13,6 @@ class DatetimeValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid ISO8601 formatted date.
      *
-     * @access  protected
-     *
      * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()
@@ -44,8 +42,6 @@ class DatetimeValidator extends AbstractFormatValidator
 
     /**
      * Validate that the input is a valid date in the specified format.
-     *
-     * @access  protected
      *
      * @param   string   $format   The date format to validate against.
      *

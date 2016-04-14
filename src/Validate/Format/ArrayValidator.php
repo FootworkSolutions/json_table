@@ -13,8 +13,6 @@ class ArrayValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid null.
      *
-     * @access  protected
-     *
      * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()

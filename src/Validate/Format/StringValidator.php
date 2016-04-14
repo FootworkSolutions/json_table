@@ -13,8 +13,6 @@ class StringValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid string.
      *
-     * @access  protected
-     *
      * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()
@@ -25,8 +23,6 @@ class StringValidator extends AbstractFormatValidator
 
     /**
      * Validate that the input is a valid email address.
-     *
-     * @access  protected
      *
      * @return  boolean Whether the input is valid.
      */
@@ -43,8 +39,6 @@ class StringValidator extends AbstractFormatValidator
      *
      * This validator allows the input to miss this off so an input
      * of "www.example.com" will be passed as valid.
-     *
-     * @access  protected
      *
      * @return  boolean Whether the input is valid.
      */
@@ -64,8 +58,6 @@ class StringValidator extends AbstractFormatValidator
      * Validate that the input is a valid binary string.
      * As PHP treats all stings as binary, this is currently just a check that the input is a string.
      * TODO: Find a better way of validating that the string is a binary.
-     *
-     * @access protected
      *
      * @return boolean Whether the input is valid.
      */

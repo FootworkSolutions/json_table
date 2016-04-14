@@ -52,8 +52,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
     /**
      * Validate that any specified primary key constraints have been met.
      *
-     * @access  public
-     *
      * @return  boolean Does the data meet the primary key constraints.
      *
      *
@@ -94,8 +92,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
     /**
      * Set the primary key fields.
      *
-     * @access  private
-     *
      * @return  void
      */
     private function setPrimaryKeyFields()
@@ -106,8 +102,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
 
     /**
      * Check that there is a column in the JSON table schema file for the current primary key field.
-     *
-     * @access  private
      *
      * @return  void
      *
@@ -125,8 +119,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
     /**
      * Get the data in the CSV column for the current primary key column.
      *
-     * @access  private
-     *
      * @return  string  The data in the column.
      */
     private function csvDataForPrimaryKeyColumn()
@@ -138,8 +130,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
 
     /**
      * Get the data in the primary key columns for the current CSV row.
-     *
-     * @access  private
      *
      * @return  void
      */
@@ -158,8 +148,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
     /**
      * Create a hash of the data taken from the primary key fields in the current CSV row.
      *
-     * @access  private
-     *
      * @return  void
      */
     private function createHash()
@@ -170,8 +158,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
 
     /**
      * Check whether the current hash has already been created for this file.
-     *
-     * @access  private
      *
      * @return  boolean|int False if this row's primary key hash is unique
      *                      or the number of the row with the same hash if it's not.
@@ -185,8 +171,6 @@ class PrimaryKey extends Analyse implements AnalyseInterface
     /**
      * Handle the current hash not being unique.
      *
-     * @access  private
-     *
      * @param   int $existingKey    The number of the row with the same hash.
      *
      * @return  void
@@ -197,7 +181,7 @@ class PrimaryKey extends Analyse implements AnalyseInterface
         $errorMessage = "The data in columns &quot;$primaryKeyColumns&quot; should be unique,
                 but rows $existingKey &amp; $this->rowNumber have the same values of &quot;$this->hash&quot;";
 
-        $this->setError(self::ERROR_DUPLICATE_PRIMARY_KEY, $errorMessage);
-        $this->setErrorRowStatistic($this->rowNumber);
+        $this->error->setError(self::ERROR_DUPLICATE_PRIMARY_KEY, $errorMessage);
+        $this->statistics->setErrorRow($this->rowNumber);
     }
 }

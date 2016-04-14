@@ -11,8 +11,6 @@ use \JsonTable\Base;
 abstract class AbstractStore extends Base
 {
     /**
-     * @access protected
-     *
      * @var array The values of the primary key of the last inserted data.
      */
     protected $insertedIds = [];
@@ -20,8 +18,6 @@ abstract class AbstractStore extends Base
 
     /**
      * Get the primary keys of the records inserted in the last call to store.
-     *
-     * @access public
      *
      * @return array The primary keys.
      */
@@ -34,7 +30,6 @@ abstract class AbstractStore extends Base
     /**
      * Convert a date from a specific format into ISO date format of YYYY-MM-DD.
      *
-     * @access public
      * @static
      *
      * @param   string  $format  The format to convert from.
@@ -57,7 +52,6 @@ abstract class AbstractStore extends Base
     /**
      * Convert a value from being something that passes the FILTER_VALIDATE_BOOLEAN filter to be an actual boolean.
      *
-     * @access  public
      * @static
      *
      * @return  boolean|null The converted value.

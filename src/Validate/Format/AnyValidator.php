@@ -14,8 +14,6 @@ class AnyValidator extends AbstractFormatValidator
      * Validate that the input is a valid any.
      * This doesn't do any checks and always returns true.
      *
-     * @access  protected
-     *
      * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()

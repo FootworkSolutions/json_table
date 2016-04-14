@@ -22,8 +22,6 @@ class ForeignKey extends Analyse implements AnalyseInterface
     /**
      * Validate that any specified foreign key constraints have been met.
      *
-     * @access  public
-     *
      * @return  boolean Does the data meet the foreign key constraints.
      *
      * @throws  \Exception if a foreign key other than postgresql is specified.
@@ -108,7 +106,7 @@ class ForeignKey extends Analyse implements AnalyseInterface
                     on row $row doesn't match a foreign key.";
 
                     $this->setError(self::ERROR_INVALID_FOREIGN_KEY, $errorMessage);
-                    $this->setErrorRowStatistic($row);
+                    $this->statistics->setErrorRow($row);
 
                     if ($this->stopIfInvalid) {
                         return false;
@@ -128,8 +126,6 @@ class ForeignKey extends Analyse implements AnalyseInterface
     /**
      * Get the package of the specified foreign key.
      *
-     * @access  private
-     *
      * @param   object  $foreignKey The foreign key object to examine.
      *
      * @return  string  The package for the foreign key.
@@ -144,8 +140,6 @@ class ForeignKey extends Analyse implements AnalyseInterface
     /**
      * Check that the data package for the current foreign key is a valid package type.
      *
-     * @access  private
-     *
      * @return  boolean Whether the data package is valid
      */
     private function checkValidDataPackageType()
@@ -156,8 +150,6 @@ class ForeignKey extends Analyse implements AnalyseInterface
 
     /**
      * Handle an invalid data package being referenced in a foreign key.
-     *
-     * @access  private
      *
      * @return  void
      *

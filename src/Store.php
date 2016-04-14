@@ -11,8 +11,6 @@ class Store extends Base
     /**
      * Load and instantiate the specified store.
      *
-     * @access private
-     *
      * @param string $storeType The type of store to load.
      *
      * @return object The store object. Throws an exception on error.
@@ -28,7 +26,6 @@ class Store extends Base
     /**
      * Load the abstract store file.
      *
-     * @access  private
      * @static
      *
      * @return  void
@@ -50,7 +47,6 @@ class Store extends Base
     /**
      * Load the store file for the specified type.
      *
-     * @access  private
      * @static
      *
      * @param   string  $storeType The type of store to load.
@@ -75,7 +71,6 @@ class Store extends Base
     /**
      * Instantiate the store class for the specified type.
      *
-     * @access  private
      * @static
      *
      * @param   string  $storeType The type of store to load.

@@ -19,8 +19,6 @@ class BooleanValidator extends AbstractFormatValidator
      * "yes" or "YES" and "no" or "NO"
      * true and false
      *
-     * @access  protected
-     *
      * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()

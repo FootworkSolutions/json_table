@@ -13,8 +13,6 @@ class NumberValidator extends AbstractFormatValidator
     /**
      * Validate that the input is a valid number (float).
      *
-     * @access  protected
-     *
      * @return  boolean Whether the input is valid.
      */
     protected function formatDefault()
@@ -25,8 +23,6 @@ class NumberValidator extends AbstractFormatValidator
 
     /**
      * Validate that the input is a valid currency.
-     *
-     * @access  protected
      *
      * @return  boolean Whether the input is valid.
      */

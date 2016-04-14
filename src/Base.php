@@ -7,7 +7,6 @@ namespace JsonTable;
 abstract class Base
 {
     /**
-     * @access protected
      * @static
      *
      * @var string Schema JSON
@@ -15,7 +14,6 @@ abstract class Base
     protected static $schemaJson;
 
     /**
-     * @access protected
      * @static
      *
      * @var string The path and name of the file to analyse.
@@ -23,7 +21,6 @@ abstract class Base
     protected static $fileName;
 
     /**
-     * @access protected
      * @static
      *
      * @var array The columns found in the header.
@@ -33,7 +30,6 @@ abstract class Base
     protected static $headerColumns;
 
     /**
-     * @access protected
      * @static
      *
      * @var object The SplFileObject of the CSV file.
@@ -41,8 +37,6 @@ abstract class Base
     protected static $file;
 
     /**
-     * @access protected
-     *
      * @var object The PDO object.
      */
     public static $pdoConnection;
@@ -50,8 +44,6 @@ abstract class Base
 
     /**
      * Set the schema.
-     *
-     * @access public
      *
      * @param string $schemaJson The schema conforming to the JSON table schema specification.
      * @see http://dataprotocols.org/json-table-schema
@@ -84,8 +76,6 @@ abstract class Base
      * Set the file.
      * This checks that the file exists.
      *
-     * @access  public
-     *
      * @param   string  $fileName    The path and name of the file to analyse.
      * @see http://dataprotocols.org/json-table-schema
      *
@@ -105,7 +95,6 @@ abstract class Base
     /**
      * Set the database connection.
      *
-     * @access protected
      * @static
      *
      * @param object $pdoConnection The PDO object.
@@ -126,7 +115,6 @@ abstract class Base
     /**
      * Open a handle to the file to be analysed.
      *
-     * @access public
      * @static
      *
      * @return void
@@ -148,7 +136,6 @@ abstract class Base
      * Set the CSV header columns from those in the file.
      * These are stored in lowercase as all column to schema checking is considered as case insensitive.
      *
-     * @access protected
      * @static
      *
      * @return true on success.
@@ -164,7 +151,6 @@ abstract class Base
     /**
      * Rewind the CSV file pointer to the first line of data.
      *
-     * @access protected
      * @static
      *
      * @return void
@@ -178,7 +164,6 @@ abstract class Base
     /**
      * Get the data from the current CSV file row and move the pointer on to the next row.
      *
-     * @access public
      * @static
      *
      * @return array boolean The CSV data or false if the end of the file has been reached.
@@ -200,8 +185,6 @@ abstract class Base
      * Get the key of the field with the specified name from the schema.
      * This can be used to validate that a column exists in the schema.
      *
-     * @access protected
-     *
      * @param string $fieldName The field name.
      *
      * @return int The key ID or false if the field is not found.
@@ -222,8 +205,6 @@ abstract class Base
      * Get the position of the field with the specified name from the CSV file.
      * This can be used to validate that a column exists in the CSV file.
      *
-     * @access protected
-     *
      * @param string $fieldName The field name.
      *
      * @return int The position or false if the field is not found.
@@ -236,8 +217,6 @@ abstract class Base
 
     /**
      * Get the schema object for a column, given the columns position in the CSV file.
-     *
-     * @access protected
      *
      * @param int $csvColumnPosition The position of the column in the CSV file.
      *
@@ -255,8 +234,6 @@ abstract class Base
     /**
      * Get the type of the specified column.
      *
-     * @access protected
-     *
      * @param object $schemaColumn The schema column object to examine.
      *
      * @return string The type.
@@ -269,8 +246,6 @@ abstract class Base
 
     /**
      * Get the format of the specified column.
-     *
-     * @access protected
      *
      * @param object $schemaColumn The schema column object to examine.
      *

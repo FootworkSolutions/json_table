@@ -9,13 +9,11 @@ namespace JsonTable\Validate;
 abstract class AbstractFormatValidator
 {
     /**
-     * @access protected
      * @var string The type of validation being done. eg "string", "number".
      */
     protected $type;
 
     /**
-     * @access protected
      * @var mixed The input being validated.
      */
     protected $input;
@@ -23,8 +21,6 @@ abstract class AbstractFormatValidator
 
     /**
      * Construct the validator.
-     *
-     * @access public
      *
      * @param string $type The type of validation being validated.
      */
@@ -36,8 +32,6 @@ abstract class AbstractFormatValidator
 
     /**
      * Set the input to validate.
-     *
-     * @access public
      *
      * @param mixed $input The input to validate.
      *
@@ -51,8 +45,6 @@ abstract class AbstractFormatValidator
 
     /**
      * Check that the input matches the specified format.
-     *
-     * @access public
      *
      * @param string $format The format to validate against.
      *
@@ -80,8 +72,6 @@ abstract class AbstractFormatValidator
 
     /**
      * Get the name of the method and the parameter to pass to it for the specified format.
-     *
-     * @access  private
      *
      * @param   string  $format         The format to validate against.
      *

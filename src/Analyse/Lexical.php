@@ -69,8 +69,6 @@ class Lexical extends Analyse implements AnalyseInterface
      * Validate that all fields are of the correct type, format and pattern.
      * This also checks that each CSV row has the expected number of columns.
      *
-     * @access  public
-     *
      * @return  boolean Is all data lexically valid.
      */
     public function validate()
@@ -140,22 +138,18 @@ class Lexical extends Analyse implements AnalyseInterface
     /**
      * Set an error and update the application as the current row has an unexpected number of columns.
      *
-     * @access  private
-     *
      * @return  void
      */
     private function handleUnexpectedColumnCount()
     {
         $errorMessage = "Row $this->rowNumber has $this->columnCount columns but should have $this->expectedColumnCount.";
-        $this->setError(Analyse::ERROR_INCORRECT_COLUMN_COUNT, $errorMessage);
-        $this->setErrorRowStatistic($this->rowNumber);
+        $this->error->setError(Analyse::ERROR_INCORRECT_COLUMN_COUNT, $errorMessage);
+        $this->statistics->setErrorRow($this->rowNumber);
     }
 
 
     /**
      * Check whether the current column is mandatory and if so, whether it has data in it.
-     *
-     * @access  private
      *
      * @return  boolean Whether the column has data in it.
      */
@@ -172,15 +166,13 @@ class Lexical extends Analyse implements AnalyseInterface
     /**
      * Set an error and update the application as the current column is mandatory and has no data in it.
      *
-     * @access  private
-     *
      * @return  void
      */
     private function handleInvalidMandatoryColumn()
     {
         $errorMessage = $this->schemaColumn->name . " on row $this->rowNumber is missing.";
-        $this->setError(Analyse::ERROR_REQUIRED_FIELD_MISSING_DATA, $errorMessage);
-        $this->setErrorRowStatistic($this->rowNumber);
+        $this->error->setError(Analyse::ERROR_REQUIRED_FIELD_MISSING_DATA, $errorMessage);
+        $this->statistics->setErrorRow($this->rowNumber);
         $this->valid = false;
     }
 
@@ -188,8 +180,6 @@ class Lexical extends Analyse implements AnalyseInterface
     /**
      * Check that the data in the current field is of a valid format as specified in the schema for this column.
      * This instantiates and passed the data to the format validator for this field type.
-     *
-     * @access  private
      *
      * @return  boolean Whether the current field is of a valid format.
      */
@@ -207,24 +197,20 @@ class Lexical extends Analyse implements AnalyseInterface
     /**
      * Set an error and update the application as the current data didn't match the specified format.
      *
-     * @access  private
-     *
      * @return  void
      */
     private function handleInvalidFormat()
     {
         $errorMessage  = "The data in column " . $this->schemaColumn->name ." on row $this->rowNumber doesn't ";
         $errorMessage .= "match the required format of $this->format.";
-        $this->setError(self::ERROR_INVALID_FORMAT, $errorMessage);
-        $this->setErrorRowStatistic($this->rowNumber);
+        $this->error->setError(self::ERROR_INVALID_FORMAT, $errorMessage);
+        $this->statistics->setErrorRow($this->rowNumber);
         $this->valid = false;
     }
 
 
     /**
      * Get the pattern of the specified column.
-     *
-     * @access  private
      *
      * @return  string  The pattern or null if no pattern is specified.
      */
@@ -239,8 +225,6 @@ class Lexical extends Analyse implements AnalyseInterface
 
     /**
      * Check that the input matches the specified pattern.
-     *
-     * @access  private
      *
      * @return  boolean Is the data valid.
      */
@@ -260,16 +244,14 @@ class Lexical extends Analyse implements AnalyseInterface
     /**
      * Set an error and update the application as the current data didn't match the specified pattern.
      *
-     * @access  private
-     *
      * @return  void
      */
     private function handleInvalidPattern()
     {
         $errorMessage  = "The data in column " . $this->schemaColumn->name . " on row $this->rowNumber doesn't ";
         $errorMessage .= "match the required pattern of $this->pattern.";
-        $this->setError(self::ERROR_INVALID_PATTERN, $errorMessage);
-        $this->setErrorRowStatistic($this->rowNumber);
+        $this->error->setError(self::ERROR_INVALID_PATTERN, $errorMessage);
+        $this->statistics->setErrorRow($this->rowNumber);
         $this->valid = false;
     }
 
@@ -277,12 +259,10 @@ class Lexical extends Analyse implements AnalyseInterface
     /**
      * Add the number of rows analysed to the statistics.
      *
-     * @access  private
-     *
      * @return  void
      */
     private function setRowsAnalysedStatistic()
     {
-        parent::$statistics['rows_analysed'] = ($this->rowNumber - 1);
+        $this->statistics->setRowsAnalysed($this->rowNumber - 1);
     }
 }

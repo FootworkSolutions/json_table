@@ -11,8 +11,6 @@ use \JsonTable\Base;
 class PostgresqlStore extends AbstractStore
 {
     /**
-     * @access    private
-     *
      * @var array      Data type and format metadata for each column being inserted.
      *                 The Key is the CSV column position in the file and value is an array of:
      *                     "pdo_type" - The PDO data type
@@ -23,7 +21,6 @@ class PostgresqlStore extends AbstractStore
 
 
     /**
-     * @access private
      * @static
      *
      * @var array Mappings of JSON table types to PDO param types.
@@ -44,8 +41,6 @@ class PostgresqlStore extends AbstractStore
 
     /**
      * Store the data.
-     *
-     * @access public
      *
      * @param string $ps_table_name  The name of the table to save the data in. With optional schema prefix.
      * @param string $ps_primary_key The name of the primary key on the table. [optional] The default is "id".
@@ -145,8 +140,6 @@ class PostgresqlStore extends AbstractStore
 
     /**
      * Get the PDO type, schema type & schema format for each column in the CSV file.
-     *
-     * @access private
      *
      * @return boolean true on success
      */
