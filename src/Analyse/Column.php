@@ -9,6 +9,17 @@ namespace JsonTable\Analyse;
 class Column extends Analyse implements AnalyseInterface
 {
     /**
+     * @var string The description for missing mandatory columns.
+     */
+    const ERROR_REQUIRED_COLUMN_MISSING = '<strong>%d</strong> required column(s) missing:';
+
+    /**
+     * @var string The description for CSV columns that are not in the schema.
+     */
+    const ERROR_UNSPECIFIED_COLUMN = '<strong>%d</strong> unexpected column(s):';
+
+    
+    /**
      * Validate that all fields are of the correct type, format and pattern.
      * This also checks that each CSV row has the expected number of columns.
      *
@@ -40,7 +51,7 @@ class Column extends Analyse implements AnalyseInterface
         foreach (parent::$schemaJson->fields as $field) {
             if ($this->isColumnMandatory($field)) {
                 if (!in_array($field->name, parent::$headerColumns)) {
-                    $this->error->setError(Analyse::ERROR_REQUIRED_COLUMN_MISSING, $field->name);
+                    $this->error->setError(self::ERROR_REQUIRED_COLUMN_MISSING, $field->name);
                     $validMandatoryColumns = false;
 
                     if ($this->stopIfInvalid) {
@@ -65,7 +76,7 @@ class Column extends Analyse implements AnalyseInterface
 
         foreach (parent::$headerColumns as $csvColumnName) {
             if (false === $this->getSchemaKeyFromName($csvColumnName)) {
-                $this->error->setError(Analyse::ERROR_UNSPECIFIED_COLUMN, $csvColumnName);
+                $this->error->setError(self::ERROR_UNSPECIFIED_COLUMN, $csvColumnName);
                 $validUnspecifiedColumns = false;
 
                 if ($this->stopIfInvalid) {

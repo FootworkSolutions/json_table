@@ -19,6 +19,16 @@ class Lexical extends Analyse implements AnalyseInterface
     const ERROR_INVALID_FORMAT = 'There are <strong>%d</strong> fields that don\'t have the correct format:';
 
     /**
+     * @var string The description for rows with missing columns.
+     */
+    const ERROR_REQUIRED_FIELD_MISSING_DATA = 'There are <strong>%d</strong> required fields with missing data:';
+
+    /**
+     * @var string The description for rows with missing columns.
+     */
+    const ERROR_INCORRECT_COLUMN_COUNT = 'There are the wrong number of columns';
+
+    /**
      * @var array   The current CSV row being analysed.
      */
     private $currentCsvRow;
@@ -143,7 +153,7 @@ class Lexical extends Analyse implements AnalyseInterface
     private function handleUnexpectedColumnCount()
     {
         $errorMessage = "Row $this->rowNumber has $this->columnCount columns but should have $this->expectedColumnCount.";
-        $this->error->setError(Analyse::ERROR_INCORRECT_COLUMN_COUNT, $errorMessage);
+        $this->error->setError(self::ERROR_INCORRECT_COLUMN_COUNT, $errorMessage);
         $this->statistics->setErrorRow($this->rowNumber);
     }
 
@@ -171,7 +181,7 @@ class Lexical extends Analyse implements AnalyseInterface
     private function handleInvalidMandatoryColumn()
     {
         $errorMessage = $this->schemaColumn->name . " on row $this->rowNumber is missing.";
-        $this->error->setError(Analyse::ERROR_REQUIRED_FIELD_MISSING_DATA, $errorMessage);
+        $this->error->setError(self::ERROR_REQUIRED_FIELD_MISSING_DATA, $errorMessage);
         $this->statistics->setErrorRow($this->rowNumber);
         $this->valid = false;
     }

@@ -11,30 +11,10 @@ use \JsonTable\Base;
 class Analyse extends Base implements AnalyseInterface
 {
     /**
-     * @var string The description for missing mandatory columns.
-     */
-    const ERROR_REQUIRED_COLUMN_MISSING = '<strong>%d</strong> required column(s) missing:';
-
-    /**
-     * @var string The description for CSV columns that are not in the schema.
-     */
-    const ERROR_UNSPECIFIED_COLUMN = '<strong>%d</strong> unexpected column(s):';
-
-    /**
-     * @var string The description for rows with missing columns.
-     */
-    const ERROR_INCORRECT_COLUMN_COUNT = 'There are the wrong number of columns';
-
-    /**
-     * @var string The description for rows with missing columns.
-     */
-    const ERROR_REQUIRED_FIELD_MISSING_DATA = 'There are <strong>%d</strong> required fields with missing data:';
-
-    /**
      * @var string The format validation type.
      */
     const VALIDATION_TYPE_FORMAT = 'Format';
-
+    
     /**
      * @var string The foreign key validation type.
      */
