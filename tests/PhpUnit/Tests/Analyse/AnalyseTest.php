@@ -94,90 +94,6 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * Test that setting a JSON schema with an invalid JSON string throws an exception.
-     */
-    public function testSchemaThrowsExceptionWithInvalidJSONString()
-    {
-        $this->expectException(\Exception::class);
-        $analyser = new Analyse();
-        $analyser->setSchema('This is not a valid JSON string.');
-    }
-
-
-    /**
-     * Test that setting an invalid JSON schema throws an exception.
-     *
-     * @param   mixed $pm_invalid_values    Invalid schema values.
-     *
-     * @dataProvider    providerInvalidSchemaValues
-     */
-    public function testSchemaThrowsExceptionWithInvalidValues($invalidValues)
-    {
-        $this->expectException(\Exception::class);
-        $analyser = new Analyse();
-        $analyser->setSchema($invalidValues);
-    }
-
-
-    /**
-     * Provider of invalid schema values.
-     *
-     * @return  array   The invalid schema values.
-     */
-    public function providerInvalidSchemaValues()
-    {
-        return [
-            [null],
-            [1],
-            [true]
-        ];
-    }
-
-
-    /**
-     * Test that setting a valid CSV file path returns true.
-     */
-    public function testSetValidFilePath()
-    {
-        $analyser = new Analyse();
-        $setFileReturnValue = $analyser->setFile('examples/example.csv');
-        $this->assertTrue($setFileReturnValue);
-    }
-
-
-    /**
-     * Test that setting an invalid file path returns false.
-     *
-     * @param   mixed   $pm_invalid_values  Invalid file path.
-     *
-     * @dataProvider    providerInvalidPaths
-     */
-    public function testSetInvalidFilePath($pm_invalid_values)
-    {
-        $analyser = new Analyse();
-        $setFileReturnValue = $analyser->setFile($pm_invalid_values);
-        $this->assertFalse($setFileReturnValue);
-    }
-
-
-    /**
-     * Provider of invalid file paths.
-     *
-     * @return  array   The invalid paths.
-     */
-    public function providerInvalidPaths()
-    {
-        return [
-            ['not a valid path'],
-            ['examples/not_valid.csv'],
-            [true],
-            [null],
-            [1]
-        ];
-    }
-
-
-    /**
      * Test that all valid data returns as valid from the analysis class.
      */
     public function testAnalyseAllValidDataIsReturnedAsValid()
@@ -432,6 +348,40 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($la_expected_statistics, $la_statistics);
     }
 
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a valid empty number.
+     */
+    public function testStatisticsWhenEmptyNumberFormat()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET'], [
+            ['john', 'john@example.com', 'www.example.com', '']
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [],
+            'percent_rows_with_errors' => 0,
+            'rows_analysed' => 1
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
     /**
      * Test that the statistics array has the correct details
      * when there is a column with an invalid integer format.
@@ -659,5 +609,140 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
             ["\N"],
             [null]
         ];
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with a valid date format.
+     */
+    public function testStatisticsWhenValidDateFormat()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH'], [
+            ['john', 'john@example.com', 'www.example.com', '1980s-09-26'],
+            ['bob', 'something@example.com', 'www.example.com', '2000-02-20']
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [1],
+            'percent_rows_with_errors' => 50,
+            'rows_analysed' => 2
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with an invalid date format.
+     *
+     * @dataProvider providerInvalidDateValues
+     */
+    public function testStatisticsWhenInvalidDateFormat($invalidDate)
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH'], [
+            ['john', 'john@example.com', 'www.example.com', $invalidDate]
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [1],
+            'percent_rows_with_errors' => 100,
+            'rows_analysed' => 1
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Provider of invalid date values.
+     *
+     * @return  array   The invalid date values.
+     */
+    public function providerInvalidDateValues()
+    {
+        return [
+            [' '],
+            ['20000-01-01'],
+            ['not_a_date'],
+            ['0000000'],
+            ['0000-00-00'],
+            ['abcd-ab-cd'],
+            ['1990-01-40']
+        ];
+    }
+
+
+    /**
+     * Test that trying to validate an a format that doesn't exist throws an exception.
+     */
+    public function testInvalidFormatThrowsException()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema('{
+            "fields": [{
+                "name": "FIRST_NAME",
+                "title": "First Name",
+                "description": "The user\'s first name",
+                "type": "not_a_format"
+            }]}'
+        );
+
+        $this->createCSVFile(['FIRST_NAME'], [['john']]);
+        $analyser->setFile('test.csv');
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Could not load the validator file for Format not_a_format.');
+
+        $analyser->validate();
+    }
+
+
+    /**
+     * Test that trying to validate without setting a CSV file throws an exception.
+     */
+    public function testRunningValidateWithoutCSVCausesError()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('CSV file not set.');
+        $analyser->validate();
     }
 }

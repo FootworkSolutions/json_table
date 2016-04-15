@@ -33,7 +33,7 @@
 		"format": "binary"
 	}, {
 		"name": "HOURS_WORKED_IN_DAY",
-		"title": "Hourse Worked In Day",
+		"title": "Hours Worked In Day",
 		"description": "Number of hours worked in an average day.",
 		"type": "number"
 	}, {
@@ -44,7 +44,7 @@
 		"format": "currency"
 	}, {
 		"name": "DAYS_SINCE_HAIRCUT",
-		"title": "Days Since Haricut",
+		"title": "Days Since Haircut",
 		"description": "Number of days since the user had a haircut.",
 		"type": "integer"
 	}, {

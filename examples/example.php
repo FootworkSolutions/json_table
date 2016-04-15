@@ -18,7 +18,6 @@ use \JsonTable\Store;
 
 // Use composer's autoloading.
 require __DIR__ . '/../vendor/autoload.php';
-PhpConsole\Helper::register();
 
 /*
  * These are the three things that need to be configured for this
