@@ -79,8 +79,10 @@ class PostgresqlStore extends AbstractStore
         $li_row = 1;
 
         // Read each row in the file.
-        while ($la_csv_row = Base::loopThroughFileRows()) {
-            // Set up the SQL statement for the insert.
+        while ($la_row = Base::loopThroughFileRows()) {
+            $la_csv_row = $la_row;
+            
+                // Set up the SQL statement for the insert.
             $ls_insert_sql = "INSERT INTO $ps_table_name (
                                   $ls_column_list
                               )

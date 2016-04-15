@@ -58,4 +58,32 @@ class Mock extends \PHPUnit_Framework_TestCase
             ->method('fetchAll')
             ->will($this->returnValue($expectedResult));
     }
+
+
+    /**
+     * Get a Statistics mock object.
+     *
+     * @access public
+     *
+     * @return  object  The mock Statistics object.
+     */
+    public function statistics()
+    {
+        return $this->getMockBuilder('\JsonTable\Analyse\Statistics')
+            ->getMock();
+    }
+
+
+    /**
+     * Get a Error mock object.
+     *
+     * @access public
+     *
+     * @return  object  The mock Statistics object.
+     */
+    public function error()
+    {
+        return $this->getMockBuilder('\JsonTable\Analyse\Error')
+            ->getMock();
+    }
 }

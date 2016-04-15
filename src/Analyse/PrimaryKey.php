@@ -69,7 +69,8 @@ class PrimaryKey extends Analyse implements AnalyseInterface
 
         $this->rowNumber= 1;
 
-        while ($this->currentCsvRow = self::loopThroughFileRows()) {
+        while ($currentCsvRow = parent::loopThroughFileRows()) {
+            $this->currentCsvRow = $currentCsvRow;
             $this->getPrimaryKeyDataForRow();
             $this->createHash();
 

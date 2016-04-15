@@ -88,7 +88,9 @@ class Lexical extends Analyse implements AnalyseInterface
 
         parent::rewindFilePointerToFirstData();
 
-        while ($this->currentCsvRow = parent::loopThroughFileRows()) {
+        while ($currentCsvRow = parent::loopThroughFileRows()) {
+            $this->currentCsvRow = $currentCsvRow;
+            
             if (!$this->checkRowHasExpectedColumnCount()) {
                 $this->handleUnexpectedColumnCount();
             }

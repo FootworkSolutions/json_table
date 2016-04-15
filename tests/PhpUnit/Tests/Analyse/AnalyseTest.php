@@ -4,8 +4,31 @@ namespace tests\PhpUnit\Tests;
 use \JsonTable\Analyse\Analyse;
 use \tests\PhpUnit\Fixtures\Mock;
 
+
 class AnalyseTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Set up anything needed by each test.
+     */
+    public function setUp()
+    {
+        if (!defined('BASE_DIRECTORY')) {
+            define('BASE_DIRECTORY', dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+        }
+    }
+
+
+    /**
+     * Remove any test files that have been created during the testing process.
+     */
+    protected function tearDown()
+    {
+        if (file_exists('test.csv')) {
+            unlink('test.csv');
+        }
+    }
+
+
     /**
      * Create a test CSV file with the specified headers and field data.
      * The file that is created is named "test.csv" and is in the current directory.
@@ -40,18 +63,33 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
      */
     private function getExampleSchemaString()
     {
-        return file_get_contents('examples/example.json');
+        return file_get_contents(BASE_DIRECTORY . '/examples/example.json');
     }
 
 
     /**
-     * Remove any test files that have been created during the testing process.
+     * Test that calling the constructor correctly sets the provided DI properties.
      */
-    protected function tearDown()
+    public function testConstructorSetsProvidedStatisticsProperty()
     {
-        if (file_exists('test.csv')) {
-            unlink('test.csv');
-        }
+        $mock = new Mock();
+        $statisticsMock = $mock->statistics();
+        $analyser = new Analyse($statisticsMock);
+        $statistics = $analyser->getStatistics();
+        $this->assertEmpty($statistics);
+    }
+
+
+    /**
+     * Test that calling the constructor with error DI correctly sets the property.
+     */
+    public function testConstructorSetsProvidedErrorProperty()
+    {
+        $mock = new Mock();
+        $errorMock = $mock->error();
+        $analyser = new Analyse(null, $errorMock);
+        $errors = $analyser->getErrors();
+        $this->assertEmpty($errors);
     }
 
 
@@ -242,7 +280,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
             ['john', 'test@example.com', ''],
             ['bob', 'something@example.com', 'www.example.com']
         ]);
-        
+
         $analyser->setFile('test.csv');
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
