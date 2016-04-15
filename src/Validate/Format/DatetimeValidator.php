@@ -17,9 +17,7 @@ class DatetimeValidator extends AbstractFormatValidator
      */
     protected function formatDefault()
     {
-        // Check if this is an ISO8601 datetime format (in the UTC timezone).
-        if (true == preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/', $this->input)) {
-            // Check that PHP can build a date object from the input.
+        if (1 === preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/', $this->input)) {
             return (false !== \DateTime::createFromFormat(DATE_ISO8601, $this->input));
         }
 
@@ -35,7 +33,6 @@ class DatetimeValidator extends AbstractFormatValidator
             return true;
         }
 
-        // The input didn't match any of the expected formats.
         return false;
     }
 

@@ -166,7 +166,7 @@ abstract class Base
      *
      * @static
      *
-     * @return array boolean The CSV data or false if the end of the file has been reached.
+     * @return array|boolean The CSV data or false if the end of the file has been reached.
      */
     protected static function loopThroughFileRows()
     {
