@@ -1079,4 +1079,35 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($la_expected_statistics, $la_statistics);
     }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when a row has an unexpected column count.
+     */
+    public function testStatisticsWhenRowHasUnexpectedColumnCount()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema(Helper::getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
+            ['john', 'john@example.com', 'www.example.com']
+        ]);
+
+        $analyser->setFile('test.csv');
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [1],
+            'percent_rows_with_errors' => 100,
+            'rows_analysed' => 1
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
 }
