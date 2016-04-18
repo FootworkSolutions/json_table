@@ -149,6 +149,20 @@ abstract class Base
 
 
     /**
+     * Reset all the static properties of the class.
+     * This is run by the testing suite at the end of each test.
+     */
+    public static function reset()
+    {
+        self::$schemaJson = null;
+        self::$fileName = null;
+        self::$headerColumns = null;
+        self::$file = null;
+        self::$pdoConnection = null;
+    }
+
+
+    /**
      * Rewind the CSV file pointer to the first line of data.
      *
      * @static

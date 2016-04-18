@@ -1,6 +1,11 @@
 <?php
 namespace tests\PhpUnit\Fixtures;
 
+use JsonTable\Analyse\Analyse;
+use JsonTable\Analyse\Statistics;
+use JsonTable\Analyse\Error;
+use JsonTable\Base;
+
 class Helper
 {
     /**
@@ -80,6 +85,17 @@ class Helper
         if (file_exists(self::getBaseDirectory() . '/test.csv')) {
             unlink(self::getBaseDirectory() . '/test.csv');
         }
+    }
+
+
+    /**
+     * Reset the state of the system.
+     */
+    public static function resetSystemState()
+    {
+        Error::reset();
+        Statistics::reset();
+        Base::reset();
     }
 }
 

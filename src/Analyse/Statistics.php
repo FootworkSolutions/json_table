@@ -19,6 +19,19 @@ class Statistics
 
 
     /**
+     * Reset the statistics.
+     */
+    public static function reset()
+    {
+        self::$statistics = [
+            'rows_with_errors' => [],
+            'percent_rows_with_errors' => 0,
+            'rows_analysed' => 0
+        ];
+    }
+
+
+    /**
      * Get the statistics about the file analysis.
      *
      * @return  array   The statistics.

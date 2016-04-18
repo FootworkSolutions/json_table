@@ -17,6 +17,15 @@ class Error
 
 
     /**
+     * Reset the errors.
+     */
+    public static function reset()
+    {
+        self::$errors = [];
+    }
+
+
+    /**
      * Get all errors that have been set during the analysis.
      *
      * @return  array   The error messages.
