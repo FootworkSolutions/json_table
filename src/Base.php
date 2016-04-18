@@ -121,7 +121,7 @@ abstract class Base
      *
      * @throws \Exception if a CSV file has not been set.
      */
-    protected static function openFile()
+    public static function openFile()
     {
         if (empty(self::$fileName)) {
             throw new \Exception('CSV file not set.');
@@ -140,7 +140,7 @@ abstract class Base
      *
      * @return true on success.
      */
-    protected static function setCsvHeaderColumns()
+    public static function setCsvHeaderColumns()
     {
         self::$file->rewind();
         self::$headerColumns = array_map('strtolower', self::$file->current());

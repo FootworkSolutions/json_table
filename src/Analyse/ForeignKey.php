@@ -101,8 +101,8 @@ class ForeignKey extends Analyse implements AnalyseInterface
                     $referenceFields
                 )) {
                     // This hash didn't match a foreign key.
-                    $csvFields = implode(', ', $csvFields);
-                    $errorMessage = "The value(s) of &quot;$csvValueHash&quot; in column(s) $csvFields
+                    $csvFieldCsv = implode(', ', $csvFields);
+                    $errorMessage = "The value(s) of &quot;$csvValueHash&quot; in column(s) $csvFieldCsv
                     on row $row doesn't match a foreign key.";
 
                     $this->error->setError(self::ERROR_INVALID_FOREIGN_KEY, $errorMessage);

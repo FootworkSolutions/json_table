@@ -3,21 +3,11 @@ namespace tests\PhpUnit\Tests;
 
 use \JsonTable\Analyse\Analyse;
 use \tests\PhpUnit\Fixtures\Mock;
+use \tests\PhpUnit\Fixtures\Helper;
 
 
 class AnalyseTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Set up anything needed by each test.
-     */
-    public function setUp()
-    {
-        if (!defined('BASE_DIRECTORY')) {
-            define('BASE_DIRECTORY', dirname(dirname(dirname(dirname(dirname(__FILE__))))));
-        }
-    }
-
-
     /**
      * Remove any test files that have been created during the testing process.
      */
@@ -51,19 +41,6 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         }
 
         fclose($file);
-    }
-
-
-    /**
-     * Get the data from the example schema.
-     *
-     * @access  private
-     *
-     * @return  string  The schema as a string.
-     */
-    private function getExampleSchemaString()
-    {
-        return file_get_contents(BASE_DIRECTORY . '/examples/example.json');
     }
 
 
@@ -103,8 +80,8 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
-        $analyser->setFile('examples/example.csv');
+        $analyser->setSchema(Helper::getExampleSchemaString());
+        $analyser->setFile(Helper::getExampleCSVLocation());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
@@ -131,7 +108,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     {
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
         $analyser = new Analyse();
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
         $analyser->setFile('test.csv');
         $fileIsValid = $analyser->validate();
         $this->assertFalse($fileIsValid);
@@ -145,7 +122,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
     {
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
         $analyser = new Analyse();
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
         $analyser->setFile('test.csv');
         $analyser->validate();
         $errors = $analyser->getErrors();
@@ -164,8 +141,8 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
-        $analyser->setFile('examples/example.csv');
+        $analyser->setSchema(Helper::getExampleSchemaString());
+        $analyser->setFile(Helper::getExampleCSVLocation());
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
@@ -190,7 +167,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
             ['john', 'test@example.com', ''],
@@ -224,7 +201,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
             ['john', 'not_an_email_address', 'www.example.com'],
@@ -258,7 +235,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
             ['john', 'john@example.com', 'not_a_website_address'],
@@ -292,7 +269,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HOURS_WORKED_IN_DAY'], [
             ['john', 'john@example.com', 'www.example.com', 'not_a_number'],
@@ -326,7 +303,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET'], [
             ['john', 'john@example.com', 'www.example.com', 'not_a_currency'],
@@ -360,7 +337,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET'], [
             ['john', 'john@example.com', 'www.example.com', '']
@@ -393,7 +370,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DAYS_SINCE_HAIRCUT'], [
             ['john', 'john@example.com', 'www.example.com', 'not_an_integer'],
@@ -427,7 +404,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET', 'DAYS_SINCE_HAIRCUT'], [
             ['john', 'john@example.com', 'www.example.com', '$55.99', 'not_an_integer'],
@@ -462,7 +439,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HAS_CAT'], [
             ['john', 'john@example.com', 'www.example.com', true],
@@ -497,7 +474,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HAS_CAT'], [
             ['john', 'john@example.com', 'www.example.com', $booleanValue]
@@ -548,7 +525,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DONT_USE'], [
             ['john', 'john@example.com', 'www.example.com', null],
@@ -583,7 +560,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DONT_USE'], [
             ['john', 'john@example.com', 'www.example.com', $nullValue]
@@ -623,7 +600,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH'], [
             ['john', 'john@example.com', 'www.example.com', '1980s-09-26'],
@@ -659,7 +636,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH'], [
             ['john', 'john@example.com', 'www.example.com', $invalidDate]
@@ -739,7 +716,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('CSV file not set.');
@@ -758,7 +735,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH_UK'], [
             ['john', 'john@example.com', 'www.example.com', '26/09/1977'],
@@ -794,7 +771,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH_UK'], [
             ['john', 'john@example.com', 'www.example.com', $invalidDate]
@@ -827,7 +804,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'LAST_LOGIN'], [
             ['john', 'john@example.com', 'www.example.com', '2016-01-01 10:43:45'],
@@ -863,7 +840,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'LAST_LOGIN'], [
             ['john', 'john@example.com', 'www.example.com', $invalidDate]
@@ -896,7 +873,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'BREAKFAST_TIME'], [
             ['john', 'john@example.com', 'www.example.com', '10:43:45'],
@@ -932,7 +909,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'BREAKFAST_TIME'], [
             ['john', 'john@example.com', 'www.example.com', $invalidDate]
@@ -965,7 +942,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATA_DUMP'], [
             ['john', 'john@example.com', 'www.example.com', 'Any data here'],
@@ -999,7 +976,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
             ['john', 'john@example.com', 'www.example.com', 'HAPPY'],
@@ -1035,7 +1012,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
 
         $analyser = new Analyse();
         $analyser->setPdoConnection($pdo);
-        $analyser->setSchema($this->getExampleSchemaString());
+        $analyser->setSchema(Helper::getExampleSchemaString());
 
         $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
             ['john', 'john@example.com', 'www.example.com', '$invalidDate']
@@ -1073,5 +1050,33 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
             ['indiffererernt'],
             ['1990-01-40']
         ];
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when a foreign key isn't found.
+     */
+    public function testStatisticsOnUnmatchedForeignKey()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema(Helper::getExampleSchemaString());
+        $analyser->setFile(Helper::getExampleCSVLocation());
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 0]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [1, 2],
+            'percent_rows_with_errors' => 100,
+            'rows_analysed' => 2
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
     }
 }
