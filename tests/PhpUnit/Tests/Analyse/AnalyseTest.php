@@ -745,4 +745,333 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('CSV file not set.');
         $analyser->validate();
     }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with a valid UK date format.
+     */
+    public function testStatisticsWhenValidUKDateFormat()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH_UK'], [
+            ['john', 'john@example.com', 'www.example.com', '26/09/1977'],
+            ['bob', 'something@example.com', 'www.example.com', '30/03/1999']
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [],
+            'percent_rows_with_errors' => 0,
+            'rows_analysed' => 2
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with an invalid UK date format.
+     *
+     * @dataProvider providerInvalidDateValues
+     */
+    public function testStatisticsWhenInvalidUKDateFormat($invalidDate)
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH_UK'], [
+            ['john', 'john@example.com', 'www.example.com', $invalidDate]
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [1],
+            'percent_rows_with_errors' => 100,
+            'rows_analysed' => 1
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with a valid datetime format.
+     */
+    public function testStatisticsWhenValidDateTimeFormat()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'LAST_LOGIN'], [
+            ['john', 'john@example.com', 'www.example.com', '2016-01-01 10:43:45'],
+            ['bob', 'something@example.com', 'www.example.com', '2015-10-13 15:13:25']
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [],
+            'percent_rows_with_errors' => 0,
+            'rows_analysed' => 2
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with an invalid datetime format.
+     *
+     * @dataProvider providerInvalidDateValues
+     */
+    public function testStatisticsWhenInvalidDateTimeFormat($invalidDate)
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'LAST_LOGIN'], [
+            ['john', 'john@example.com', 'www.example.com', $invalidDate]
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [1],
+            'percent_rows_with_errors' => 100,
+            'rows_analysed' => 1
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with a valid time format.
+     */
+    public function testStatisticsWhenValidTimeFormat()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'BREAKFAST_TIME'], [
+            ['john', 'john@example.com', 'www.example.com', '10:43:45'],
+            ['bob', 'something@example.com', 'www.example.com', '15:13:25']
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [],
+            'percent_rows_with_errors' => 0,
+            'rows_analysed' => 2
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with an invalid time format.
+     *
+     * @dataProvider providerInvalidDateValues
+     */
+    public function testStatisticsWhenInvalidTimeFormat($invalidDate)
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'BREAKFAST_TIME'], [
+            ['john', 'john@example.com', 'www.example.com', $invalidDate]
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [1],
+            'percent_rows_with_errors' => 100,
+            'rows_analysed' => 1
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with a valid "any" format.
+     */
+    public function testStatisticsWhenValidAnyFormat()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATA_DUMP'], [
+            ['john', 'john@example.com', 'www.example.com', 'Any data here'],
+            ['bob', 'something@example.com', 'www.example.com', '15:13:25']
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [],
+            'percent_rows_with_errors' => 0,
+            'rows_analysed' => 2
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with a valid string format with a specified pattern
+     */
+    public function testStatisticsWhenValidStringWithPattern()
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
+            ['john', 'john@example.com', 'www.example.com', 'HAPPY'],
+            ['bob', 'something@example.com', 'www.example.com', 'SAD']
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [],
+            'percent_rows_with_errors' => 0,
+            'rows_analysed' => 2
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Test that the statistics array has the correct details
+     * when there is a column with a valid string format with a specified pattern
+     *
+     * @dataProvider    providerInvalidPatternValues
+     */
+    public function testStatisticsWhenInvalidStringWithPattern($invalidDate)
+    {
+        $mock = new Mock();
+        $pdo = $mock->PDO();
+
+        $analyser = new Analyse();
+        $analyser->setPdoConnection($pdo);
+        $analyser->setSchema($this->getExampleSchemaString());
+
+        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
+            ['john', 'john@example.com', 'www.example.com', '$invalidDate']
+        ]);
+
+        $analyser->setFile('test.csv');
+
+        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+
+        $analyser->validate();
+        $la_statistics = $analyser->getStatistics();
+        $la_expected_statistics = [
+            'rows_with_errors' => [1],
+            'percent_rows_with_errors' => 100,
+            'rows_analysed' => 1
+        ];
+
+        $this->assertEquals($la_expected_statistics, $la_statistics);
+    }
+
+
+    /**
+     * Provider of invalid date values.
+     *
+     * @return  array   The invalid date values.
+     */
+    public function providerInvalidPatternValues()
+    {
+        return [
+            [''],
+            [' '],
+            ['not_a_valid_pattern'],
+            ['0000000'],
+            ['sads'],
+            ['indiffererernt'],
+            ['1990-01-40']
+        ];
+    }
 }
