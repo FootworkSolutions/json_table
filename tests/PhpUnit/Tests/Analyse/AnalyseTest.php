@@ -13,34 +13,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        if (file_exists('test.csv')) {
-            unlink('test.csv');
-        }
-    }
-
-
-    /**
-     * Create a test CSV file with the specified headers and field data.
-     * The file that is created is named "test.csv" and is in the current directory.
-     *
-     * @access private
-     *
-     * @param array $pa_column_names The headers.
-     * @param array $pa_field_values The field values as a multi-dimensional array.
-     *
-     * @return void
-     */
-    private function createCSVFile($columnNames, $fieldValues)
-    {
-        $file = fopen('test.csv', 'w');
-
-        fputcsv($file, $columnNames);
-
-        foreach ($fieldValues as $rowValues) {
-            fputcsv($file, $rowValues);
-        }
-
-        fclose($file);
+        Helper::deleteTestCSVFile();
     }
 
 
@@ -106,10 +79,10 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateReturnsFalseOnMissingMandatoryColumnInCSVFile()
     {
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
         $analyser = new Analyse();
         $analyser->setSchema(Helper::getExampleSchemaString());
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
         $fileIsValid = $analyser->validate();
         $this->assertFalse($fileIsValid);
     }
@@ -120,10 +93,10 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
      */
     public function testErrorIsSetOnMissingMandatoryColumnInCSVFile()
     {
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS'], [['john', 'test@example.com']]);
         $analyser = new Analyse();
         $analyser->setSchema(Helper::getExampleSchemaString());
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
         $analyser->validate();
         $errors = $analyser->getErrors();
         $expectedError = ['<strong>1</strong> required column(s) missing:' => ['website']];
@@ -146,14 +119,14 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [],
             'percent_rows_with_errors' => 0,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -169,24 +142,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
             ['john', 'test@example.com', ''],
             ['bob', 'something@example.com', 'www.example.com']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -203,24 +176,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
             ['john', 'not_an_email_address', 'www.example.com'],
             ['bob', 'something@example.com', 'www.example.com']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -237,24 +210,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE'], [
             ['john', 'john@example.com', 'not_a_website_address'],
             ['bob', 'something@example.com', 'www.example.com']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -271,24 +244,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HOURS_WORKED_IN_DAY'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HOURS_WORKED_IN_DAY'], [
             ['john', 'john@example.com', 'www.example.com', 'not_a_number'],
             ['bob', 'something@example.com', 'www.example.com', 10.0]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -305,24 +278,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET'], [
             ['john', 'john@example.com', 'www.example.com', 'not_a_currency'],
             ['bob', 'something@example.com', 'www.example.com', '£10.45']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -339,23 +312,23 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET'], [
             ['john', 'john@example.com', 'www.example.com', '']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [],
             'percent_rows_with_errors' => 0,
             'rows_analysed' => 1
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -372,24 +345,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DAYS_SINCE_HAIRCUT'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DAYS_SINCE_HAIRCUT'], [
             ['john', 'john@example.com', 'www.example.com', 'not_an_integer'],
             ['bob', 'something@example.com', 'www.example.com', 45]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -406,25 +379,25 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET', 'DAYS_SINCE_HAIRCUT'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MONEY_IN_POCKET', 'DAYS_SINCE_HAIRCUT'], [
             ['john', 'john@example.com', 'www.example.com', '$55.99', 'not_an_integer'],
             ['bob', 'something@example.com', 'www.example.com', 'not_a_currency', 45],
             ['bob', '', 'www.example.com', '£34', 300]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1, 2, 3],
             'percent_rows_with_errors' => 100,
             'rows_analysed' => 3
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -441,24 +414,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HAS_CAT'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HAS_CAT'], [
             ['john', 'john@example.com', 'www.example.com', true],
             ['bob', 'something@example.com', 'www.example.com', 'not_a_boolean']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [2],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -476,11 +449,11 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HAS_CAT'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'HAS_CAT'], [
             ['john', 'john@example.com', 'www.example.com', $booleanValue]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $isValid = $analyser->validate();
@@ -527,24 +500,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DONT_USE'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DONT_USE'], [
             ['john', 'john@example.com', 'www.example.com', null],
             ['bob', 'something@example.com', 'www.example.com', 'not_null']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [2],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -562,11 +535,11 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DONT_USE'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DONT_USE'], [
             ['john', 'john@example.com', 'www.example.com', $nullValue]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $isValid = $analyser->validate();
@@ -602,24 +575,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH'], [
             ['john', 'john@example.com', 'www.example.com', '1980s-09-26'],
             ['bob', 'something@example.com', 'www.example.com', '2000-02-20']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 50,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -638,23 +611,23 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH'], [
             ['john', 'john@example.com', 'www.example.com', $invalidDate]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 100,
             'rows_analysed' => 1
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -696,8 +669,8 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
             }]}'
         );
 
-        $this->createCSVFile(['FIRST_NAME'], [['john']]);
-        $analyser->setFile('test.csv');
+        Helper::createTestCSVFile(['FIRST_NAME'], [['john']]);
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Could not load the validator file for Format not_a_format.');
@@ -737,24 +710,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH_UK'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH_UK'], [
             ['john', 'john@example.com', 'www.example.com', '26/09/1977'],
             ['bob', 'something@example.com', 'www.example.com', '30/03/1999']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [],
             'percent_rows_with_errors' => 0,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -773,23 +746,23 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH_UK'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATE_OF_BIRTH_UK'], [
             ['john', 'john@example.com', 'www.example.com', $invalidDate]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 100,
             'rows_analysed' => 1
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -806,24 +779,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'LAST_LOGIN'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'LAST_LOGIN'], [
             ['john', 'john@example.com', 'www.example.com', '2016-01-01 10:43:45'],
             ['bob', 'something@example.com', 'www.example.com', '2015-10-13 15:13:25']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [],
             'percent_rows_with_errors' => 0,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -842,23 +815,23 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'LAST_LOGIN'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'LAST_LOGIN'], [
             ['john', 'john@example.com', 'www.example.com', $invalidDate]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 100,
             'rows_analysed' => 1
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -875,24 +848,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'BREAKFAST_TIME'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'BREAKFAST_TIME'], [
             ['john', 'john@example.com', 'www.example.com', '10:43:45'],
             ['bob', 'something@example.com', 'www.example.com', '15:13:25']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [],
             'percent_rows_with_errors' => 0,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -911,23 +884,23 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'BREAKFAST_TIME'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'BREAKFAST_TIME'], [
             ['john', 'john@example.com', 'www.example.com', $invalidDate]
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 100,
             'rows_analysed' => 1
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -944,24 +917,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATA_DUMP'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'DATA_DUMP'], [
             ['john', 'john@example.com', 'www.example.com', 'Any data here'],
             ['bob', 'something@example.com', 'www.example.com', '15:13:25']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [],
             'percent_rows_with_errors' => 0,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -978,24 +951,24 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
             ['john', 'john@example.com', 'www.example.com', 'HAPPY'],
             ['bob', 'something@example.com', 'www.example.com', 'SAD']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [],
             'percent_rows_with_errors' => 0,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -1014,23 +987,23 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
             ['john', 'john@example.com', 'www.example.com', '$invalidDate']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
 
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 100,
             'rows_analysed' => 1
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -1070,14 +1043,14 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 0]]);
 
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1, 2],
             'percent_rows_with_errors' => 100,
             'rows_analysed' => 2
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 
 
@@ -1094,20 +1067,20 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
 
-        $this->createCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
+        Helper::createTestCSVFile(['FIRST_NAME', 'EMAIL_ADDRESS', 'WEBSITE', 'MOOD'], [
             ['john', 'john@example.com', 'www.example.com']
         ]);
 
-        $analyser->setFile('test.csv');
+        $analyser->setFile(Helper::getTestCSVFile());
         $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
-        $la_statistics = $analyser->getStatistics();
-        $la_expected_statistics = [
+        $statistics = $analyser->getStatistics();
+        $expectedStatistics = [
             'rows_with_errors' => [1],
             'percent_rows_with_errors' => 100,
             'rows_analysed' => 1
         ];
 
-        $this->assertEquals($la_expected_statistics, $la_statistics);
+        $this->assertEquals($expectedStatistics, $statistics);
     }
 }

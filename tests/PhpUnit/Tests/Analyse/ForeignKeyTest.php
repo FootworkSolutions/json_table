@@ -26,6 +26,7 @@ class ForeignKeyTest extends \PHPUnit_Framework_TestCase
                 "type": "string"
             }]}'
         );
+        
         $foreignKey = new ForeignKey();
         $this->assertTrue($foreignKey->validate());
     }
@@ -89,5 +90,5 @@ class ForeignKeyTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    
+
 }
