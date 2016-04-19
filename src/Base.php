@@ -156,7 +156,7 @@ abstract class Base
     {
         self::$schemaJson = null;
         self::$fileName = null;
-        self::$headerColumns = null;
+        self::$headerColumns = [];
         self::$file = null;
         self::$pdoConnection = null;
     }
