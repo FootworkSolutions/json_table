@@ -32,7 +32,7 @@ abstract class AbstractStore extends Base
      *
      * @static
      *
-     * @param   string  $format  The format to convert from.
+     * @param   string  $format           The format to convert from.
      * @param   string  $dateToConvert    The date to convert.
      *
      * @return  string  The formatted date.
@@ -64,8 +64,8 @@ abstract class AbstractStore extends Base
             $value = strtolower($value);
         }
 
-        $truths = ['1', 1, true, 'on', 'yes'];
-        $false = ['0', 0, false, 'off', 'no'];
+        $truths = ['1', 1, true, 'on', 'yes', 'true'];
+        $false = ['0', 0, false, 'off', 'no', 'false'];
 
         if (in_array($value, $truths, true)) {
             return true;

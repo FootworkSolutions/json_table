@@ -13,13 +13,13 @@ class Store extends Base
      *
      * @param string $storeType The type of store to load.
      *
-     * @return object The store object. Throws an exception on error.
+     * @return object The store object.
      */
     public static function load($storeType)
     {
         self::loadAbstractStoreFile();
         self::loadStoreTypeFile($storeType);
-        self::instantiateStoreClass($storeType);
+        return self::instantiateStoreClass($storeType);
     }
 
 
