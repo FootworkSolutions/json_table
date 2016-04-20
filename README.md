@@ -48,7 +48,7 @@ $lo_analyser->set_schema('/your/file/path/example.json');
 $lo_analyser->set_file('/your/file/path/example.csv');
 
 // Check whether the file is valid against the schema.
-$lb_file_is_valid = $lo_analyser->analyse();
+$lb_file_is_valid = $lo_analyser->validate();
 ```
 Store the valid CSV file:
 ```
