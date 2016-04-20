@@ -6,8 +6,6 @@ class Mock extends \PHPUnit_Framework_TestCase
     /**
      * Get a PDO mock object.
      *
-     * @access  public
-     *
      * @return  object  The mock PDOStatement object.
      */
     public function PDO()
@@ -21,8 +19,6 @@ class Mock extends \PHPUnit_Framework_TestCase
     /**
      * Get a PDOStatement mock object.
      *
-     * @access public
-     *
      * @return  object  The mock PDOStatement object.
      */
     public function PDOStatement()
@@ -34,15 +30,14 @@ class Mock extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * This defines the expected result from a group of PDO prepare, bindParam and execute statements.
+     * This defines the expected result from a group of PDO prepare, bindParam and fetchAll statements.
      *
-     * @access public
-     *
+     * @param   object   $pdoMock           The mock PDO object to use.
      * @param   mixed    $expectedDbResult  The expected result from the database.
      *
      * @return  void
      */
-    public function expectFetchAllResult($pdoMock, $expectedResult)
+    public function expectPdoFetchAllResult($pdoMock, $expectedResult)
     {
         $pdoStatement = $this->PDOStatement();
 
@@ -61,9 +56,65 @@ class Mock extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * Get a Statistics mock object.
+     * This defines the expected result from a group of PDO prepare, bindParam and execute statements.
      *
-     * @access public
+     * @param   object   $pdoMock           The mock PDO object to use.
+     * @param   mixed    $expectedDbResult  The expected result from the database.
+     *
+     * @return  void
+     */
+    public function expectPdoExecute($pdoMock, $expectedResult = null)
+    {
+        $pdoStatement = $this->PDOStatement();
+
+        $pdoMock->expects($this->any())
+            ->method('prepare')
+            ->will($this->returnValue($pdoStatement));
+
+        $pdoStatement->expects($this->any())
+            ->method('bindParam')
+            ->will($this->returnValue(true));
+
+        $pdoStatement->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue(true));
+
+        if (!is_null($expectedResult)) {
+            $pdoStatement->expects($this->any())
+                ->method('fetch')
+                ->will($this->returnValue($expectedResult));
+        }
+            
+    }
+
+
+    /**
+     * This defines the expected result a failed PDO execute call.
+     *
+     * @param   object   $pdoMock           The mock PDO object to use.
+     *
+     * @return  void
+     */
+    public function expectPdoFailedExecute($pdoMock)
+    {
+        $pdoStatement = $this->PDOStatement();
+
+        $pdoMock->expects($this->any())
+            ->method('prepare')
+            ->will($this->returnValue($pdoStatement));
+
+        $pdoStatement->expects($this->any())
+            ->method('bindParam')
+            ->will($this->returnValue(true));
+
+        $pdoStatement->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue(false));
+    }
+
+
+    /**
+     * Get a Statistics mock object.
      *
      * @return  object  The mock Statistics object.
      */
@@ -76,8 +127,6 @@ class Mock extends \PHPUnit_Framework_TestCase
 
     /**
      * Get a Error mock object.
-     *
-     * @access public
      *
      * @return  object  The mock Statistics object.
      */

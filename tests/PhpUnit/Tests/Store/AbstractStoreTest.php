@@ -1,7 +1,6 @@
 <?php
 namespace PhpUnit\Tests\Store;
 
-use \tests\PhpUnit\Fixtures\Mock;
 use \JsonTable\Store\AbstractStore;
 
 

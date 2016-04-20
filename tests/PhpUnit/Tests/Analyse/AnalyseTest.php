@@ -57,7 +57,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setSchema(Helper::getExampleSchemaString());
         $analyser->setFile(Helper::getExampleCSVLocation());
 
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $fileIsValid = $analyser->validate();
         $this->assertEquals(true, $fileIsValid);
@@ -117,7 +117,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setPdoConnection($pdo);
         $analyser->setSchema(Helper::getExampleSchemaString());
         $analyser->setFile(Helper::getExampleCSVLocation());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -149,7 +149,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
         $statistics = $analyser->getStatistics();
         $expectedStatistics = [
@@ -181,7 +181,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
         $statistics = $analyser->getStatistics();
         $expectedStatistics = [
@@ -213,7 +213,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
         $statistics = $analyser->getStatistics();
         $expectedStatistics = [
@@ -245,7 +245,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
         $statistics = $analyser->getStatistics();
         $expectedStatistics = [
@@ -277,7 +277,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
         $statistics = $analyser->getStatistics();
         $expectedStatistics = [
@@ -308,7 +308,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
         $statistics = $analyser->getStatistics();
         $expectedStatistics = [
@@ -340,7 +340,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
         $statistics = $analyser->getStatistics();
         $expectedStatistics = [
@@ -373,7 +373,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -406,7 +406,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -439,7 +439,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $isValid = $analyser->validate();
         $this->assertEquals(true, $isValid);
@@ -491,7 +491,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -524,7 +524,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $isValid = $analyser->validate();
         $this->assertEquals(true, $isValid);
@@ -565,7 +565,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -599,7 +599,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -697,7 +697,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -731,7 +731,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -764,7 +764,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -798,7 +798,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -831,7 +831,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -865,7 +865,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -898,7 +898,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -931,7 +931,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -965,7 +965,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -1012,7 +1012,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         $analyser->setSchema(Helper::getExampleSchemaString());
         $analyser->setFile(Helper::getExampleCSVLocation());
 
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 0]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 0]]);
 
         $analyser->validate();
         $statistics = $analyser->getStatistics();
@@ -1044,7 +1044,7 @@ class AnalyseTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $analyser->setFile(Helper::getTestCSVFile());
-        $mock->expectFetchAllResult($pdo, [0 => ['count' => 1]]);
+        $mock->expectPdoFetchAllResult($pdo, [0 => ['count' => 1]]);
         $analyser->validate();
         $statistics = $analyser->getStatistics();
         $expectedStatistics = [

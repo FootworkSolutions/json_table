@@ -40,7 +40,7 @@ class PostgresqlStore extends AbstractStore
     private $insertParameters;
 
     /**
-     * @var int The current CSV row being stored.
+     * @var array The current CSV row being stored.
      */
     private $currentCsvRow;
 
@@ -160,7 +160,9 @@ class PostgresqlStore extends AbstractStore
      */
     private function storeCsvRows()
     {
-        while ($this->currentCsvRow = Base::loopThroughFileRows()) {
+        while ($csvRow = Base::loopThroughFileRows()) {
+            $this->currentCsvRow = $csvRow;
+            
             $insertSql = "INSERT INTO $this->tableName (
                                   $this->columnList
                               )
@@ -215,5 +217,16 @@ class PostgresqlStore extends AbstractStore
         }
 
         return $fieldValue;
+    }
+
+
+    /**
+     * Get the returned primary key of any rows that have been stored.
+     *
+     * @return  array   The primary keys.
+     */
+    public function getInsertedIds()
+    {
+        return $this->insertedIds;
     }
 }

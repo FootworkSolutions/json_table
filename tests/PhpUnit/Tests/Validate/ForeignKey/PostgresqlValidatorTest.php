@@ -16,7 +16,7 @@ class PostgresqlValidatorTest extends \PHPUnit_Framework_TestCase
         $mock = new Mock();
         $pdo = $mock->PDO();
         $base->setPdoConnection($pdo);
-        $mock->expectFetchAllResult($pdo, false);
+        $mock->expectPdoFetchAllResult($pdo, false);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Could not validate the foreign key for tableName

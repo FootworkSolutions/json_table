@@ -88,7 +88,4 @@ class ForeignKeyTest extends \PHPUnit_Framework_TestCase
             [false]
         ];
     }
-
-
-
 }
